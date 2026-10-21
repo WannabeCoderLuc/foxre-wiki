@@ -15,6 +15,7 @@ Run all gates: MCP `engine_verify` (or `python -m pytest Engine\tests -q` from t
 | `formats/fox2.py` | Python | [`docs/formats/FOX2.md`](../formats/fox2.md) | <span class="status pass">PASS</span> | 44,994/44,994 DataSets byte-identical |
 | `formats/frt.py` | Python | [`docs/formats/FRT.md`](../formats/frt.md) | <span class="status pass">PASS</span> | 307/307 route sets byte-identical |
 | `formats/nav2.py` | Python (+numpy) | [`docs/NAVMESH.md`](../formats/nav2.md) | <span class="status pass">PASS</span> | 840/840 navmeshes byte-identical |
+| `runtime/` (gameobjects, scheduler, messages) | Python | [`docs/engine/Scheduler.md`](scheduler.md), `Messages.md` | <span class="status pass">PASS</span> | live FoxTrace fixture: every updater-vector change and 43-message boot sequence reproduced (`test_m3_runtime.py`) |
 
 `Tools\foxhash.py` and `Tools\nav2lib.py` are shims to `core/strcode.py` and `formats/nav2.py`.
 Tests: `tests\` (pytest; `verifiers.lock.json` = sha256 of each verifier, enforced by `engine_verify`). Census tools that produce the spec statistics: `Tools\{fox2,fpk,qar}_census.py`, `Tools\qar_harvest_paths.py`.

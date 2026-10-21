@@ -4,6 +4,7 @@
 
 ## The engine's own catalogue of types
 Fox Engine keeps a **class registry**: a list of every data class it knows (1,153 of them). For each class it records
+
 - a **parent class** (a `GameObjectLocator` is a kind of `TransformData`, which is a kind of `Data`, which is a kind of `Entity`),
 - its **size in memory** and a **version number**,
 - its **properties**: name, type (integer, float, string, vector, reference ...), container (single value, array, list or string map) and position inside the object.
@@ -20,6 +21,7 @@ flowchart TB
     D --> E["Second pass: extra (dynamic) properties,<br/>finish each entity"]
     E --> F["Finalize the DataSet"]
 ```
+
 - The loader does **a little work each frame** (one entity per step), so large levels don't freeze the game.
 - If a file's entity says class version 2 but the engine's class is version 3, loading stops. That is why every DataSet shipped with the game matches the registry exactly.
 - Files that don't start with the binary signature are read as **XML** instead: the engine can also load text DataSets.

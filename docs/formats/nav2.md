@@ -1,6 +1,7 @@
 # NAV2 navmeshes
 
 **Sources:**
+
 - 853 `.nav2` files under `EXTRACTED_DATA`, compared field by field (`Tools/nav2_probe*.py`).
 - `NavxNavBlock` entities in the fox2 index.
 - Engine class names (`Navx*` strings in the exe).
@@ -8,6 +9,7 @@
 **Tool:** `Tools/navmesh_tool.py`.
 
 **Evidence tags:**
+
 - **[V]** consistent across all files tested and checked against known world positions
 - **[I]** inferred
 - **[?]** unknown

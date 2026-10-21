@@ -12,10 +12,12 @@ Tags: [V] verified on every entry, [D] holds in all game data, [I], [?].
 | chunk0–4.dat | 2,885 / 4,375 / 14,115 / 1,948 / 13,722 | 2,284 / 2,698 / 13,580 / 1,584 / 13,128 | 99–100 % |
 | data1.dat | 623 | 0 | 621 |
 | texture0–4.dat | 33,359 / 8,804 / 21,059 / 14,796 / 16,557 | 0 | 80 / 98 / 76 / 62 / 72 % |
+
 `master\e2f*.dat` (5 files) are ASF videos, not archives. The live Steam install additionally has SnakeBite's `a_chunk7.dat`/`a_texture7.dat` and a modified `00.dat`; always census the `GameBackup` copy.
 
 ## Header (32 bytes) [V]
 All fields after the magic are XORed with format constants X = (0x41441043, 0x11C22050, 0xD05608C3, 0x532C7319):
+
 | Off | Field | Stored |
 |---|---|---|
 | 0x00 | magic `SQAR` | plain |
@@ -47,6 +49,7 @@ All constants and the per-entry key are part of the format (key stored next to t
 
 ## PathCode64 (entry hash) [V by 111,394 matches]
 `hash = extTypeId << 51 | metaFlag << 50 | hash50` — see `Engine\core\pathcode.py`:
+
 - `hash50 = CityHash64WithSeeds(stem, 0x9AE16A3B2F90404F, seed1) & (2^50-1)`, stem = path without extension and without leading `/Assets/`, seed1 = last 8 bytes of stem reversed (LE u64).
 - meta flag for paths outside `/Assets/` or under `/Assets/tpptest`.
 - extTypeId = `hash50(ext) & 0x1FFF` over GzsTool's extension list (`1.ftexs` … `6.ftexs` are distinct types).

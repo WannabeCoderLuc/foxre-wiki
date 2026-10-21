@@ -15,6 +15,7 @@ flowchart LR
     DATA -- contains --> LUA
     EXE -- runs --> LUA
 ```
+
 - **The executable** contains both the general engine (file loading, objects, rendering, physics) and the game-specific code (soldiers, vehicles, bosses). It is protected by Denuvo; the project never modifies it and never analyses the protection itself.
 - **The data archives** hold everything else: level layouts, models, textures, sounds, navigation meshes and the Lua scripts that describe missions.
 - **Lua scripts** decide *what* happens (spawn an enemy, start an event); the executable decides *how* it happens.
@@ -33,7 +34,7 @@ Every milestone ends on a test a computer decides: pass or fail. A file reader o
 | M0 Foundations | tools, workspace, test runner | <span class="status pass">PASS</span> |
 | M1 Data layer | read every archive, package and core data file | <span class="status pass">PASS</span> |
 | M2 Entities and reflection | turn level data into typed, connected objects | <span class="status pass">PASS</span> |
-| M3 Runtime core | how a frame runs: object manager, updates, messages | <span class="status in-progress">IN PROGRESS</span> |
+| M3 Runtime core | how a frame runs: object manager, updates, messages | <span class="status pass">PASS</span> |
 | M4 to M9 | Lua host, world, rendering, animation, gameplay, playable slice | <span class="status planned">PLANNED</span> |
 
 ## Reading order

@@ -14,6 +14,7 @@ Base hierarchy [V]: Entity (48 B) ← Data (120) ← DataSet (296), TransformDat
 
 ## Cross-check with the data [V]
 Against `fox2_typedb.json` (all 44,994 DataSets, 403 classes, 3,716 class/property pairs, all names resolved):
+
 - 386/403 data classes are in the dump; the 17 missing are `Fx*` VFX node classes (registered outside the exported entity groups) [D].
 - classVersion in every DataSet entity == the registry version (0 mismatches).
 - 3,372/3,372 static properties seen in data exist in the class chain with identical type and container.
@@ -32,6 +33,7 @@ Against `fox2_typedb.json` (all 44,994 DataSets, 403 classes, 3,716 class/proper
 | 0x140077620 / 0x140077680 / 0x1400776F0 | FilePtr (type 20) property, container 0/1/2 |
 | 0x1400926F0 | PropertyInfo factory: `switch(typeId 0..24)` → 0x48-byte typed PropertyInfo |
 | 0x140078020 | Lua accessor registration (`"RW"`/`"rw"` flags) |
+
 Descriptor layout used by the exporter: name +0xC8, parent +0xE0 (IsKindOf walks it, 0x140113480), version u16 +0xDA, category +0xA8, size +0xD0, align +0xD8, flags byte +0x130 (bit 3 = subentity group, bit 4 = block), property map at +0x20/+0x28.
 PropertyInfo (0x48 B): vtable (slot 1 = arraySize), name +0x10, offset +0x18, arraysize +0x20, storage/flags +0x24, container +0x28, hidden flag +0x2C bit 0, ptrtype +0x30, enuminfo +0x38.
 

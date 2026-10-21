@@ -26,6 +26,7 @@ Unresolved link categories (all expected): 130 archives absent from the shipped 
 Load path: `LoadDataSetFile` (Lua) → resource system (`FUN_1400CDF40`, status +0x44) → `EntityFile` (desc 0x142B661D0, 0x70 B; `DataSetFile2` derives, vtable 0x1420D0D00) → reader object at EntityFile+0x60 (0x140189xxx, async job `FUN_1401B13B0` or sync `FUN_1401893A0`) → **format selection `FUN_1400ED040`**: byte 0 == 0xF2 and bytes 1–3 == "box" → **binary reader** (ctor `FUN_1400EABE0`, 0x178 B, vtable 0x1420C5308); otherwise the **XML reader** (`FUN_1400EADC0`, vtable 0x1420C52D0) — the engine also loads XML DataSets.
 Binary reader vtable: +0x20 `FUN_1400EDE50` = **time-sliced step** (called repeatedly by `EntityFile::Update` 0x1400F7D20), +0x28 `FUN_1400F0680` = attach buffer (data, size) to the stream at +0xC8.
 Step state machine (+0x50):
+
 | State | Function | Work |
 |---|---|---|
 | 0 | `FUN_1400EDBC0` header + `FUN_1400EDB00` entity headers | header: `F2 'b' 'o' 'x'`, version char − '0' (supported list `FUN_1400EBED0`; 5–6 = hashed-string format, +0x171), 0, flag byte, flag byte (must be 0), u32 entityCount, u32 stringTableOffset, u32 entitiesOffset; string table `FUN_1400EE6E0`; per-entity header + class lookup `FUN_1400EEE00`. Then **one arena** `BlockHeapAlloc(Σ align_up(class.size), max align)` for every entity whose class has no custom creator (desc+0xC0 == 0) |
@@ -33,6 +34,7 @@ Step state machine (+0x50):
 | 2 | `FUN_1400EBF80` | second pass per entity: create the dynamic-property holder (desc+0x90 → vt+8), read `dynamicCount` dynamic properties (`FUN_1400EF210`), finish entity `FUN_1400EBC30` |
 | 3 | `FUN_1400725F0` | post-load pass on the DataSet object [I: reference fixups] |
 | 4 | `FUN_1400ECE70` | finalize / done |
+
 The binary writer is `FUN_1400EF290` (DataSetFile2::Save): mirror image of the above (writes version as `'0'+5`).
 Consequences for the engine: a DataSet is one contiguous allocation; file `address` fields are editor-session addresses (unique per build), mapped to new objects at load [I]; property order on disk = class-chain order (matches `TypeDB.properties()`).
 

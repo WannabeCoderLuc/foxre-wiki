@@ -31,6 +31,7 @@ Events:             48 bytes each
 | 0x0C | 4×u32 | aim params (vector3 / character id / up to 4 route ids, by aimType) |
 | 0x1C | 4×u32 | type-specific params (speed, message id, SwitchRoute route+func+arg, SyncRoute table+step, …) |
 | 0x2C | 4 bytes | snippet [?] |
+
 Field semantics per type follow youarebritish's `frt.bt` [W]; the codec keeps events raw.
 
 ## Event type names (StrCode32, recovered 2026-10-21, in `strcode_bruteforced.tsv`)

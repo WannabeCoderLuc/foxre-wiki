@@ -17,6 +17,7 @@ Milestones 1-3 (FoxRe agent, reviewed 2026-10-19). Trust only claims tagged [V];
 ## 1. Executive Summary
 
 Milestone 1 reverse-engineers the foundational spine of Konami's Fox Engine. Through disassembly, decompile analysis, and comprehensive x64 cross-reference scanning across all 11,344 call sites, we have decoded:
+
 1. **The Engine Startup Lifecycle:** From WinMain (`0x140003aa0`) to kernel initialization (`0x1400017c0`), registering the 12 top-level engine packages (`TppSystem`, `FoxQuark`, `GameCore`, etc.), triggering the subsystem cascade (`0x140bff180`), and entering the master frame update loop (`0x140064560` / `0x140001cb0`).
 2. **The Global Class Registry Singleton:** Backed by global pointer `_DAT_142c3a8a0` (allocated in `0x140bfefa0`), registered by `0x140bff070`, accessed by `0x140bff050`, featuring vtable `0x142308648` and an array of 2,048 (`0x800`) `ClassDescriptor` slots.
 3. **The `ClassDescriptor` ABI Specification:** A standardized 10-slot virtual table enabling engine-wide dynamic instantiation (`CreateInstance` allocating via Quark memory `0x140bff0e0`), component dependency resolution (`SetupSystem` querying `QuarkSystemTable + 0x00`), teardown (`TeardownSystem`), and interface querying (`QueryInterface` via 48-bit `StrCode64`).
@@ -106,6 +107,7 @@ undefined8 * FUN_140bfefa0(void) {
     this->pQuarkSystemTable = pTable; // *(this + 8) = pTable;
   }
   ```
+
 - **Slot 2 (`+0x10`) — `0x1407d9020`:** `GetRegisteredCount()`: Returns `this->registeredCount` (`*(uint32_t*)(this + 0x10)`).
 - **Slot 3 (`+0x18`) — `0x140bfef70`:** `ExportRegisteredClasses(ClassDescriptor** outArray)`:
   Copies all pointers from `this->descriptors` into `outArray`.
@@ -119,6 +121,7 @@ undefined8 * FUN_140bfefa0(void) {
   0x140bff05d: add rsp, 0x28
   0x140bff061: ret
   ```
+
 - **`0x140BFF070(ClassDescriptor* pDesc)` — `Fox_RegisterClassDescriptor()`:**
   ```assembly
   0x140bff070: push rbx
@@ -182,6 +185,7 @@ Using `TppBuddyDog2` descriptor vtable (`0x142315d68`) as the reference implemen
 
 ### 4.4 Registered Class Breakdown
 Analysis of all 1,506 callers of `0x140bff070` reveals **1,491 distinct class registrations**. 
+
 - 319 hashes are fully resolved to vanilla symbols in `mgsv_knowledge.db`.
 - Suffix clustering demonstrates that registered classes are **Gameplay Component Controllers and Actor Managers**, not passive data types:
   - `Controller`: 119 classes (e.g. `TppBuddyDog2ActionController`, `TppSahelan2AiController`, `TppPlayerSightManager`)
@@ -241,6 +245,7 @@ By disassembling instructions following `call 0x140bff050` across all 11,344 cal
 ### 6.2 16-Bit `GameObjectId` Bit-Packing
 Every actor in MGSV has a 16-bit integer ID (`uint16_t`):
 $$\text{GameObjectId} = (\text{typeIndex} \ll 9) \mid \text{instanceIndex}$$
+
 - **High 7 bits (bits 9–15):** `typeIndex` (0 to 127). E.g., `0x00` = Player, `0x01` = CommandPost (`0x0200`), `0x02` = Soldier (`0x0400`), `0x13` = BuddyDog (`0x2600`), `0x15` = Sahelan (`0x2A00`).
 - **Low 9 bits (bits 0–8):** `instanceIndex` (0 to 511).
 
@@ -259,6 +264,7 @@ void* GameObjectManager::GetTypeManager(GameObjectManager* this, uint16_t gameOb
 
 ### 6.4 `GameObject.SendCommand` Execution Chain (`0x140BFA380`)
 When Lua invokes `GameObject.SendCommand(id, { id = "CommandName", ... })`:
+
 1. Validates Lua arguments (table/number at index 1, table at index 2).
 2. Extracts `gameObjectId = lua_tointeger(L, 1)`.
 3. Calls `0x140bf3fc0(gameObjectId)`, resolving the specific type manager (e.g. `TppSahelan2Manager`).
@@ -282,6 +288,7 @@ When Lua invokes `GameObject.SendCommand(id, { id = "CommandName", ... })`:
    $$\text{StrCode64}("TppBear") = \text{0x35f7b2706575}$$
    $$\text{StrCode64}("TppBuddyDog2") = \text{0x0d6974413c33}$$
    $$\text{StrCode64}("TppSahelan2") = \text{0x18037b588147}$$
+
 3. **Descriptor Lookup:** The engine searches `_DAT_142c3a8a0->descriptors` for the matching `ClassDescriptor`.
 4. **Actor Instantiation:**
    - Calls `ClassDescriptor::vtable[1]` (`CreateInstance()`) to allocate actor struct memory via `QuarkSystemTable + 0x08`.
@@ -334,6 +341,7 @@ During this investigation, we bridged the vocabulary between these two systems, 
 
 ### 1.1 File Extension Table Registration
 Fox Engine registers its supported file formats in a global format registry table during engine initialization:
+
 - **Registry Table Address**: `0x1429E3550`
 - **Registration Function**: `FUN_1400403F0`
 - **Global File Handler Container**: `_DAT_142b63b10`
@@ -358,6 +366,7 @@ A compiled `.fox2` file (`FOXB` format) represents a serialized `DataSet` object
 
 ### 1.3 Entity Record Structure in Binary Stream
 Each serialized entity within the payload block begins with an aligned entity descriptor:
+
 1. `classHash` (`uint64_t`, 48-bit `StrCode64`): Identifies the Fox Core entity class (e.g., `0x89731475623d` -> `TppHeli2`, `0x42f7c0062453` -> `GameObjectLocator`).
 2. `entityAddress` (`uint64_t`): File-local reference ID used to link `EntityPtr` and `EntityHandle` references across the graph.
 3. `propertyCount` (`uint32_t`): Number of serialized properties belonging to this instance.
@@ -485,6 +494,7 @@ Fox Engine's property system identifies types via an internal 8-bit enumeration:
 
 ### 2.3 RTTI & Dynamic Cast (`IsInstanceOf<T>`)
 Fox Engine entities do not use Microsoft C++ `/GR` RTTI. Instead, dynamic casting is executed via the `ClassDescriptor` tree:
+
 1. `entity->vtable[0]` is invoked to obtain `ClassDescriptor* current = entity->GetClass()`.
 2. The casting function inspects `current->classHash` against target class hash.
 3. If they do not match, the traversal follows `current = current->superClass` (stored at offset `ClassDescriptor + 0x48`).
@@ -535,6 +545,7 @@ The bridge from a static level `.fox2` definition to an active gameplay actor ex
 
 ### 3.1 Stage 1: DataBody Instantiation (`0x140BF7710`)
 During stage loading, the engine separates static asset definitions (`Data`) from scene instances (`DataBody`). For `GameObjectLocator`, virtual method `slot 9` (`0x140BF7710`) is invoked:
+
 - Verifies registration of `GameObjectLocatorBody` in the Core Reflection registry (`0x140074c90`).
 - Calls `BlockHeapAlloc(size=0x90, align=0x10)` (`0x1400dcb50`).
 - Installs `GameObjectLocatorBody` vtable (`0x142306B70`).
@@ -542,6 +553,7 @@ During stage loading, the engine separates static asset definitions (`Data`) fro
 
 ### 3.2 Stage 2: CreationRequest Dispatch (`thunk_FUN_140bf7d00`)
 At scene activation, the scene manager invokes virtual method `slot 6` (`0x140BF7980`), which jumps directly to `0x140BF7D00`:
+
 - **Disassembly Trace (`0x140bf7d00`)**:
   ```x86asm
   0x140bf7d3d: mov     rbp, rcx                     ; rbp = this (GameObjectLocatorBody)
@@ -568,10 +580,12 @@ At scene activation, the scene manager invokes virtual method `slot 6` (`0x140BF
   0x140bf7e44: mov     rdx, creationRequest
   0x140bf7e4e: call    qword ptr [r8 + 0x10]        ; GameObjectManager::vtable[2] (0x140BF8F80)
   ```
+
 - `GameObjectManager::vtable[2]` (`0x140BF8F80`) offsets `rcx` by `+0x430` to access the `CreationQueue` and calls `0x140BF90F0` to enqueue the actor for instantiation.
 
 ### 3.3 Stage 3: Actor ID Allocation & Type Index (`0x140BF4690`)
 When `GameObjectManager` processes creation requests:
+
 - Reads `typeIndex` from the registered Type Descriptor (stored at `typeDesc + 0x1C` as a 16-bit integer).
 - Resolves against the canonical GameObject type index table (`exe 0x142A7BA90`, documented in `mgsv_unified_server/data/re/gameobject_type_index.tsv`):
   - `0`: `GAME_OBJECT_TYPE_PLAYER2`
@@ -589,6 +603,7 @@ When `GameObjectManager` processes creation requests:
   0x140bf4705: lea     rcx, [rbx + 7]
   0x140bf4709: shr     rcx, 3                       ; bitmap byte count = (maxInstances + 7) >> 3
   ```
+
 - **16-bit Actor ID Encoding**:
   $$\text{ActorID} = (\text{typeIndex} \ll 9) \mid \text{instanceIndex}$$
   - `instanceIndex` (`bits 0..8`, range `0x000` to `0x1FF`, max 512 instances per type).
@@ -596,6 +611,7 @@ When `GameObjectManager` processes creation requests:
 
 ### 3.4 Stage 4: Quark System Allocation & SetupSystem Wiring
 With the unique Actor ID reserved:
+
 1. **Memory Allocation**: The type manager queries the Quark class descriptor registered via `0x140BFF070` and calls `vtable[1]` (`CreateInstance`).
    - `CreateInstance` invokes `QuarkSystemTable[1]` (`0x140BFF0E0`), which allocates aligned actor memory from the gameplay slab allocator.
 2. **SetupSystem Component Wiring**: The type manager invokes `vtable[4]` (`SetupSystem`), passing the actor pointer (`rsi`) and `CreationRequest*` (`rdi`).
@@ -603,6 +619,7 @@ With the unique Actor ID reserved:
 
 #### Concrete Trace: `TppHeli2` SetupSystem (`0x140DD42F0`)
 Disassembly of `0x140DD42F0` reveals the exact wiring layout of `TppHeli2`:
+
 - `0x140dd4337`: Queries `TppGameObjectInfo` (`0x7cffa68e663e`).
 - `0x140dd4362`: Stores `TppHeli2Realizer` (`0xee21f8ab1680`) into `[rsi + 0x18]`.
 - `0x140dd47b8`: Wires `TppGameObjectRealizerController` (`0x666e24552600`) into `[rsi + 0x1c0]`.
@@ -891,6 +908,7 @@ The delivery path from C++ emission to actor listener execution is completely re
 
 #### Lua `GameObject.SendMessage` FIFO Queue:
 In addition to the TaskBucket bus, Fox Engine provides a high-throughput per-type FIFO queue for Lua scripts:
+
 - **Emission (`GameObject.SendMessage`, `FUN_140bfa510`)**: Unpacks actorId, calls `FUN_140bfa840`. Enqueues event into linked list at `0x142c399c8 + typeIndex * 0x18` (pooled via freelist `_DAT_142c389b0`).
 - **Drain (`MessageBus::vtable[9]`, `FUN_140bf39c0`)**: Dequeues pending messages for `typeIndex`, popping `actorId` and `messageId` for batch delivery.
 

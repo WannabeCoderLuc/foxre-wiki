@@ -130,7 +130,32 @@ def resolve_src(token: str, current_src: str) -> str | None:
     return None
 
 
+def block_spacing(text: str) -> str:
+    """Python-Markdown only starts a table or list after a blank line; GitHub does not need one.
+    Insert the blank line before a table header / first list item that directly follows a paragraph."""
+    out, fence = [], False
+    lines = text.split("\n")
+    for i, line in enumerate(lines):
+        s = line.lstrip()
+        if s.startswith(("```", "~~~")):
+            fence = not fence
+        prev = out[-1].strip() if out else ""
+        if not fence and prev.startswith("|") and s and not s.startswith("|"):
+            out.append("")                     # text right after a table would become a table row
+            prev = ""
+        if not fence and prev and not prev.startswith(("|", "#", ">", "<")) \
+                and not re.match(r"([-*+]|\d+\.) ", prev):
+            nxt = lines[i + 1].strip() if i + 1 < len(lines) else ""
+            starts_table = s.startswith("|") and re.match(r"^\|?\s*:?-{3,}", nxt)
+            starts_list = line == s and (re.match(r"[-*+] \S", s) or re.match(r"\d+\. \S", s))
+            if starts_table or starts_list:
+                out.append("")
+        out.append(line)
+    return "\n".join(out)
+
+
 def transform(text: str, src: str, page: str) -> str:
+    text = block_spacing(text)
     for g, word in GLYPH_STATUS.items():
         text = text.replace(g, word)
     text = EMOJI.sub("", text)
@@ -321,7 +346,14 @@ def main():
         sys.exit(mkdocs("serve"))
     if mkdocs("build", "--strict", "--quiet") != 0:
         sys.exit("mkdocs build --strict failed (broken link or config error) - nothing committed")
-    print("mkdocs build --strict: OK")
+    raw = []
+    for dp, _d, fs in os.walk(os.path.join(HERE, "site")):
+        for f in fs:
+            if f.endswith(".html") and re.search(r"\|\s*:?-{3,}", open(os.path.join(dp, f), encoding="utf-8").read()):
+                raw.append(os.path.relpath(os.path.join(dp, f), HERE))
+    if raw:
+        sys.exit("unrendered markdown table in: " + ", ".join(raw))
+    print("mkdocs build --strict: OK (no raw tables)")
     if a.commit or a.push:
         git("add", "-A")
         if git("status", "--porcelain").stdout.strip():

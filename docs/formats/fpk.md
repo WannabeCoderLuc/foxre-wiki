@@ -26,6 +26,7 @@ Reference table (referenceCount × 16)  — paths of other packages this one dep
 Names: entry names then reference names, each NUL-terminated, back to back; pad to 16
 Data: each entry's bytes in table order, each padded to 16
 ```
+
 - `md5` = MD5 of the stored name bytes. In TPP 1.0.15.4 every name is stored in clear (`/Assets/…`) and matches its MD5 (124,841/124,841) [D]. (The format allows obfuscated names whose MD5 must be looked up in `fpk_dictionary.txt`; the codec keeps the stored MD5 for that case.)
 - Layout is canonical in every game file, so `write(read(b)) == b` [V].
 

@@ -11,7 +11,7 @@ hide:
 
 PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &middot; every claim backed by a pass/fail test
 
-**3 of 10 milestones passed** &middot; current: **M3 Runtime core**
+**4 of 10 milestones passed** &middot; current: ****
 
 </div>
 
@@ -39,16 +39,16 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 | | Milestone | Scope | Status |
 |---|---|---|:-:|
-| M0 | Foundations |  | <span class="status pass">PASS</span> |
+| M0 | Foundations | workspace, MCP oracles, hash functions | <span class="status pass">PASS</span> |
 | M1 | Data layer | read every file container and the core data formats | <span class="status pass">PASS</span> |
 | M2 | Entity & reflection core | fox2 → live typed entity graph | <span class="status pass">PASS</span> |
-| M3 | Runtime core | scheduler, messages, GameObjects | <span class="status in-progress">IN PROGRESS</span> |
+| M3 | Runtime core | scheduler, messages, GameObjects | <span class="status pass">PASS</span> |
 | M4 | Script host | Lua 5.1 + Fox/Tpp API | <span class="status planned">PLANNED</span> |
 | M5 | World | terrain, collision, navigation, routes | <span class="status planned">PLANNED</span> |
-| M6 | Assets & rendering |  | <span class="status planned">PLANNED</span> |
-| M7 | Animation |  | <span class="status planned">PLANNED</span> |
-| M8 | Gameplay systems |  | <span class="status planned">PLANNED</span> |
-| M9 | Playable slice |  | <span class="status planned">PLANNED</span> |
+| M6 | Assets & rendering | textures, models, materials, renderer | <span class="status planned">PLANNED</span> |
+| M7 | Animation | clips, motion graphs, rigs | <span class="status planned">PLANNED</span> |
+| M8 | Gameplay systems | GameObject families, AI, damage, sound | <span class="status planned">PLANNED</span> |
+| M9 | Playable slice | one free-roam area, player + one AI type | <span class="status planned">PLANNED</span> |
 
 ## Verified engine modules
 
@@ -63,13 +63,14 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 | `formats/fox2.py` | Python | [`docs/formats/FOX2.md`](formats/fox2.md) | <span class="status pass">PASS</span> | 44,994/44,994 DataSets byte-identical |
 | `formats/frt.py` | Python | [`docs/formats/FRT.md`](formats/frt.md) | <span class="status pass">PASS</span> | 307/307 route sets byte-identical |
 | `formats/nav2.py` | Python (+numpy) | [`docs/NAVMESH.md`](formats/nav2.md) | <span class="status pass">PASS</span> | 840/840 navmeshes byte-identical |
+| `runtime/` (gameobjects, scheduler, messages) | Python | [`docs/engine/Scheduler.md`](engine/scheduler.md), `Messages.md` | <span class="status pass">PASS</span> | live FoxTrace fixture: every updater-vector change and 43-message boot sequence reproduced (`test_m3_runtime.py`) |
 
 ## Latest sessions
 
+- 2026-10-22: **M3 PASS**: FoxTrace live capture (2 identical boots) → `m3_frame_trace.json`; `Engine\runtime\` reproduces updater order + message sequence; suite 28/28. Site tables fixed.
 - 2026-10-21: M3 specs: scheduler + messages re-verified from the exe ([`docs\engine\Scheduler.md`](engine/scheduler.md), `Messages.md`); 3 FoxRe claims corrected.
 - 2026-10-21: **M2 PASS**: DataSet reader/writer decoded (magic checked, ASCII version, instanceSize, classVersion check); live gate 17/17 identifier targets match the game. Pages site + text statuses set up.
 - 2026-10-21: M2 entity graph (static): s10151 + link closure → 8,669 typed entities, all refs resolved or categorised ([`docs\engine\Entities.md`](engine/entities.md)).
 - 2026-10-21: M2 reflection: game type DB dumped live (1,153 classes, 6,062 props) → `Engine\core\typedb.py`, [`docs\engine\Reflection.md`](engine/reflection.md); matches all DataSets. Game run restored to baseline.
-- 2026-10-21: **M1 done**: FPK 16,354/16,354, QAR 134,241 entries MD5-ok, FRT 307/307, NAV2 840/840; 68 route event names recovered.
 
 [Full session log](status/log.md)

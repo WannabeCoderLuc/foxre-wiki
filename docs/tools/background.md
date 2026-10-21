@@ -40,6 +40,7 @@ Verified data facts: the only `sahelan`-world navmesh is `s10151_nav_sahelan.nav
 
 ## 4. Option A: "Sahelanthropus Unbound" (IH boss type) — history
 Built as an IH r267 boss (`InfBossEvent` + `InfBossTppSahelan2.lua` + addon), packaged by `Tools\build_sahelan_unbound.py` (own fpk/fpkd + fox2 + SnakeBite writers, byte-identical round trips on all game packages/DataSets).
+
 - **t1/t1b/t1c** crashed at `mgsvtpp+0xADBFBB` (null bone in a transform lookup). Root cause: missing Ep31 skeletons/parts. **t1d** added the 25 `s10151_special_npc` files → full fight works (2026-10-14).
 - **t1e:** difficulty presets (Normal 35k life, Extreme 55k + Ep50 combat grade), heli attacks, search-missile routes, red fog at phase 8+; `ReportStatus()` to fit the 512-byte pipe.
 - Death-reload hang: `TppSahelan2_block` never reached EMPTIED. **Fixed 2026-10-17** by load mode **MISSION_PACK** (packs load with free roam, no script block).

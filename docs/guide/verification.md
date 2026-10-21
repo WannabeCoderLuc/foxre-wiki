@@ -16,6 +16,7 @@ Test files are locked with checksums, so a test can't quietly be changed to make
 
 ## Confidence tags
 Statements in the reference pages carry a tag:
+
 | Tag | Meaning |
 |---|---|
 | **[V]** verified | seen in the program's code or confirmed in the running game |

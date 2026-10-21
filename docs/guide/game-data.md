@@ -10,6 +10,7 @@ flowchart TB
     FILES["Individual files<br/>.fox2 DataSets, models, textures, .lua, .nav2, .frt ..."]
     QAR --> FPK --> FILES
 ```
+
 1. **QAR archives** (`master\*.dat`) are the large files on disk. Each entry is lightly scrambled with fixed constants (not real encryption: the keys are part of the format itself) and often zlib-compressed. Every entry carries an MD5 checksum, which proves we decoded it correctly.
 2. **FPK / FPKD packages** are bundles inside the archives. The game loads a whole package at once, for example everything one area of the map needs. An `.fpk` holds assets (models, textures, scripts); the matching `.fpkd` holds the **DataSets** that describe how those assets are placed and configured.
 3. **Files** inside packages are the actual content.

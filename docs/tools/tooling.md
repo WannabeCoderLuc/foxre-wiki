@@ -2,12 +2,14 @@
 
 ## Lessons from github.com/yibie/awesome-rea (AI-assisted RE projects)
 The list's one rule: a project counts only if correctness is a **machine-decidable PASS/FAIL gate** set before agents iterate. What the strongest entries do:
+
 - **momo5502, "500+ billion tokens"** (PC FPS, MSVC): byte-matching oracle (compile with original compiler → compare function bytes vs EXE, relocations checked by symbol+offset) → 99 % functions, 83 % byte-exact. CI re-verifies; the verifier script is hash-locked so agents can't edit it; inline asm banned. Context compaction at 42 % instead of 90 % helped more than model upgrades; hourly instruction re-read against drift; reviewer agents were useless without an objective gate; discard bad code rather than salvage it. Tooling: ida-mcp, Sogen emulator.
 - **DecompPipeline** (Ghidra + emulator oracle): each function judged PASS/FAIL by running original vs reimplementation in an emulator; every harness is **stamped with its oracle input** so stale harnesses can't pass; locked-down `claude -p` workers; files ≤ 400 lines.
 - **decomp-compat-kit**: an **independent** verifier (stock toolchain, outside the agents' build) that classifies every mismatch; only "unexplained" needs a human. A hash says nothing about types/names — meaning must be checked separately.
 - Post-mortems: progress climbs fast then stalls (~25 % → 58 %); ~5 % still needs an expert; "slopcomps" (unverified AI ports) are the community's red line. decomp.wtf was archived after community pushback.
 
 **Applied to us** (clean-room engine, not matching decompilation — mgsvtpp has 141k functions, Denuvo, and publishing derived code is legally fraught):
+
 1. Every format: byte-identical round trip on **all** game files (`fox-format` skill).
 2. Every pure algorithm (hashes, decompression, quantisation, math): **emulator oracle** — run the original function from `GameBackup` `.xtext` in unicorn with test inputs, compare to our implementation. Never emulate code that reaches `.xdata`/`.ecode` (Denuvo).
 3. Every behaviour: live fixtures (`fox-ground-truth`), stamped with the build + capture inputs.

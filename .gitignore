@@ -1,0 +1,9 @@
+site/
+.upstream_wiki/
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+.DS_Store
+Thumbs.db

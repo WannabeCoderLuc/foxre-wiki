@@ -1,7 +1,4 @@
-> [!NOTE]
-> Generated `from[`mgsv_unified_server/AI_GUIDE.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/mgsv_unified_server/AI_GUIDE.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
-
-# mgsv-unified: MCP server + knowledge DB
+# MCP server and knowledge DB
 
 Single MCP endpoint for MGSV:TPP 1.0.15.4 EN work: static RE of `mgsvtpp.exe`, fox2 data, vanilla Lua, community wiki, V_Framework sources, `.nav2`, live game control, adapters, and the knowledge DB. Project rules in `..\CLAUDE.md` always win.
 
@@ -30,7 +27,7 @@ Single MCP endpoint for MGSV:TPP 1.0.15.4 EN work: static RE of `mgsvtpp.exe`, f
 ## 2. Tool catalog
 **Knowledge engine** (sub-second, `data\knowledge\mgsv_knowledge.db`)
 - `mgsv_query_knowledge(query, category=all, limit=40 (≤300), abi=false)`. Categories: `functions` (VA → dossier; text or `role:` → list), `hashes`, `commands`, `classes`, `lua` (≥3 chars), `lua_api`, `docs` (FTS5: `a OR b`, `pre*`), `decomp`, `inventory`, `enums`, `modules`, `symbols`, `roles`, `callers`, `callees`, `ingested`, `all`.
- Roles: ActionController, NavigationController, StateCollector, NoticeController, DiscoveryController, AiController, AiModule, ActionPlugin, Action, DamageHandler, Realizer, MessageDispatch, Sound, Effect, Camera, Route, Weapon, Lifecycle, SendCommandHandler, LuaBinding, VFrameworkHook, VirtualMethod, HashUser.
+  Roles: ActionController, NavigationController, StateCollector, NoticeController, DiscoveryController, AiController, AiModule, ActionPlugin, Action, DamageHandler, Realizer, MessageDispatch, Sound, Effect, Camera, Route, Weapon, Lifecycle, SendCommandHandler, LuaBinding, VFrameworkHook, VirtualMethod, HashUser.
 - `mgsv_explain_system(system_name, depth=normal|full)`: docs, classes, functions by role, handlers, Lua API, hashes. Systems in `knowledge\systems.py` (Sahelanthropus AI, CommandPost2, Soldier NoticeController, Soldier2, Navmesh, Reinforcement, Walker Gear, Heli2, Vehicle, Player2, Buddies, UAV, Hostage2, Parasite2, Lua bindings, V_Framework, Fox2 data, Sound; aliases `sahelan`, `cp`, `notice`, `nav2`).
 - `mgsv_inspect_handler(command_or_hash, decompile=false, lua_hits=8)`: hashes, handler(s), decompiled branch, code sites, every vanilla `{id="…"}` call with arg keys, V_F interception, docs.
 - `mgsv_update_knowledge_db(mode=background|sync|status, force, only[], ingest_path)`.
@@ -55,9 +52,9 @@ Single MCP endpoint for MGSV:TPP 1.0.15.4 EN work: static RE of `mgsvtpp.exe`, f
 **Live:** `game_status` (PID, focus, SHA1 + build tag of installed DLLs), `game_screenshot(output_path)`, `game_send_keys(sequence)` e.g. `"enter, wait 1000, NUMPAD8"`, `game_pipe_lua(lua_code)` (IHHook pipe).
 **Adapters:** `atomizer_call(tool_function, arguments)` (`Tools\atom.py`), `websift_call(tool_name, arguments)` (`Tools\sift.mjs`).
 
-**Engine oracles** (`server\oracle_tools.py`; machine-decidable PASS/FAIL, see `..\docs\TOOLING.md`)
+**Engine oracles** (`server\oracle_tools.py`; machine-decidable PASS/FAIL, see [`..\docs\TOOLING.md`](tooling.md))
 - `re_emulate(va, args, memory, max_insns)`: one function of the `GameBackup` `mgsvtpp.exe` in unicorn; sections mapped from the file (lief, relocs not parsed). Win64 ABI: args `int | "0x.." | "@buf" | "@buf+off" | "len:buf" | {"f": x} | {"f32": x}` → rcx/rdx/r8/r9 or xmm0-3 by position, the rest on the stack; `memory` = `[{name, hex|str|size, nul, align}]`. Returns status `ok|refused|insn_limit|error`, rax (+ u48/eax), xmm0, buffers after the call, insn count, writes into image sections (= not pure). Refused: execution outside `.xtext`, any touch of `.xdata`/`.ecode`/`.trace` (never mapped), import calls (IAT slots → trap addresses, reported by name), unmapped reads (gs:/TEB, heap).
- StrCode64: `0x141A09AC0(s, strlen)` (`ff_stringid_hash_n`) → `0x141A09770` `fox::StrCode64_Seeded(s, strlen+1, ((int8)s[0]<<16)+strlen)` (signed first byte). Body: CityHash 1.0.3 for ≤ 64 hashed bytes, CityHash 1.1 long-string loop above (0x141A08CB0 unaligned / 0x141A091F0 aligned, picked by pointer alignment). [V] `Tools\foxhash.py` == game for byte lengths 0–300 incl. non-ASCII (fixed 2026-10-21; verifier `Engine\tests\test_strcode64_oracle.py`). The game code is the oracle.
+  StrCode64: `0x141A09AC0(s, strlen)` (`ff_stringid_hash_n`) → `0x141A09770` `fox::StrCode64_Seeded(s, strlen+1, ((int8)s[0]<<16)+strlen)` (signed first byte). Body: CityHash 1.0.3 for ≤ 64 hashed bytes, CityHash 1.1 long-string loop above (0x141A08CB0 unaligned / 0x141A091F0 aligned, picked by pointer alignment). [V] `Tools\foxhash.py` == game for byte lengths 0–300 incl. non-ASCII (fixed 2026-10-21; verifier `Engine\tests\test_strcode64_oracle.py`). The game code is the oracle.
 - `engine_verify(target, relock)`: pytest over `..\Engine\tests\` (or one file / dir / node id), junit → counts, `PASS`/`FAIL`. `Engine\tests\verifiers.lock.json` holds each verifier's sha256: changed/removed verifiers are reported and the lock is kept until `relock=true` (review first); new files are locked automatically.
 - `lua51_run(code, files, stubs, max_insns)`: lupa Lua 5.1 without os/io/debug/package/require/dofile/loadfile/string.dump, no Python attribute access, text chunks only (bytecode refused), instruction limit. `files` = vanilla Lua (Assets-relative path or unique substring), each return value bound to the file's base name. `stubs` auto-creates unknown capitalised globals (a stub used as a number = 0); real `StrCode32/64` (+ `Fox.`), `bit` (LuaBitOp). Returns output, returns, errors, loaded, stubbed_globals.
 
@@ -130,3 +127,6 @@ Ingest formats: TSV `address|addr|va`+name → symbols; `strcode*|hash`+name →
 - 1.2.0 (2026-10-18): `re_closure`, `sahelan_inventory`; 1.1.0: `re_sendcommand`, `lua_search`, `vframework_search`.
 - 1.0 (2026-10-17): consolidation of `mgsv-re` + wiki/V_F/navmesh/live/adapters (`Quarantine\ChangeRecords\CR-20261017-01_MCP_Unified\`).
 - 2026-10-21: docs moved to `..\docs\`; README/MCP_USAGE/KNOWLEDGE_DB/CHANGELOG merged into this file.
+
+---
+<small>Source: `mgsv_unified_server/AI_GUIDE.md` in the project repository &middot; generated 2026-10-22.</small>

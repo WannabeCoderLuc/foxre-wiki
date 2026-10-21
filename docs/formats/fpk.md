@@ -1,7 +1,4 @@
-> [!NOTE]
-> Generated `from[`docs/formats/FPK.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/formats/FPK.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
-
-# FPK / FPKD — Fox packages
+# FPK / FPKD packages
 
 Codec `Engine\formats\fpk.py` · verifier `Engine\tests\test_fpk_roundtrip.py` · census `python Tools\fpk_census.py` (→ `Memory\research\fpk_census\census.json`).
 **Gate (2026-10-21): 16,354 / 16,354 unique packages round-trip byte-identically** (8,247 fpk + 8,107 fpkd; 18,052 inventory entries), and **732/732** obfuscated `.lua` entries decode to Lua 5.1 source that compiles.
@@ -13,19 +10,19 @@ Packages are the unit the game streams: `.fpk` holds asset files (models, textur
 ## Layout (little-endian)
 ```
 Header (48 bytes)
- 0x00 char[6] "foxfpk"
- 0x06 u8 kind: 0x00 fpk, 0x64 ('d') fpkd
- 0x07 char[3] "win"
- 0x0A u32 fileSize (= total length)
- 0x0E 18 bytes zero [D]
- 0x20 u32 version = 2 [D]
- 0x24 u32 fileCount
- 0x28 u32 referenceCount (0 in 65 %, 1-3 in 35 %, max 10) [D]
- 0x2C u32 0 [D]
+  0x00 char[6] "foxfpk"
+  0x06 u8      kind: 0x00 fpk, 0x64 ('d') fpkd
+  0x07 char[3] "win"
+  0x0A u32     fileSize (= total length)
+  0x0E 18 bytes zero                                  [D]
+  0x20 u32     version = 2                            [D]
+  0x24 u32     fileCount
+  0x28 u32     referenceCount   (0 in 65 %, 1-3 in 35 %, max 10)  [D]
+  0x2C u32     0                                      [D]
 Entry table (fileCount × 48)
- u32 dataOffset, u32 0, i32 dataSize, u32 0, i32 nameOffset, u32 0, i32 nameLength, u32 0, u8 md5[16]
-Reference table (referenceCount × 16) — paths of other packages this one depends on
- i32 nameOffset, u32 0, i32 nameLength, u32 0
+  u32 dataOffset, u32 0, i32 dataSize, u32 0, i32 nameOffset, u32 0, i32 nameLength, u32 0, u8 md5[16]
+Reference table (referenceCount × 16)  — paths of other packages this one depends on
+  i32 nameOffset, u32 0, i32 nameLength, u32 0
 Names: entry names then reference names, each NUL-terminated, back to back; pad to 16
 Data: each entry's bytes in table order, each padded to 16
 ```
@@ -41,3 +38,6 @@ Every `.lua` inside a package (732/732) is XOR-chained: first byte 0x1B or 0x1C 
 
 ## Open
 Exe parser VA; meaning of version 2 (constant).
+
+---
+<small>Source: `docs/formats/FPK.md` in the project repository &middot; generated 2026-10-22.</small>

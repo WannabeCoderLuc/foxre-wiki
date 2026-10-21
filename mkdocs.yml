@@ -1,46 +1,49 @@
-site_name: FoxRe Wiki
-site_description: Fox Engine Reverse Engineering and Technical Architecture Reference (Metal Gear Solid V)
-site_author: FoxRe Contributors
+# Generated pages + nav: edit SITE in sync_wiki.py, not the nav below (it is rewritten on every build).
+site_name: FoxRe
+site_description: Reverse engineering Metal Gear Solid V The Phantom Pain and rebuilding its Fox Engine, clean-room and test-gated.
 site_url: https://wannabecoderluc.github.io/foxre-wiki/
-
 repo_name: WannabeCoderLuc/foxre-wiki
 repo_url: https://github.com/WannabeCoderLuc/foxre-wiki
-edit_uri: edit/main/docs/
+copyright: FoxRe project. Unofficial research; not affiliated with Konami. No game files are published.
 
 theme:
   name: material
   language: en
   palette:
-    # Slate dark mode by default (high-tech / tactical aesthetic)
-    - scheme: slate
-      primary: black
-      accent: amber
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
       toggle:
-        icon: material/weather-night
+        icon: material/brightness-4
         name: Switch to light mode
-    # Clean light mode
-    - scheme: default
-      primary: blue-grey
-      accent: amber
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
       toggle:
-        icon: material/weather-sunny
+        icon: material/brightness-7
         name: Switch to dark mode
   font:
     text: Inter
     code: JetBrains Mono
+  icon:
+    repo: material/github
   features:
-    - navigation.instant
-    - navigation.tracking
-    - navigation.tabs
+    # One always-visible sidebar: every section and page is listed from every page.
     - navigation.sections
     - navigation.expand
+    - navigation.indexes
+    - navigation.path
     - navigation.top
     - navigation.footer
+    - toc.follow
     - search.suggest
     - search.highlight
-    - search.share
     - content.code.copy
-    - content.action.edit
+
+plugins:
+  - search
 
 extra_css:
   - stylesheets/extra.css
@@ -58,43 +61,55 @@ markdown_extensions:
       line_spans: __span
       pygments_lang_class: true
   - pymdownx.inlinehilite
-  - pymdownx.snippets
   - pymdownx.keys
   - pymdownx.mark
   - pymdownx.tabbed:
       alternate_style: true
   - tables
   - attr_list
+  - md_in_html
   - def_list
   - toc:
       permalink: true
 
+validation:
+  links:
+    not_found: warn
+    anchors: warn
+    absolute_links: info
+    unrecognized_links: warn
+
 nav:
+  - Home: index.md
   - Guide:
-      - What this project is: Guide-Overview.md
-      - Game data, from disk to objects: Guide-Game-Data.md
-      - Classes, properties and entities: Guide-Classes-And-Entities.md
-      - How a frame runs: Guide-Frame-Loop.md
-      - How we verify: Guide-Verification.md
-      - Glossary: Guide-Glossary.md
-  - Overview:
-      - Home: index.md
-      - Roadmap: Roadmap.md
-      - Session Log: Session-Log.md
-  - Engine Architecture:
-      - Modules Overview: Engine-Modules.md
-      - Core Architecture: Engine-Core-Architecture.md
-      - Reflection & Type DB: Engine-Reflection.md
-      - Entity System: Engine-Entities.md
-      - Scheduler: Engine-Scheduler.md
-      - Messages & Commands: Engine-Messages.md
-  - File Formats:
-      - QAR Archives: Format-QAR.md
-      - FPK Packages: Format-FPK.md
-      - FOX2 DataSets: Format-FOX2.md
-      - FRT Routes: Format-FRT.md
-      - NAV2 Navmesh: Format-NAV2.md
-  - Tooling & Reference:
-      - MCP Server: MCP-Server.md
-      - Tooling & Verification: Tooling.md
-      - Project Background: Background.md
+      - guide/index.md
+      - "What this project is": guide/overview.md
+      - "Game data: from disk to objects": guide/game-data.md
+      - "Classes, properties and entities": guide/classes-and-entities.md
+      - "How a frame runs": guide/frame-loop.md
+      - "How we verify": guide/verification.md
+      - "Glossary": guide/glossary.md
+  - Project status:
+      - status/index.md
+      - "Roadmap": status/roadmap.md
+      - "Session log": status/log.md
+  - Engine:
+      - engine/index.md
+      - "Engine modules": engine/modules.md
+      - "Reflection and type database": engine/reflection.md
+      - "Entities and DataSet loading": engine/entities.md
+      - "Scheduler": engine/scheduler.md
+      - "Messages and commands": engine/messages.md
+      - "Core architecture notes (2026-10-19)": engine/core-architecture.md
+  - File formats:
+      - formats/index.md
+      - "QAR archives": formats/qar.md
+      - "FPK / FPKD packages": formats/fpk.md
+      - "FOX2 DataSets": formats/fox2.md
+      - "FRT route sets": formats/frt.md
+      - "NAV2 navmeshes": formats/nav2.md
+  - Tools:
+      - tools/index.md
+      - "MCP server and knowledge DB": tools/mcp-server.md
+      - "Installed tools": tools/tooling.md
+      - "Background": tools/background.md

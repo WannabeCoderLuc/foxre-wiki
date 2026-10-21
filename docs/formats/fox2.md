@@ -1,7 +1,4 @@
-> [!NOTE]
-> Generated `from[`docs/formats/FOX2.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/formats/FOX2.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
-
-# FOX2 — Fox Engine DataSet
+# FOX2 DataSets
 
 Codec `Engine\formats\fox2.py` · verifier `Engine\tests\test_fox2_roundtrip.py` · census `python Tools\fox2_census.py` (→ `Memory\research\fox2_census\census.json`).
 **Gate (2026-10-21): 44,994 / 44,994 unique DataSets round-trip byte-identically** (46,215 inventory entries; 924 MB).
@@ -15,19 +12,19 @@ All integers little-endian. All names are **StrCode64** (48-bit; upper 16 bits o
 ## Layout
 ```
 Header (32 bytes)
- 0x00 u8 magic 0xF2 (= EDB binformat 242), then "box" [V, checked by FUN_1400ED040]
- 0x04 char version '5' (ASCII; value = char - '0'; 2..6 accepted, 5-6 = hashed strings) [V]
- 0x05 u8 0 [V]
- 0x06 u8 flag 0 in all files [D]
- 0x07 u8 flag must be 0 (reader stops otherwise) [V]
- 0x08 i32 entityCount
- 0x0C i32 stringTableOffset
- 0x10 i32 entitiesOffset always 32 [D]
- 0x14 12 bytes zero [D]
+  0x00 u8   magic        0xF2 (= EDB binformat 242), then "box"  [V, checked by FUN_1400ED040]
+  0x04 char version      '5' (ASCII; value = char - '0'; 2..6 accepted, 5-6 = hashed strings) [V]
+  0x05 u8   0                                                    [V]
+  0x06 u8   flag         0 in all files                          [D]
+  0x07 u8   flag         must be 0 (reader stops otherwise)      [V]
+  0x08 i32  entityCount
+  0x0C i32  stringTableOffset
+  0x10 i32  entitiesOffset   always 32                          [D]
+  0x14 12 bytes zero                                            [D]
 Entities (entityCount, back to back)
 String table
- repeated { u64 hash; i32 length; u8 utf8[length] } (no NUL, no padding), terminated by 8 zero bytes
- pad to 16, then "\0\0end", pad to 16 [D]
+  repeated { u64 hash; i32 length; u8 utf8[length] }  (no NUL, no padding), terminated by 8 zero bytes
+  pad to 16, then "\0\0end", pad to 16                          [D]
 ```
 
 ### Entity (64-byte header + properties)
@@ -87,9 +84,12 @@ Usage (property instances over all files) [D]: EntityHandle 3.57 M, EntityPtr 2.
 - The writer emits the canonical layout above; since every game file is canonical, `write(read(b)) == b` holds for all of them.
 
 ## Exe side
-- **Corrected 2026-10-21:** the loader **does** check the magic — byte compare `0xF2` + "box" in `FUN_1400ED040` (an earlier immediate-value search missed it); non-matching files go to the XML reader. `ent`/`end` tags are not checked. Full reader/writer: [docs/engine/Entities.md](Engine-Entities.md) §Runtime instantiation (reader `FUN_1400EDE50` state machine, writer `FUN_1400EF290`).
+- **Corrected 2026-10-21:** the loader **does** check the magic — byte compare `0xF2` + "box" in `FUN_1400ED040` (an earlier immediate-value search missed it); non-matching files go to the XML reader. `ent`/`end` tags are not checked. Full reader/writer: [`docs\engine\Entities.md`](../engine/entities.md) §Runtime instantiation (reader `FUN_1400EDE50` state machine, writer `FUN_1400EF290`).
 - Parsing happens in the generic resource loader before `DataSetFile2::OnLoad` (0x140113750 casts the loaded object via `FUN_1401071B0` and stores it at +0x70) [V]. The byte parser is the binary reader FUN_1400EDE50 (see Entities.md) [V].
-- [docs/ENGINE.md](Engine-Core-Architecture.md) §1.2/§1.3 (FoxRe agent) give a different header/entity layout: **wrong [x]**, superseded by this spec.
+- [`docs\ENGINE.md`](../engine/core-architecture.md) §1.2/§1.3 (FoxRe agent) give a different header/entity layout: **wrong [x]**, superseded by this spec.
 
 ## Open
 unknown2 meaning (unused by the reader); PropertyInfo encoding (type 23 unused in TPP data).
+
+---
+<small>Source: `docs/formats/FOX2.md` in the project repository &middot; generated 2026-10-22.</small>

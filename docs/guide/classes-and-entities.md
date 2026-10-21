@@ -1,9 +1,6 @@
-> [!NOTE]
-> Generated `from[`docs/guide/Classes-And-Entities.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/guide/Classes-And-Entities.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
+# Classes, properties and entities
 
-# Guide: Classes, properties and entities
-
-*Covers milestone M2. Details: [Reflection and type DB](Engine-Reflection.md), [Entities](Engine-Entities.md).*
+*Covers milestone M2. Details: [Reflection and type DB](../engine/reflection.md), [Entities](../engine/entities.md).*
 
 ## The engine's own catalogue of types
 Fox Engine keeps a **class registry**: a list of every data class it knows (1,153 of them). For each class it records
@@ -17,11 +14,11 @@ This is called *reflection*: the program can describe its own data structures. T
 When the game loads a DataSet it does the following (read from the executable):
 ```mermaid
 flowchart TB
- A["Read the header<br/>check the magic bytes and format version"] --> B["Read every entity header<br/>look up its class, check the class version"]
- B --> C["Allocate one block of memory<br/>large enough for all entities"]
- C --> D["Build the entities, one per step<br/>fill properties in class order"]
- D --> E["Second pass: extra (dynamic) properties,<br/>finish each entity"]
- E --> F["Finalize the DataSet"]
+    A["Read the header<br/>check the magic bytes and format version"] --> B["Read every entity header<br/>look up its class, check the class version"]
+    B --> C["Allocate one block of memory<br/>large enough for all entities"]
+    C --> D["Build the entities, one per step<br/>fill properties in class order"]
+    D --> E["Second pass: extra (dynamic) properties,<br/>finish each entity"]
+    E --> F["Finalize the DataSet"]
 ```
 - The loader does **a little work each frame** (one entity per step), so large levels don't freeze the game.
 - If a file's entity says class version 2 but the engine's class is version 3, loading stops. That is why every DataSet shipped with the game matches the registry exactly.
@@ -38,3 +35,6 @@ The project's loader (`Engine/core/entities.py`) resolves all three. For a whole
 
 ## The live check
 In Afghanistan free roam we asked the running game for 17 objects through its own Lua function `DataIdentifier.GetDataWithIdentifier`. For all 17, the name, class and world position match what our loader computed from the files alone. That was the M2 pass condition.
+
+---
+<small>Source: `docs/guide/Classes-And-Entities.md` in the project repository &middot; generated 2026-10-22.</small>

@@ -1,7 +1,4 @@
-> [!NOTE]
-> Generated `from[`docs/formats/QAR.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/formats/QAR.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
-
-# QAR — Fox Engine archives (`master\*.dat`, magic `SQAR`)
+# QAR archives
 
 Codec `Engine\formats\qar.py` · path hashes `Engine\core\pathcode.py` · verifier `Engine\tests\test_qar_all.py` · census `python Tools\qar_census.py` (→ `Memory\research\qar_census\`), path harvest `python Tools\qar_harvest_paths.py`.
 **Gate (2026-10-21), pristine `GameBackup\MGS_TPP\master`: 13 archives, 134,241 entries — every entry decodes with a matching MD5; header, section table and all entry headers re-encode byte-identically; section keys match entry hashes for all entries. Names resolved: 111,394 (83.0 %).**
@@ -60,3 +57,6 @@ Sources (in `Tools\qar_census.DICTS`): GzsTool `qar_dictionary.txt`, `mgsv-looku
 
 ## Exe side
 Not traced yet [?] (loader = FoxFS / `foxfs.dat`, `foxpatch.dat` strings at 0x1420AE6E8).
+
+---
+<small>Source: `docs/formats/QAR.md` in the project repository &middot; generated 2026-10-22.</small>

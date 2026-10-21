@@ -1,7 +1,4 @@
-> [!NOTE]
-> Generated `from[`docs/ENGINE.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/ENGINE.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
-
-# Fox Engine core: Quark/class registry, fox2 reflection, GameObject scheduler + MessageBus
+# Core architecture notes (2026-10-19)
 
 Milestones 1-3 (FoxRe agent, reviewed 2026-10-19). Trust only claims tagged [V]; review banners mark wrong [x] claims. Merged 2026-10-21 from: `ENGINE.md`, `ENGINE.md`, `ENGINE.md`.
 
@@ -11,8 +8,8 @@ Milestones 1-3 (FoxRe agent, reviewed 2026-10-19). Trust only claims tagged [V];
 
 > **Review 2026-10-19:** boot chain, 0x140BFF050 (11,344 sites) and 0x140BFF070 (1,506 sites) [V]; Quark slot names [I]; "Sahelan SendCommand 0x1418B9CE0" is wrong [x] (verified handler 0x1418BB820). Details: `mgsv_unified_server/docs/FOXRE_REVIEW.md`.
 
-**Investigator:** Investigation Worker (Open Fox Engine Project) 
-**Binary Target:** *Metal Gear Solid V: The Phantom Pain* (PC Steam v1.0.15.4 EN, base `0x140000000`, `mgsvtpp.exe`) 
+**Investigator:** Investigation Worker (Open Fox Engine Project)  
+**Binary Target:** *Metal Gear Solid V: The Phantom Pain* (PC Steam v1.0.15.4 EN, base `0x140000000`, `mgsvtpp.exe`)  
 **Knowledge DB Status:** Verified connected (202.3 MB SQLite database, 143,899 functions, 9,146 class vtables, 173,985 hashes, 380 SendCommand IDs). Background sync idle, 0 stale sources.
 
 ---
@@ -32,42 +29,42 @@ Milestone 1 reverse-engineers the foundational spine of Konami's Fox Engine. Thr
 
 ### 2.1 The Entrypoint Chain
 1. **WinMain (`0x140003aa0`):**
- - Parses command-line arguments using `GetCommandLineW()` and `CommandLineToArgvW()`.
- - Initializes core application arguments via `FUN_1400632b0(app_ctx, argc, argv)`.
- - Invokes engine initialization: `uVar3 = FUN_1400017c0();` (returns Application singleton `0x142b59100`).
- - Calls `FUN_140064560(app_singleton, app_ctx);` which runs the master engine frame loop.
+   - Parses command-line arguments using `GetCommandLineW()` and `CommandLineToArgvW()`.
+   - Initializes core application arguments via `FUN_1400632b0(app_ctx, argc, argv)`.
+   - Invokes engine initialization: `uVar3 = FUN_1400017c0();` (returns Application singleton `0x142b59100`).
+   - Calls `FUN_140064560(app_singleton, app_ctx);` which runs the master engine frame loop.
 
 2. **Master Kernel & Module Initialization (`0x1400017c0`):**
- - Sets global default parameters at `0x142b58ff0` keyed by `StrCode64("Default")` (`0x797fce5df5f8`).
- - Instantiates the Application object (`0x142b59100`) with vtable `0x1420a0930`.
- - Registers the **12 Top-Level Engine Packages** via sequential calls to `FUN_1400214b0()`:
- 1. `0x14052e520`: `TppSystem` (Declares dependencies: `FoxKernel`, `FoxCore`, `Fio`, `Anim`, `Animx`, `FoxGameKit`, `Gr`, `Grx`, `Geo`, `Graph`, `Graphx`, `Nav`, `Navx`, `Nt`, `Nio`, `Tactical`, `Fx`, `Ui`, `Demo`)
- 2. `0x14096f210`: `TppSound` (depends on `TppSystem`)
- 3. `0x14051d260`: `TppMotherBaseCore` (depends on `TppSystem`, `TppGameKit`, `TppNetwork`)
- 4. `0x140be4e70`: `TppMotherBaseStage` (depends on `TppMotherBaseCore`)
- 5. `0x1406a77f0`: `TppEffect` (depends on `TppSystem`)
- 6. `0x1407ce490`: `TppNetwork` (depends on `TppSystem`)
- 7. `0x140555920`: `TppGameKit` (depends on `FoxQuark`, `TppNetwork`, `TppSystem`)
- 8. `0x14085a6e0`: `TppUi` (depends on `TppSystem`, `TppNetwork`)
- 9. `0x140bf1510`: `FoxQuark` (depends on `FoxKernel`, `FoxCore`)
- 10. `0x140bf3620`: `GameCore` (depends on `FoxKernel`, `FoxCore`, `Nt`)
- 11. `0x1409909c0`: `TppPhysics / GeoBridge`
- 12. `0x1405132f0`: `GameService` (depends on `FoxKernel`, `FoxCore`, `Graphx`, `frt`)
- - Calls `FUN_140bff180()`, triggering the subsystem registration cascade across `0x140c03200` to `0x140c8cb50`.
+   - Sets global default parameters at `0x142b58ff0` keyed by `StrCode64("Default")` (`0x797fce5df5f8`).
+   - Instantiates the Application object (`0x142b59100`) with vtable `0x1420a0930`.
+   - Registers the **12 Top-Level Engine Packages** via sequential calls to `FUN_1400214b0()`:
+     1. `0x14052e520`: `TppSystem` (Declares dependencies: `FoxKernel`, `FoxCore`, `Fio`, `Anim`, `Animx`, `FoxGameKit`, `Gr`, `Grx`, `Geo`, `Graph`, `Graphx`, `Nav`, `Navx`, `Nt`, `Nio`, `Tactical`, `Fx`, `Ui`, `Demo`)
+     2. `0x14096f210`: `TppSound` (depends on `TppSystem`)
+     3. `0x14051d260`: `TppMotherBaseCore` (depends on `TppSystem`, `TppGameKit`, `TppNetwork`)
+     4. `0x140be4e70`: `TppMotherBaseStage` (depends on `TppMotherBaseCore`)
+     5. `0x1406a77f0`: `TppEffect` (depends on `TppSystem`)
+     6. `0x1407ce490`: `TppNetwork` (depends on `TppSystem`)
+     7. `0x140555920`: `TppGameKit` (depends on `FoxQuark`, `TppNetwork`, `TppSystem`)
+     8. `0x14085a6e0`: `TppUi` (depends on `TppSystem`, `TppNetwork`)
+     9. `0x140bf1510`: `FoxQuark` (depends on `FoxKernel`, `FoxCore`)
+     10. `0x140bf3620`: `GameCore` (depends on `FoxKernel`, `FoxCore`, `Nt`)
+     11. `0x1409909c0`: `TppPhysics / GeoBridge`
+     12. `0x1405132f0`: `GameService` (depends on `FoxKernel`, `FoxCore`, `Graphx`, `frt`)
+   - Calls `FUN_140bff180()`, triggering the subsystem registration cascade across `0x140c03200` to `0x140c8cb50`.
 
 3. **Master Engine Frame Loop (`0x140064560`):**
- ```c
- while (cVar2 == '\0') {
- uStack_18 = 0xffffffffffffffff;
- FUN_14007f840(param_1 + 0xc, &uStack_18);
- func_0x000140084570(); // Windows Message Pump (PeekMessage/DispatchMessage)
- (**(code **)(*param_1 + 0x48))(param_1, &uStack_18); // Application::vtable[9] (+0x48)
- FUN_140064030(param_1, &uStack_18);
- cVar2 = FUN_14001ff70(param_1);
- }
- ```
- - `Application::vtable[9]` (`+0x48`) resolves to `0x140001cb0` (`MasterFrameUpdate`).
- - `0x140001cb0` executes the per-frame scheduler across GameObject actors, physics, animation, and message queues.
+   ```c
+   while (cVar2 == '\0') {
+     uStack_18 = 0xffffffffffffffff;
+     FUN_14007f840(param_1 + 0xc, &uStack_18);
+     func_0x000140084570(); // Windows Message Pump (PeekMessage/DispatchMessage)
+     (**(code **)(*param_1 + 0x48))(param_1, &uStack_18); // Application::vtable[9] (+0x48)
+     FUN_140064030(param_1, &uStack_18);
+     cVar2 = FUN_14001ff70(param_1);
+   }
+   ```
+   - `Application::vtable[9]` (`+0x48`) resolves to `0x140001cb0` (`MasterFrameUpdate`).
+   - `0x140001cb0` executes the per-frame scheduler across GameObject actors, physics, animation, and message queues.
 
 ---
 
@@ -78,17 +75,17 @@ All class descriptors across the engine register into a single global repository
 ### 3.1 Singleton Accessor & Allocator (`0x140BFEFA0`)
 ```c
 undefined8 * FUN_140bfefa0(void) {
- if (_DAT_142c3a8a0 == NULL) {
- _DAT_142c3a8a0 = (undefined8 *)func_0x0001400041a0(0x4018); // Heap alloc 16,408 bytes
- if (_DAT_142c3a8a0 != NULL) {
- *_DAT_142c3a8a0 = &UNK_142308648; // Registry Vtable
- _DAT_142c3a8a0[1] = 0; // +0x08: pQuarkSystemTable (initially NULL)
- *(uint32_t *)(_DAT_142c3a8a0 + 2) = 0; // +0x10: registered_count = 0
- // Clears array of 0x800 (2048) descriptor pointers starting at +0x18
- memset(_DAT_142c3a8a0 + 3, 0, 0x100 * 8 * 8); 
- }
- }
- return _DAT_142c3a8a0;
+  if (_DAT_142c3a8a0 == NULL) {
+    _DAT_142c3a8a0 = (undefined8 *)func_0x0001400041a0(0x4018); // Heap alloc 16,408 bytes
+    if (_DAT_142c3a8a0 != NULL) {
+      *_DAT_142c3a8a0 = &UNK_142308648;                     // Registry Vtable
+      _DAT_142c3a8a0[1] = 0;                                // +0x08: pQuarkSystemTable (initially NULL)
+      *(uint32_t *)(_DAT_142c3a8a0 + 2) = 0;                // +0x10: registered_count = 0
+      // Clears array of 0x800 (2048) descriptor pointers starting at +0x18
+      memset(_DAT_142c3a8a0 + 3, 0, 0x100 * 8 * 8); 
+    }
+  }
+  return _DAT_142c3a8a0;
 }
 ```
 
@@ -104,41 +101,41 @@ undefined8 * FUN_140bfefa0(void) {
 ### 3.3 Registry Vtable (`0x142308648`)
 - **Slot 0 (`+0x00`) — `0x140bfef30`:** `~ClassRegistry()` (Destructor).
 - **Slot 1 (`+0x08`) — `0x140c0e770`:** `SetQuarkSystemTable(void* pTable)`:
- ```c
- void SetQuarkSystemTable(ClassRegistry* this, void* pTable) {
- this->pQuarkSystemTable = pTable; // *(this + 8) = pTable;
- }
- ```
+  ```c
+  void SetQuarkSystemTable(ClassRegistry* this, void* pTable) {
+    this->pQuarkSystemTable = pTable; // *(this + 8) = pTable;
+  }
+  ```
 - **Slot 2 (`+0x10`) — `0x1407d9020`:** `GetRegisteredCount()`: Returns `this->registeredCount` (`*(uint32_t*)(this + 0x10)`).
 - **Slot 3 (`+0x18`) — `0x140bfef70`:** `ExportRegisteredClasses(ClassDescriptor** outArray)`:
- Copies all pointers from `this->descriptors` into `outArray`.
+  Copies all pointers from `this->descriptors` into `outArray`.
 
 ### 3.4 Key Global API Entrypoints
 - **`0x140BFF050()` — `Fox_GetQuarkSystemTable()`:**
- ```assembly
- 0x140bff050: sub rsp, 0x28
- 0x140bff054: call 0x140bfefa0 ; Get registry singleton
- 0x140bff059: mov rax, [rax + 8] ; rax = registry->pQuarkSystemTable
- 0x140bff05d: add rsp, 0x28
- 0x140bff061: ret
- ```
+  ```assembly
+  0x140bff050: sub rsp, 0x28
+  0x140bff054: call 0x140bfefa0      ; Get registry singleton
+  0x140bff059: mov rax, [rax + 8]    ; rax = registry->pQuarkSystemTable
+  0x140bff05d: add rsp, 0x28
+  0x140bff061: ret
+  ```
 - **`0x140BFF070(ClassDescriptor* pDesc)` — `Fox_RegisterClassDescriptor()`:**
- ```assembly
- 0x140bff070: push rbx
- 0x140bff072: sub rsp, 0x20
- 0x140bff076: mov rbx, rcx ; rbx = ClassDescriptor*
- 0x140bff079: call 0x140bfefa0 ; rax = registry
- 0x140bff07e: test rbx, rbx
- 0x140bff081: je 0x140bff096
- 0x140bff083: mov edx, [rax + 0x10] ; edx = count
- 0x140bff086: cmp edx, 0x800 ; cap at 2048
- 0x140bff08c: jae 0x140bff096
- 0x140bff08e: mov [rax + rdx*8 + 0x18], rbx ; registry->descriptors[count] = pDesc
- 0x140bff093: inc dword ptr [rax + 0x10] ; count++
- 0x140bff096: add rsp, 0x20
- 0x140bff09a: pop rbx
- 0x140bff09b: ret
- ```
+  ```assembly
+  0x140bff070: push rbx
+  0x140bff072: sub rsp, 0x20
+  0x140bff076: mov rbx, rcx          ; rbx = ClassDescriptor*
+  0x140bff079: call 0x140bfefa0      ; rax = registry
+  0x140bff07e: test rbx, rbx
+  0x140bff081: je 0x140bff096
+  0x140bff083: mov edx, [rax + 0x10] ; edx = count
+  0x140bff086: cmp edx, 0x800        ; cap at 2048
+  0x140bff08c: jae 0x140bff096
+  0x140bff08e: mov [rax + rdx*8 + 0x18], rbx ; registry->descriptors[count] = pDesc
+  0x140bff093: inc dword ptr [rax + 0x10]    ; count++
+  0x140bff096: add rsp, 0x20
+  0x140bff09a: pop rbx
+  0x140bff09b: ret
+  ```
 
 ---
 
@@ -158,13 +155,13 @@ Disassembly of caller `0x142009660` (`TppUiMenuTitleCallback`):
 ```assembly
 0x142009660: sub rsp, 0x38
 0x142009664: mov qword ptr [rsp + 0x20], -2
-0x14200966d: lea rax, [rip + 0x300a9c] ; rax = Descriptor Vtable (0x14230a110)
-0x142009674: mov [rip + 0xa8f275], rax ; desc->vtable = 0x14230a110
-0x14200967b: movabs rax, 0xc9e730521b42 ; StrCode64("TppUiMenuTitleCallback")
-0x142009685: mov [rip + 0xa8f26c], rax ; desc->classHash = 0xc9e730521b42
+0x14200966d: lea rax, [rip + 0x300a9c]     ; rax = Descriptor Vtable (0x14230a110)
+0x142009674: mov [rip + 0xa8f275], rax     ; desc->vtable = 0x14230a110
+0x14200967b: movabs rax, 0xc9e730521b42    ; StrCode64("TppUiMenuTitleCallback")
+0x142009685: mov [rip + 0xa8f26c], rax     ; desc->classHash = 0xc9e730521b42
 0x14200968c: mov qword ptr [rip + 0xa8f269], 0 ; desc->flags = 0
-0x142009697: lea rcx, [rip + 0xa8f252] ; rcx = &desc (0x142a988f0)
-0x14200969e: call 0x140bff070 ; RegisterClassDescriptor(&desc)
+0x142009697: lea rcx, [rip + 0xa8f252]     ; rcx = &desc (0x142a988f0)
+0x14200969e: call 0x140bff070              ; RegisterClassDescriptor(&desc)
 ```
 
 ### 4.3 Virtual Method Table Specification (10 Slots)
@@ -187,13 +184,13 @@ Using `TppBuddyDog2` descriptor vtable (`0x142315d68`) as the reference implemen
 Analysis of all 1,506 callers of `0x140bff070` reveals **1,491 distinct class registrations**. 
 - 319 hashes are fully resolved to vanilla symbols in `mgsv_knowledge.db`.
 - Suffix clustering demonstrates that registered classes are **Gameplay Component Controllers and Actor Managers**, not passive data types:
- - `Controller`: 119 classes (e.g. `TppBuddyDog2ActionController`, `TppSahelan2AiController`, `TppPlayerSightManager`)
- - `Ai`: 56 classes (e.g. `TppSahelan2PhaseAlertAi`, `TppBuddyDog2CommandAi`)
- - `Plugin`: 13 classes (e.g. `TppSahelan2BladePlugin`, `S2GrenadePlugin`)
- - `Handler`: 7 classes (e.g. `TppBuddyDog2DamageHandler`, `TppHeli2DamageHandler`)
- - `Realizer`: 6 classes (e.g. `TppParasite2Realizer`, `TppGameObjectRealizer`)
- - `Collector`: 12 classes (e.g. `TppBuddyDog2StateCollector`)
- - `Info`: 12 classes (e.g. `TppBuddyDog2FlagInfo`, `TppAnimalFlagInfo`)
+  - `Controller`: 119 classes (e.g. `TppBuddyDog2ActionController`, `TppSahelan2AiController`, `TppPlayerSightManager`)
+  - `Ai`: 56 classes (e.g. `TppSahelan2PhaseAlertAi`, `TppBuddyDog2CommandAi`)
+  - `Plugin`: 13 classes (e.g. `TppSahelan2BladePlugin`, `S2GrenadePlugin`)
+  - `Handler`: 7 classes (e.g. `TppBuddyDog2DamageHandler`, `TppHeli2DamageHandler`)
+  - `Realizer`: 6 classes (e.g. `TppParasite2Realizer`, `TppGameObjectRealizer`)
+  - `Collector`: 12 classes (e.g. `TppBuddyDog2StateCollector`)
+  - `Info`: 12 classes (e.g. `TppBuddyDog2FlagInfo`, `TppAnimalFlagInfo`)
 
 ---
 
@@ -251,12 +248,12 @@ $$\text{GameObjectId} = (\text{typeIndex} \ll 9) \mid \text{instanceIndex}$$
 `GameObjectManager::vtable[4]` (`+0x20`) at `0x140bf99e0`:
 ```c
 void* GameObjectManager::GetTypeManager(GameObjectManager* this, uint16_t gameObjectId) {
- uint32_t typeIndex = gameObjectId >> 9;
- GameObjectTypeRecord* record = this->typeRecords[typeIndex]; // *(this + 0x30 + typeIndex*8)
- if (record != NULL && record->pSubRecord != NULL) {
- return record->pSubRecord->pTypeManager; // *(record + 8 + 0x20)
- }
- return NULL;
+  uint32_t typeIndex = gameObjectId >> 9;
+  GameObjectTypeRecord* record = this->typeRecords[typeIndex]; // *(this + 0x30 + typeIndex*8)
+  if (record != NULL && record->pSubRecord != NULL) {
+    return record->pSubRecord->pTypeManager;                   // *(record + 8 + 0x20)
+  }
+  return NULL;
 }
 ```
 
@@ -268,42 +265,42 @@ When Lua invokes `GameObject.SendCommand(id, { id = "CommandName", ... })`:
 4. Extracts string field `id` from parameter table (`lua_getfield(L, 2, "id")`).
 5. Computes 32-bit hash: `commandId = CityHash64(id) & 0xFFFFFFFF` via `0x1400234f0`.
 6. Executes virtual dispatch to `manager->vtable[16]` (`+0x80`):
- ```c
- return (*(manager->vtable + 0x80))(manager, L, gameObjectId & 0x1FF, commandId);
- ```
- - For `TppSahelan2` (type 21), slot `+0x80` invokes `0x1418b9ce0` (Sahelan SendCommand switch).
- - For `TppSoldier2` (type 2), slot `+0x80` invokes `0x141356170` (Soldier SendCommand switch).
- - For `CommandPost2` (type 1), slot `+0x80` invokes `0x140d5df30` (CP SendCommand switch).
+   ```c
+   return (*(manager->vtable + 0x80))(manager, L, gameObjectId & 0x1FF, commandId);
+   ```
+   - For `TppSahelan2` (type 21), slot `+0x80` invokes `0x1418b9ce0` (Sahelan SendCommand switch).
+   - For `TppSoldier2` (type 2), slot `+0x80` invokes `0x141356170` (Soldier SendCommand switch).
+   - For `CommandPost2` (type 1), slot `+0x80` invokes `0x140d5df30` (CP SendCommand switch).
 
 ---
 
 ## 7. The `.fox2` Dataset to Runtime Actor Bridge
 
 1. **Dataset Representation:** Level datasets (`.fox2`) instantiate `GameObjectLocator` and `GameObject` entities.
- - `GameObjectLocator` carries spatial coordinates (`transform`), flags, and a string property `typeName` (e.g. `"TppBear"`, `"TppSoldier2"`, `"TppSahelan2"`).
+   - `GameObjectLocator` carries spatial coordinates (`transform`), flags, and a string property `typeName` (e.g. `"TppBear"`, `"TppSoldier2"`, `"TppSahelan2"`).
 2. **Hash Resolution:** Upon loading, Fox Engine computes the 48-bit `StrCode64` of `typeName`:
- $$\text{StrCode64}("TppBear") = \text{0x35f7b2706575}$$
- $$\text{StrCode64}("TppBuddyDog2") = \text{0x0d6974413c33}$$
- $$\text{StrCode64}("TppSahelan2") = \text{0x18037b588147}$$
+   $$\text{StrCode64}("TppBear") = \text{0x35f7b2706575}$$
+   $$\text{StrCode64}("TppBuddyDog2") = \text{0x0d6974413c33}$$
+   $$\text{StrCode64}("TppSahelan2") = \text{0x18037b588147}$$
 3. **Descriptor Lookup:** The engine searches `_DAT_142c3a8a0->descriptors` for the matching `ClassDescriptor`.
 4. **Actor Instantiation:**
- - Calls `ClassDescriptor::vtable[1]` (`CreateInstance()`) to allocate actor struct memory via `QuarkSystemTable + 0x08`.
- - Calls `ClassDescriptor::vtable[4]` (`SetupSystem()`) to query `QuarkSystemTable + 0x00` and bind all component controllers.
- - Allocates the next available instance index and registers the actor in `GameObjectManager`.
+   - Calls `ClassDescriptor::vtable[1]` (`CreateInstance()`) to allocate actor struct memory via `QuarkSystemTable + 0x08`.
+   - Calls `ClassDescriptor::vtable[4]` (`SetupSystem()`) to query `QuarkSystemTable + 0x00` and bind all component controllers.
+   - Allocates the next available instance index and registers the actor in `GameObjectManager`.
 
 ---
 
 ## 8. Remaining Questions & Gaps
 
 1. **Unresolved Class Descriptor Names (1,172 hashes):**
- - 319 hashes are decoded, leaving 1,172 hashes in `0x140bff070`. Because these are internal C++ controller/plugin class names not serialized directly into `.fox2` files, dictionary lookup against asset strings yielded 0 new hits.
- - *Lead for next investigator:* Run `Tools\harvest_tokens.py` on Ghidra decompiles to harvest type names from debug strings and assertions, then brute-force against the 1,172 class hashes with `Tools\strcode_brute\bin\brute.exe`.
+   - 319 hashes are decoded, leaving 1,172 hashes in `0x140bff070`. Because these are internal C++ controller/plugin class names not serialized directly into `.fox2` files, dictionary lookup against asset strings yielded 0 new hits.
+   - *Lead for next investigator:* Run `Tools\harvest_tokens.py` on Ghidra decompiles to harvest type names from debug strings and assertions, then brute-force against the 1,172 class hashes with `Tools\strcode_brute\bin\brute.exe`.
 2. **`QuarkSystemTable` Creation Point:**
- - We proved that `QuarkSystemTable` is set into `_DAT_142c3a8a0 + 8` via `0x140c0e770` and that all access occurs through `0x140bff050`. The exact allocator for the 33-slot table itself appears in early stage boot before package loading; tracing the caller of `SetQuarkSystemTable` with the non-null pointer during cold start will reveal the root Quark constructor.
+   - We proved that `QuarkSystemTable` is set into `_DAT_142c3a8a0 + 8` via `0x140c0e770` and that all access occurs through `0x140bff050`. The exact allocator for the 33-slot table itself appears in early stage boot before package loading; tracing the caller of `SetQuarkSystemTable` with the non-null pointer during cold start will reveal the root Quark constructor.
 3. **Priorities for Milestone 2 (`.fox2` Reflection & Entity Deserialization):**
- - Trace `DataSet` deserialization in `FoxCore` / `FoxGameKit`.
- - Map `Entity`, `Data`, and `DataElement` vtables and property descriptor lists (`PropertyInfo` reflection array).
- - Trace how `GameObjectLocator` entities in `.fox2` invoke `GameObjectManager` to spawn active actors at map coordinates.
+   - Trace `DataSet` deserialization in `FoxCore` / `FoxGameKit`.
+   - Map `Entity`, `Data`, and `DataElement` vtables and property descriptor lists (`PropertyInfo` reflection array).
+   - Trace how `GameObjectLocator` entities in `.fox2` invoke `GameObjectManager` to spawn active actors at map coordinates.
 
 ---
 *Report delivered to parent coordinator (`b69bb361-5e59-4f93-b4b3-d2ea0677eef7`).*
@@ -321,13 +318,13 @@ This investigation provides a comprehensive reverse engineering of the Fox Engin
 A fundamental finding of this investigation is the existence of **two distinct, co-operating class systems** within the Fox Engine executable:
 
 1. **Fox Core Reflection & Entity System** (`FUN_140074c90` / `FUN_14007d210`):
- - Manages static asset definition, serialization, and level composition (`.fox2` binary/XML datasets).
- - Contains 1,138 registered entity classes (e.g., `Entity`, `Data`, `DataSet`, `TransformData`, `GameObjectLocator`, `GameObject`).
- - Driven by `ClassDescriptor` structures registered with class hashes, property metadata reflection tables, and static inheritance pointers.
+   - Manages static asset definition, serialization, and level composition (`.fox2` binary/XML datasets).
+   - Contains 1,138 registered entity classes (e.g., `Entity`, `Data`, `DataSet`, `TransformData`, `GameObjectLocator`, `GameObject`).
+   - Driven by `ClassDescriptor` structures registered with class hashes, property metadata reflection tables, and static inheritance pointers.
 2. **Fox Quark / Gameplay Class Registry** (`0x140BFF070`):
- - Manages runtime actor controllers, AI behavior-tree nodes, action plugins, and gameplay daemons.
- - Contains 1,491 runtime class descriptors registered during static C++ initialization (`_initterm` execution in `0x142000000 - 0x142066000`).
- - Driven by 5-slot virtual method tables: `slot 0` (RTTI / `GetClassDescriptor`), `slot 1` (`CreateInstance`), `slot 2` (`DestroyInstance`), `slot 3` (`QueryInterface`), and `slot 4` (`SetupSystem`).
+   - Manages runtime actor controllers, AI behavior-tree nodes, action plugins, and gameplay daemons.
+   - Contains 1,491 runtime class descriptors registered during static C++ initialization (`_initterm` execution in `0x142000000 - 0x142066000`).
+   - Driven by 5-slot virtual method tables: `slot 0` (RTTI / `GetClassDescriptor`), `slot 1` (`CreateInstance`), `slot 2` (`DestroyInstance`), `slot 3` (`QueryInterface`), and `slot 4` (`SetupSystem`).
 
 During this investigation, we bridged the vocabulary between these two systems, leveraging AI behavior-tree node table hashes, vehicle controllers, weapon action plugins, and entity class tokens to crack **456 brand new verified class descriptor hashes**, bringing the total resolved classes from an initial baseline of 319 (21.4%) up to **775 resolved classes (52.0%)** in `mgsv_unified_server/data/re/strcode_bruteforced.tsv`.
 
@@ -345,7 +342,7 @@ The file format table binds extension string hashes (`.fdes`, `.fdmg`, `.fmdl`, 
 
 ### 1.2 Binary .fox2 Format Specification
 
-> **[x] Superseded 2026-10-21:** this header/entity layout is wrong. Verified layout (round trip on all 44,994 DataSets): [docs/formats/FOX2.md](Format-FOX2.md).
+> **[x] Superseded 2026-10-21:** this header/entity layout is wrong. Verified layout (round trip on all 44,994 DataSets): [`docs/formats/FOX2.md`](../formats/fox2.md).
 A compiled `.fox2` file (`FOXB` format) represents a serialized `DataSet` object graph:
 
 | Offset | Type | Field | Description |
@@ -365,22 +362,22 @@ Each serialized entity within the payload block begins with an aligned entity de
 2. `entityAddress` (`uint64_t`): File-local reference ID used to link `EntityPtr` and `EntityHandle` references across the graph.
 3. `propertyCount` (`uint32_t`): Number of serialized properties belonging to this instance.
 4. `properties[]`: Array of property tuples:
- - `nameHash` (`uint64_t`, `StrCode64`): Property key (e.g., `"name"`, `"dataSet"`, `"transform"`, `"typeName"`, `"parameters"`).
- - `type` (`uint8_t`): Property type enumeration index (see Section 2.2).
- - `containerType` (`uint8_t`): Scalar (`0`), Dynamic Array (`1`), StringMap (`2`).
- - `arraySize` (`uint16_t`): Element count if container.
- - `value`: Direct primitive value or relative offset to complex payload.
+   - `nameHash` (`uint64_t`, `StrCode64`): Property key (e.g., `"name"`, `"dataSet"`, `"transform"`, `"typeName"`, `"parameters"`).
+   - `type` (`uint8_t`): Property type enumeration index (see Section 2.2).
+   - `containerType` (`uint8_t`): Scalar (`0`), Dynamic Array (`1`), StringMap (`2`).
+   - `arraySize` (`uint16_t`): Element count if container.
+   - `value`: Direct primitive value or relative offset to complex payload.
 
 ### 1.4 Deserialization Sequence in `mgsvtpp.exe`
 1. **Root Instantiation**: The loader instantiates the root entity, always an instance of `DataSet` (size `0x128`, vtable `0x1420C29F0`).
 2. **Entity Deserialization Loop**:
- - The engine iterates through `entityCount`.
- - For each entity record, `0x14007d210` queries the Core Class Registry by `classHash`.
- - The registered factory callback (`ClassDescriptor::vtable[1]`) allocates heap memory via `BlockHeapAlloc` (`0x1400dcb50`).
- - The entity vtable is installed, and property deserializers map stream values into the target object fields using `PropertyInfo::offset`.
+   - The engine iterates through `entityCount`.
+   - For each entity record, `0x14007d210` queries the Core Class Registry by `classHash`.
+   - The registered factory callback (`ClassDescriptor::vtable[1]`) allocates heap memory via `BlockHeapAlloc` (`0x1400dcb50`).
+   - The entity vtable is installed, and property deserializers map stream values into the target object fields using `PropertyInfo::offset`.
 3. **Registration in DataSet**:
- - Every deserialized `Data` instance is inserted into `DataSet::dataList` (a `Fox StringMap<Data*>` at offset `DataSet + 0x78`).
- - The key is `Data::name` (Fox String at `+0x30`), and `Data::dataSet` pointer at `+0x38` is back-linked to the root `DataSet`.
+   - Every deserialized `Data` instance is inserted into `DataSet::dataList` (a `Fox StringMap<Data*>` at offset `DataSet + 0x78`).
+   - The key is `Data::name` (Fox String at `+0x30`), and `Data::dataSet` pointer at `+0x38` is back-linked to the root `DataSet`.
 
 ---
 
@@ -388,22 +385,22 @@ Each serialized entity within the payload block begins with an aligned entity de
 
 ### 2.1 Core Inheritance Hierarchy & Vtable Layouts
 
-> **2026-10-21:** class sizes below are confirmed [V] by the game's own registry dump ([docs/engine/Reflection.md](Engine-Reflection.md)); vtables/field meanings still [I].
+> **2026-10-21:** class sizes below are confirmed [V] by the game's own registry dump ([`docs/engine/Reflection.md`](reflection.md)); vtables/field meanings still [I].
 
 ```
 Entity (size 0x30, vtable 0x1420BF158)
- │
- ├── Data (size 0x78, vtable 0x1420CE800)
- │ │
- │ ├── DataSet (size 0x128, vtable 0x1420C29F0)
- │ │
- │ ├── TransformData (vtable 0x1420CD980)
- │ │ │
- │ │ └── GameObjectLocator (size 0x150, vtable 0x142306AF0)
- │ │
- │ └── GameObject (size 0x98, vtable 0x1423070C0)
- │
- └── DataElement (size 0x38, vtable 0x1420C17E0)
+  │
+  ├── Data (size 0x78, vtable 0x1420CE800)
+  │     │
+  │     ├── DataSet (size 0x128, vtable 0x1420C29F0)
+  │     │
+  │     ├── TransformData (vtable 0x1420CD980)
+  │     │     │
+  │     │     └── GameObjectLocator (size 0x150, vtable 0x142306AF0)
+  │     │
+  │     └── GameObject (size 0x98, vtable 0x1423070C0)
+  │
+  └── DataElement (size 0x38, vtable 0x1420C17E0)
 ```
 
 #### Detailed Struct Memory Layouts:
@@ -501,38 +498,38 @@ The bridge from a static level `.fox2` definition to an active gameplay actor ex
 
 ```
 ┌───────────────────────────────┐
-│ DataSet (.fox2) │
-│ Contains: GameObjectLocator │
-│ (typeName: "TppHeli2", ...) │
+│       DataSet (.fox2)         │
+│ Contains: GameObjectLocator   │
+│  (typeName: "TppHeli2", ...)  │
 └───────────────┬───────────────┘
- │ Stage Load (Traverse Data Entities)
- ▼
+                │ Stage Load (Traverse Data Entities)
+                ▼
 ┌───────────────────────────────┐
-│ GameObjectLocator::slot 9 │ (0x140BF7710)
-│ Allocates 0x90-byte Body │
+│ GameObjectLocator::slot 9     │ (0x140BF7710)
+│ Allocates 0x90-byte Body      │
 └───────────────┬───────────────┘
- │ Returns Body (vtable 0x142306B70)
- ▼
+                │ Returns Body (vtable 0x142306B70)
+                ▼
 ┌───────────────────────────────┐
 │ GameObjectLocatorBody::slot 6 │ (0x140BF7980 -> thunk 0x140BF7D00)
 │ 1. Extracts typeName & Matrix │
-│ 2. Allocates CreationRequest │
-│ 3. Enqueues to GameObjectMgr │
+│ 2. Allocates CreationRequest  │
+│ 3. Enqueues to GameObjectMgr  │
 └───────────────┬───────────────┘
- │ GameObjectManager::vtable[2] (0x140BF8F80)
- ▼
+                │ GameObjectManager::vtable[2] (0x140BF8F80)
+                ▼
 ┌───────────────────────────────┐
-│ GameObjectManager Dispatcher │ (0x140BF4690)
+│ GameObjectManager Dispatcher  │ (0x140BF4690)
 │ 1. Resolves typeIndex (0..127)│
 │ 2. Allocates instance (0..511)│
-│ 3. ActorID = (type<<9)|inst │
+│ 3. ActorID = (type<<9)|inst   │
 └───────────────┬───────────────┘
- │ Invoke Type Factory (0x140BFF070 descriptor)
- ▼
+                │ Invoke Type Factory (0x140BFF070 descriptor)
+                ▼
 ┌───────────────────────────────┐
-│ Actor Instantiation & Setup │
+│ Actor Instantiation & Setup   │
 │ 1. vtable[1] (CreateInstance) │ (Memory allocated via QuarkSystem 0x140BFF0E0)
-│ 2. vtable[4] (SetupSystem) │ (Wires Realizer, AI, Nav, Action controllers)
+│ 2. vtable[4] (SetupSystem)    │ (Wires Realizer, AI, Nav, Action controllers)
 └───────────────────────────────┘
 ```
 
@@ -546,63 +543,63 @@ During stage loading, the engine separates static asset definitions (`Data`) fro
 ### 3.2 Stage 2: CreationRequest Dispatch (`thunk_FUN_140bf7d00`)
 At scene activation, the scene manager invokes virtual method `slot 6` (`0x140BF7980`), which jumps directly to `0x140BF7D00`:
 - **Disassembly Trace (`0x140bf7d00`)**:
- ```x86asm
- 0x140bf7d3d: mov rbp, rcx ; rbp = this (GameObjectLocatorBody)
- 0x140bf7d40: call 0x1400dfaa0 ; rsi = Data* (GameObjectLocator definition)
- 0x140bf7d48: lea rcx, [rax + 0x130] ; rcx = &locator->typeName
- 0x140bf7d4f: call 0x140028970 ; IsEmpty(typeName)?
- 0x140bf7d54: test al, al
- 0x140bf7d56: jne 0x140bf7e52 ; Exit if empty
- 0x140bf7d5c: call 0x140bf4470 ; rbx = GameObjectTypeRegistry singleton
- 0x140bf7d73: call 0x14001d630 ; rax = StrCode64(typeName)
- 0x140bf7d7e: call qword ptr [rdi] ; Verify typeName is registered in game
- 0x140bf7d89: movaps xmm6, [rsi + 0x100] ; Load transform matrix row 0
- 0x140bf7d90: movaps xmm7, [rsi + 0x110] ; Load transform matrix row 1
- 0x140bf7d97: movaps xmm8, [rsi + 0x120] ; Load transform matrix row 2
- 0x140bf7d9f: mov ecx, 0x50
- 0x140bf7da4: call 0x140bf3c00 ; Allocate 0x50-byte CreationRequest struct
- 0x140bf7e08: mov [rax + 0x30], typeNameHash ; Store typeName hash
- 0x140bf7e13: movaps [rax], xmm6 ; Store Transform row 0
- 0x140bf7e16: movaps [rax + 0x10], xmm7 ; Store Transform row 1
- 0x140bf7e1a: movaps [rax + 0x20], xmm8 ; Store Transform row 2
- 0x140bf7e26: mov [rax + 0x38], rsi ; Store GameObjectLocator* pointer
- 0x140bf7e38: mov [rax + 0x40], parameters ; Store parameters EntityPtr
- 0x140bf7e3c: call 0x140bf9a10 ; rax = GameObjectManager singleton
- 0x140bf7e44: mov rdx, creationRequest
- 0x140bf7e4e: call qword ptr [r8 + 0x10] ; GameObjectManager::vtable[2] (0x140BF8F80)
- ```
+  ```x86asm
+  0x140bf7d3d: mov     rbp, rcx                     ; rbp = this (GameObjectLocatorBody)
+  0x140bf7d40: call    0x1400dfaa0                  ; rsi = Data* (GameObjectLocator definition)
+  0x140bf7d48: lea     rcx, [rax + 0x130]           ; rcx = &locator->typeName
+  0x140bf7d4f: call    0x140028970                  ; IsEmpty(typeName)?
+  0x140bf7d54: test    al, al
+  0x140bf7d56: jne     0x140bf7e52                  ; Exit if empty
+  0x140bf7d5c: call    0x140bf4470                  ; rbx = GameObjectTypeRegistry singleton
+  0x140bf7d73: call    0x14001d630                  ; rax = StrCode64(typeName)
+  0x140bf7d7e: call    qword ptr [rdi]              ; Verify typeName is registered in game
+  0x140bf7d89: movaps  xmm6, [rsi + 0x100]          ; Load transform matrix row 0
+  0x140bf7d90: movaps  xmm7, [rsi + 0x110]          ; Load transform matrix row 1
+  0x140bf7d97: movaps  xmm8, [rsi + 0x120]          ; Load transform matrix row 2
+  0x140bf7d9f: mov     ecx, 0x50
+  0x140bf7da4: call    0x140bf3c00                  ; Allocate 0x50-byte CreationRequest struct
+  0x140bf7e08: mov     [rax + 0x30], typeNameHash   ; Store typeName hash
+  0x140bf7e13: movaps  [rax], xmm6                  ; Store Transform row 0
+  0x140bf7e16: movaps  [rax + 0x10], xmm7           ; Store Transform row 1
+  0x140bf7e1a: movaps  [rax + 0x20], xmm8           ; Store Transform row 2
+  0x140bf7e26: mov     [rax + 0x38], rsi            ; Store GameObjectLocator* pointer
+  0x140bf7e38: mov     [rax + 0x40], parameters     ; Store parameters EntityPtr
+  0x140bf7e3c: call    0x140bf9a10                  ; rax = GameObjectManager singleton
+  0x140bf7e44: mov     rdx, creationRequest
+  0x140bf7e4e: call    qword ptr [r8 + 0x10]        ; GameObjectManager::vtable[2] (0x140BF8F80)
+  ```
 - `GameObjectManager::vtable[2]` (`0x140BF8F80`) offsets `rcx` by `+0x430` to access the `CreationQueue` and calls `0x140BF90F0` to enqueue the actor for instantiation.
 
 ### 3.3 Stage 3: Actor ID Allocation & Type Index (`0x140BF4690`)
 When `GameObjectManager` processes creation requests:
 - Reads `typeIndex` from the registered Type Descriptor (stored at `typeDesc + 0x1C` as a 16-bit integer).
 - Resolves against the canonical GameObject type index table (`exe 0x142A7BA90`, documented in `mgsv_unified_server/data/re/gameobject_type_index.tsv`):
- - `0`: `GAME_OBJECT_TYPE_PLAYER2`
- - `1`: `GAME_OBJECT_TYPE_COMMAND_POST2`
- - `2`: `GAME_OBJECT_TYPE_SOLDIER2`
- - `3`: `GAME_OBJECT_TYPE_HOSTAGE2`
- - `14`: `GAME_OBJECT_TYPE_HELI2`
- - `21`: `GAME_OBJECT_TYPE_SAHELAN2`
- - `24`: `GAME_OBJECT_TYPE_VOLGIN2`
+  - `0`: `GAME_OBJECT_TYPE_PLAYER2`
+  - `1`: `GAME_OBJECT_TYPE_COMMAND_POST2`
+  - `2`: `GAME_OBJECT_TYPE_SOLDIER2`
+  - `3`: `GAME_OBJECT_TYPE_HOSTAGE2`
+  - `14`: `GAME_OBJECT_TYPE_HELI2`
+  - `21`: `GAME_OBJECT_TYPE_SAHELAN2`
+  - `24`: `GAME_OBJECT_TYPE_VOLGIN2`
 - Allocates an instance index using a bitmap allocator (`0x140BF4690`):
- ```x86asm
- 0x140bf46d4: movzx eax, word ptr [rbx + 0x1c] ; eax = typeIndex
- 0x140bf46d8: mov word ptr [rdi + 0x18], ax
- 0x140bf46f4: mov ebx, dword ptr [rdi + 0xc] ; maxInstances for this type
- 0x140bf4705: lea rcx, [rbx + 7]
- 0x140bf4709: shr rcx, 3 ; bitmap byte count = (maxInstances + 7) >> 3
- ```
+  ```x86asm
+  0x140bf46d4: movzx   eax, word ptr [rbx + 0x1c]   ; eax = typeIndex
+  0x140bf46d8: mov     word ptr [rdi + 0x18], ax
+  0x140bf46f4: mov     ebx, dword ptr [rdi + 0xc]   ; maxInstances for this type
+  0x140bf4705: lea     rcx, [rbx + 7]
+  0x140bf4709: shr     rcx, 3                       ; bitmap byte count = (maxInstances + 7) >> 3
+  ```
 - **16-bit Actor ID Encoding**:
- $$\text{ActorID} = (\text{typeIndex} \ll 9) \mid \text{instanceIndex}$$
- - `instanceIndex` (`bits 0..8`, range `0x000` to `0x1FF`, max 512 instances per type).
- - `typeIndex` (`bits 9..15`, range `0` to `127`, max 128 GameObject types).
+  $$\text{ActorID} = (\text{typeIndex} \ll 9) \mid \text{instanceIndex}$$
+  - `instanceIndex` (`bits 0..8`, range `0x000` to `0x1FF`, max 512 instances per type).
+  - `typeIndex` (`bits 9..15`, range `0` to `127`, max 128 GameObject types).
 
 ### 3.4 Stage 4: Quark System Allocation & SetupSystem Wiring
 With the unique Actor ID reserved:
 1. **Memory Allocation**: The type manager queries the Quark class descriptor registered via `0x140BFF070` and calls `vtable[1]` (`CreateInstance`).
- - `CreateInstance` invokes `QuarkSystemTable[1]` (`0x140BFF0E0`), which allocates aligned actor memory from the gameplay slab allocator.
+   - `CreateInstance` invokes `QuarkSystemTable[1]` (`0x140BFF0E0`), which allocates aligned actor memory from the gameplay slab allocator.
 2. **SetupSystem Component Wiring**: The type manager invokes `vtable[4]` (`SetupSystem`), passing the actor pointer (`rsi`) and `CreationRequest*` (`rdi`).
- - `SetupSystem` queries `QuarkSystemTable[0]` (`ComponentRegistry`) via `StrCode64` hashes to look up all necessary controllers and behavior-tree nodes.
+   - `SetupSystem` queries `QuarkSystemTable[0]` (`ComponentRegistry`) via `StrCode64` hashes to look up all necessary controllers and behavior-tree nodes.
 
 #### Concrete Trace: `TppHeli2` SetupSystem (`0x140DD42F0`)
 Disassembly of `0x140DD42F0` reveals the exact wiring layout of `TppHeli2`:
@@ -682,13 +679,13 @@ All additions have been verified via `foxhash.py` StrCode64 computation, committ
 
 # Milestone 3 Investigation Report: Master GameObject Scheduler, TypeManager Architecture, and Event Message Bus
 
-> **Re-verified 2026-10-21:** clean specs now `in[docs/engine/Scheduler.md](Engine-Scheduler.md)` `and[docs/engine/Messages.md](Engine-Messages.md)` (use those). Corrections [x]: GetTypeManager uses `id >> 9` (no mask); Phase 1 is the type-descriptor lifecycle, not pre-physics; `0x140BF3FC0` is a Denuvo thunk, not a plain lookup.
+> **Re-verified 2026-10-21:** clean specs now in [`docs/engine/Scheduler.md`](scheduler.md) and [`docs/engine/Messages.md`](messages.md) (use those). Corrections [x]: GetTypeManager uses `id >> 9` (no mask); Phase 1 is the type-descriptor lifecycle, not pre-physics; `0x140BF3FC0` is a Denuvo thunk, not a plain lookup.
 
 > **Review 2026-10-19:** type registration 0x140BF4620 (84 = 16 + 47 calls) and SendCommand routing [V]; struct layouts not re-checked [I]. Details: `mgsv_unified_server/docs/FOXRE_REVIEW.md`.
 
-**Investigator:** Antigravity (Advanced Static Reverse Engineering Reviewer) 
-**Binary Target:** *Metal Gear Solid V: The Phantom Pain* (PC Steam v1.0.15.4 EN, base `0x140000000`, `mgsvtpp.exe`) 
-**Knowledge DB Status:** Connected (`mgsv_unified_server/data/knowledge/mgsv_knowledge.db`, 143,899 functions, 9,146 class vtables, 173,985 hashes, 380 SendCommand IDs, 514 command handlers). 
+**Investigator:** Antigravity (Advanced Static Reverse Engineering Reviewer)  
+**Binary Target:** *Metal Gear Solid V: The Phantom Pain* (PC Steam v1.0.15.4 EN, base `0x140000000`, `mgsvtpp.exe`)  
+**Knowledge DB Status:** Connected (`mgsv_unified_server/data/knowledge/mgsv_knowledge.db`, 143,899 functions, 9,146 class vtables, 173,985 hashes, 380 SendCommand IDs, 514 command handlers).  
 
 ---
 
@@ -697,41 +694,41 @@ All additions have been verified via `foxhash.py` StrCode64 computation, committ
 Milestone 3 reverse-engineers the runtime execution engine, polymorphic actor scheduling, and event message routing of Konami's Fox Engine. Through static disassembly, persistent headless Ghidra decompilation, and end-to-end call-chain tracing across 11,344 subsystem sites and 385 MessageBus sites, we have established the verified ground-truth specification:
 
 1. **Master `GameObjectManager` Structure & 3-Vtable Multiple Inheritance:**
- - Global singleton allocated at `0x140bf9060` (size `0x470` bytes), stored at `_DAT_142c389a0`, accessed via getter `0x140bf9a10` and type-lookup thunk `0x140bf3fc0`.
- - `GameObjectManager` utilizes MSVC C++ multiple inheritance with **three distinct virtual tables**:
- - **Primary Interface (`+0x00`)**: vtable `0x1423073c0` (9 slots: `0x140bf98d0`..`0x140bf8f20`). Slot 8 is the primary scalar deleting destructor (`FUN_140bf8f20`).
- - **Secondary Interface (`+0x10`)**: vtable `0x142307408` (2 slots: slot 0 `0x140bf9a20` `OnTaskBucketEvent`, slot 1 `0x140bf8ea0` adjusting destructor `-0x10`).
- - **Tertiary Interface (`+0x18`)**: vtable `0x142307418` (2 slots: slot 0 `0x140645940` `re__voidreturn`, slot 1 `0x140bf8eac` adjusting destructor `-0x18`).
- - Internal layout: `+0x00` primary vtable, `+0x08` TaskBucket scheduler channel for `"GameObject"` (`0xc6b72750`), `+0x10` secondary task callback vtable, `+0x18` tertiary interface vtable, `+0x30` array of 128 `TypeSlot` pointers (`0x400` bytes), `+0x430` thread-safe `CreationQueue`, `+0x450`/`+0x451` threading mode flags, and `+0x460` critical section synchronization primitive.
+   - Global singleton allocated at `0x140bf9060` (size `0x470` bytes), stored at `_DAT_142c389a0`, accessed via getter `0x140bf9a10` and type-lookup thunk `0x140bf3fc0`.
+   - `GameObjectManager` utilizes MSVC C++ multiple inheritance with **three distinct virtual tables**:
+     - **Primary Interface (`+0x00`)**: vtable `0x1423073c0` (9 slots: `0x140bf98d0`..`0x140bf8f20`). Slot 8 is the primary scalar deleting destructor (`FUN_140bf8f20`).
+     - **Secondary Interface (`+0x10`)**: vtable `0x142307408` (2 slots: slot 0 `0x140bf9a20` `OnTaskBucketEvent`, slot 1 `0x140bf8ea0` adjusting destructor `-0x10`).
+     - **Tertiary Interface (`+0x18`)**: vtable `0x142307418` (2 slots: slot 0 `0x140645940` `re__voidreturn`, slot 1 `0x140bf8eac` adjusting destructor `-0x18`).
+   - Internal layout: `+0x00` primary vtable, `+0x08` TaskBucket scheduler channel for `"GameObject"` (`0xc6b72750`), `+0x10` secondary task callback vtable, `+0x18` tertiary interface vtable, `+0x30` array of 128 `TypeSlot` pointers (`0x400` bytes), `+0x430` thread-safe `CreationQueue`, `+0x450`/`+0x451` threading mode flags, and `+0x460` critical section synchronization primitive.
 
 2. **GameObject Type Registration Pipeline:**
- - There are 84 distinct calls across the binary to registration function `0x140bf4620`:
- - `FUN_1405c8b40`: Registers 16 Gimmick/container types (indices 76–91).
- - `FUN_140991bf0`: Registers 47 Core Actor types (indices 0–45, e.g. Player2, Soldier2, Heli2, Sahelan2).
- - Subsystem Initializers: Specialized registrations (e.g. `0x140a23be0` for CommandPost2, `0x140b2e834` for Vehicle2).
- - Real TypeDescriptor vtables:
- - `TppSoldier2TypeDescriptor`: `0x142287c80` (idx=2, hash=`0x3fef1d0298aa`), registered at `0x1409922c0`.
- - `TppHeli2TypeDescriptor`: `0x142288068` (idx=14, hash=`0x89731475623d`), registered at `0x140992597`.
- - `TppSahelan2TypeDescriptor`: `0x142287f50` (idx=21, hash=`0xaa1b15b6a1eb`), registered at `0x140992864`.
+   - There are 84 distinct calls across the binary to registration function `0x140bf4620`:
+     - `FUN_1405c8b40`: Registers 16 Gimmick/container types (indices 76–91).
+     - `FUN_140991bf0`: Registers 47 Core Actor types (indices 0–45, e.g. Player2, Soldier2, Heli2, Sahelan2).
+     - Subsystem Initializers: Specialized registrations (e.g. `0x140a23be0` for CommandPost2, `0x140b2e834` for Vehicle2).
+   - Real TypeDescriptor vtables:
+     - `TppSoldier2TypeDescriptor`: `0x142287c80` (idx=2, hash=`0x3fef1d0298aa`), registered at `0x1409922c0`.
+     - `TppHeli2TypeDescriptor`: `0x142288068` (idx=14, hash=`0x89731475623d`), registered at `0x140992597`.
+     - `TppSahelan2TypeDescriptor`: `0x142287f50` (idx=21, hash=`0xaa1b15b6a1eb`), registered at `0x140992864`.
 
 3. **Per-Frame Update Phases & Tick Cascade:**
- - Drains `+0x430` creation queue under `+0x460` lock, then loops over all 128 types executing:
- - Phase 1 (`FUN_140bf9620`): Pre-Physics & Lifecycle / Deletion handling.
- - Phase 2 (`FUN_140bf94e0`): Batch Activation & Registration handler for newly spawned instances. Flattens incoming linked list `+0x38` into contiguous vector `+0x20` and invokes `TypeManager::vtable[6]` (`BatchActivateInstances`).
- - Phase 3 (`FUN_140bf91b0`): Post-Physics & Instance compaction, removes dead instances via `TypeManager::vtable[7]` (`DeleteInstances`).
+   - Drains `+0x430` creation queue under `+0x460` lock, then loops over all 128 types executing:
+     - Phase 1 (`FUN_140bf9620`): Pre-Physics & Lifecycle / Deletion handling.
+     - Phase 2 (`FUN_140bf94e0`): Batch Activation & Registration handler for newly spawned instances. Flattens incoming linked list `+0x38` into contiguous vector `+0x20` and invokes `TypeManager::vtable[6]` (`BatchActivateInstances`).
+     - Phase 3 (`FUN_140bf91b0`): Post-Physics & Instance compaction, removes dead instances via `TypeManager::vtable[7]` (`DeleteInstances`).
 
 4. **Two-Tier Polymorphic Delegation & SendCommand Routing:**
- - Fox Engine decouples high-level actor dispatch from low-level subsystem handlers:
- - **Tier 1: TypeManager** (`vtable[16]`, offset `+0x80`): Universal polymorphic router (`FUN_1409e9940` for Soldier2, `FUN_140a70c10` for Heli2, `FUN_140a63d60` for Sahelan2).
- - **Tier 2: Gameplay Subsystem Controller**: Inside `vtable[16]`, the TypeManager retrieves the Tier 2 controller via `QueryInterface(StrCode64(TypeName))` and forwards the command:
- - Soldier2: calls `subsystem->vtable[26] (+0xd0)` (`0x141356170`, 131 commands).
- - Heli2: calls `subsystem->vtable[5] (+0x28)` (`0x140dd56f0`, 66 commands).
- - Sahelan2: calls `subsystem->vtable[6] (+0x30)` (`0x1418bb820`, 12 commands).
+   - Fox Engine decouples high-level actor dispatch from low-level subsystem handlers:
+     - **Tier 1: TypeManager** (`vtable[16]`, offset `+0x80`): Universal polymorphic router (`FUN_1409e9940` for Soldier2, `FUN_140a70c10` for Heli2, `FUN_140a63d60` for Sahelan2).
+     - **Tier 2: Gameplay Subsystem Controller**: Inside `vtable[16]`, the TypeManager retrieves the Tier 2 controller via `QueryInterface(StrCode64(TypeName))` and forwards the command:
+       - Soldier2: calls `subsystem->vtable[26] (+0xd0)` (`0x141356170`, 131 commands).
+       - Heli2: calls `subsystem->vtable[5] (+0x28)` (`0x140dd56f0`, 66 commands).
+       - Sahelan2: calls `subsystem->vtable[6] (+0x30)` (`0x1418bb820`, 12 commands).
 
 5. **Full Resolution of Event Delivery Pipeline:**
- - `MessageBus::RaiseMessage` (`MessageBus->vtable[8] (+0x40)`) enqueues events to the `"GameObject"` `TaskBucket`.
- - During frame tick, `TaskBucket::DrainAndDispatchMessages` (`FUN_140180760`) matches subscription filters and invokes bucket callback `puVar5->vtable[0]` (`FUN_140bf9a20` at `GameObjectManager + 0x10`).
- - `FUN_140bf9a20` unpacks `actorId`, locates `TypeManager`, and invokes `TypeManager::vtable[15] (+0x78)`.
+   - `MessageBus::RaiseMessage` (`MessageBus->vtable[8] (+0x40)`) enqueues events to the `"GameObject"` `TaskBucket`.
+   - During frame tick, `TaskBucket::DrainAndDispatchMessages` (`FUN_140180760`) matches subscription filters and invokes bucket callback `puVar5->vtable[0]` (`FUN_140bf9a20` at `GameObjectManager + 0x10`).
+   - `FUN_140bf9a20` unpacks `actorId`, locates `TypeManager`, and invokes `TypeManager::vtable[15] (+0x78)`.
 
 ---
 
@@ -742,52 +739,52 @@ Milestone 3 reverse-engineers the runtime execution engine, polymorphic actor sc
 ```c
 // 0x140bf8a20: GameObjectManager Constructor
 undefined8 * FUN_140bf8a20(undefined8 *param_1) {
- *param_1 = &UNK_1423073c0; // +0x00: Primary Vtable (9 slots)
- param_1[1] = 0; // +0x08: pGameObjectTaskBucket
- param_1[2] = &UNK_142307408; // +0x10: Secondary Vtable (TaskBucket callback interface)
- param_1[3] = &UNK_142307418; // +0x18: Tertiary Vtable
- param_1[4] = 0; // +0x20: Reserved state words
- param_1[5] = 0;
- 
- // Initialize 128 TypeSlot pointers (+0x30 .. +0x430)
- for (int i = 0; i < 128; i++) param_1[6 + i] = 0;
- 
- // Initialize CreationQueue at +0x430 (size 0x20)
- FUN_140032df0(param_1 + 0x86, 0, 8, 1, 1);
- *(undefined8*)(param_1 + 0x86) = &UNK_1423073a8;
- 
- // Acquire "GameObject" TaskBucket (hash 0xc6b72750)
- undefined8 *bucketMgr = (undefined8 *)FUN_140180c00();
- longlong *pBucket = (longlong *)(**(code **)*bucketMgr)(bucketMgr, 0xc6b72750);
- param_1[1] = pBucket;
- 
- // Register Secondary Interface (+0x10) as TaskBucket Callback Listener
- (**(code **)(*pBucket + 0x18))(pBucket, param_1 + 2); // TaskBucket::RegisterCallback(this + 0x10)
- re__voidreturn(param_1 + 3);
- return param_1;
+  *param_1 = &UNK_1423073c0;       // +0x00: Primary Vtable (9 slots)
+  param_1[1] = 0;                  // +0x08: pGameObjectTaskBucket
+  param_1[2] = &UNK_142307408;     // +0x10: Secondary Vtable (TaskBucket callback interface)
+  param_1[3] = &UNK_142307418;     // +0x18: Tertiary Vtable
+  param_1[4] = 0;                  // +0x20: Reserved state words
+  param_1[5] = 0;
+  
+  // Initialize 128 TypeSlot pointers (+0x30 .. +0x430)
+  for (int i = 0; i < 128; i++) param_1[6 + i] = 0;
+  
+  // Initialize CreationQueue at +0x430 (size 0x20)
+  FUN_140032df0(param_1 + 0x86, 0, 8, 1, 1);
+  *(undefined8*)(param_1 + 0x86) = &UNK_1423073a8;
+  
+  // Acquire "GameObject" TaskBucket (hash 0xc6b72750)
+  undefined8 *bucketMgr = (undefined8 *)FUN_140180c00();
+  longlong *pBucket = (longlong *)(**(code **)*bucketMgr)(bucketMgr, 0xc6b72750);
+  param_1[1] = pBucket;
+  
+  // Register Secondary Interface (+0x10) as TaskBucket Callback Listener
+  (**(code **)(*pBucket + 0x18))(pBucket, param_1 + 2); // TaskBucket::RegisterCallback(this + 0x10)
+  re__voidreturn(param_1 + 3);
+  return param_1;
 }
 ```
 
 ### Complete Specification of All 3 Vtables:
 
 1. **Primary Interface Vtable (`0x1423073c0`, `this + 0x00`, 9 Slots):**
- - **Slot 0 (`+0x00`)**: `0x140bf98d0` — `RegisterTypeSlot(typeIndex, typeHash, allocParam)`: Allocates 72-byte (`0x48`) `TypeSlot` via `FUN_140bf8b30`, stores at `this->typeSlots[typeIndex]`.
- - **Slot 1 (`+0x08`)**: `0x140bf8f60` — `EnqueueTypeDescriptorConfig(config)`: Enqueues configuration to `TypeSlot->pendingQueue` (`+0x10`).
- - **Slot 2 (`+0x10`)**: `0x140bf8f80` — `EnqueueCreationRequest(req)`: Enqueues actor creation into FIFO queue `this + 0x430`.
- - **Slot 3 (`+0x18`)**: `0x140bf90b0` — `ExecuteImmediateTypeTick(config)`: Forces immediate synchronous execution of Phase 1, Phase 2, and compaction for a single type.
- - **Slot 4 (`+0x20`)**: `0x140bf99e0` — `GetTypeManager(actorId)`: Unpacks `typeIndex = (actorId >> 9) & 0x7F`, returns `typeSlots[typeIndex]->pTypeDesc->pConcreteTypeManager`.
- - **Slot 5 (`+0x28`)**: `0x140bf9930` — `GetGameObjectIdByName(outActorId, nameHash)`: Queries `TypeManager::vtable[17] (+0x88)` across all active types.
- - **Slot 6 (`+0x30`)**: `0x140bf9ac0` — `ProcessCreationQueueAndTick()`: Main frame tick. Drains `+0x430` creation queue under lock `+0x460`, then loops over all 128 types executing Phase 1, Phase 2, and Phase 3.
- - **Slot 7 (`+0x38`)**: `0x140bf99c0` — `GetTypeInstanceCount(typeIndex)`: Returns active count `*(uint32_t*)(typeSlots[typeIndex] + 0x40)`.
- - **Slot 8 (`+0x40`)**: `0x140bf8f20` — `ScalarDeletingDestructor(flags)`: Primary destructor. Invokes teardown `FUN_140bf8c10(this)`, frees memory with `func_0x000140015f90(this, 0x10001)` if `flags & 1`.
+   - **Slot 0 (`+0x00`)**: `0x140bf98d0` — `RegisterTypeSlot(typeIndex, typeHash, allocParam)`: Allocates 72-byte (`0x48`) `TypeSlot` via `FUN_140bf8b30`, stores at `this->typeSlots[typeIndex]`.
+   - **Slot 1 (`+0x08`)**: `0x140bf8f60` — `EnqueueTypeDescriptorConfig(config)`: Enqueues configuration to `TypeSlot->pendingQueue` (`+0x10`).
+   - **Slot 2 (`+0x10`)**: `0x140bf8f80` — `EnqueueCreationRequest(req)`: Enqueues actor creation into FIFO queue `this + 0x430`.
+   - **Slot 3 (`+0x18`)**: `0x140bf90b0` — `ExecuteImmediateTypeTick(config)`: Forces immediate synchronous execution of Phase 1, Phase 2, and compaction for a single type.
+   - **Slot 4 (`+0x20`)**: `0x140bf99e0` — `GetTypeManager(actorId)`: Unpacks `typeIndex = (actorId >> 9) & 0x7F`, returns `typeSlots[typeIndex]->pTypeDesc->pConcreteTypeManager`.
+   - **Slot 5 (`+0x28`)**: `0x140bf9930` — `GetGameObjectIdByName(outActorId, nameHash)`: Queries `TypeManager::vtable[17] (+0x88)` across all active types.
+   - **Slot 6 (`+0x30`)**: `0x140bf9ac0` — `ProcessCreationQueueAndTick()`: Main frame tick. Drains `+0x430` creation queue under lock `+0x460`, then loops over all 128 types executing Phase 1, Phase 2, and Phase 3.
+   - **Slot 7 (`+0x38`)**: `0x140bf99c0` — `GetTypeInstanceCount(typeIndex)`: Returns active count `*(uint32_t*)(typeSlots[typeIndex] + 0x40)`.
+   - **Slot 8 (`+0x40`)**: `0x140bf8f20` — `ScalarDeletingDestructor(flags)`: Primary destructor. Invokes teardown `FUN_140bf8c10(this)`, frees memory with `func_0x000140015f90(this, 0x10001)` if `flags & 1`.
 
 2. **Secondary Interface Vtable (`0x142307408`, `this + 0x10`, 2 Slots):**
- - **Slot 0 (`+0x00`)**: `0x140bf9a20` — `OnTaskBucketEvent(bucket, pEvent)`: TaskBucket execution callback! Unpacks `actorId` from `pEvent`, locates `TypeManager`, and dispatches via `TypeManager::vtable[15] (+0x78)`.
- - **Slot 1 (`+0x08`)**: `0x140bf8ea0` — `MultipleInheritanceAdjustingDestructor_10(flags)`: Adjusts `this` pointer by `-0x10` back to `GameObjectManager*`, calls common teardown `FUN_140bf8c10`, and deletes if `flags & 1`.
+   - **Slot 0 (`+0x00`)**: `0x140bf9a20` — `OnTaskBucketEvent(bucket, pEvent)`: TaskBucket execution callback! Unpacks `actorId` from `pEvent`, locates `TypeManager`, and dispatches via `TypeManager::vtable[15] (+0x78)`.
+   - **Slot 1 (`+0x08`)**: `0x140bf8ea0` — `MultipleInheritanceAdjustingDestructor_10(flags)`: Adjusts `this` pointer by `-0x10` back to `GameObjectManager*`, calls common teardown `FUN_140bf8c10`, and deletes if `flags & 1`.
 
 3. **Tertiary Interface Vtable (`0x142307418`, `this + 0x18`, 2 Slots):**
- - **Slot 0 (`+0x00`)**: `0x140645940` — `re__voidreturn()`: Interface sentinel stub.
- - **Slot 1 (`+0x08`)**: `0x140bf8eac` — `MultipleInheritanceAdjustingDestructor_18(flags)`: Adjusts `this` pointer by `-0x18` back to `GameObjectManager*`, calls common teardown `FUN_140bf8c10`, and deletes if `flags & 1`.
+   - **Slot 0 (`+0x00`)**: `0x140645940` — `re__voidreturn()`: Interface sentinel stub.
+   - **Slot 1 (`+0x08`)**: `0x140bf8eac` — `MultipleInheritanceAdjustingDestructor_18(flags)`: Adjusts `this` pointer by `-0x18` back to `GameObjectManager*`, calls common teardown `FUN_140bf8c10`, and deletes if `flags & 1`.
 
 ---
 
@@ -796,11 +793,11 @@ undefined8 * FUN_140bf8a20(undefined8 *param_1) {
 Each registered type has a corresponding `TypeSlot` allocated at `+0x30 + (typeIndex * 8)`:
 ```c
 struct TypeSlot {
- void* baseObject; // +0x00: Initialized by func_0x000141a98cf0
- TypeDescriptor* pTypeDesc; // +0x08: Pointer to active TypeDescriptor
- std::list<void*> pendingQueue; // +0x10: Head of pending descriptor configs (+0x18: size)
- std::vector<void*> instances; // +0x20: Contiguous instance pointer array (+0x28: end, +0x30: cap)
- std::list<void*> activeList; // +0x38: Active actor linked list (+0x40: activeCount)
+    void* baseObject;               // +0x00: Initialized by func_0x000141a98cf0
+    TypeDescriptor* pTypeDesc;      // +0x08: Pointer to active TypeDescriptor
+    std::list<void*> pendingQueue;  // +0x10: Head of pending descriptor configs (+0x18: size)
+    std::vector<void*> instances;   // +0x20: Contiguous instance pointer array (+0x28: end, +0x30: cap)
+    std::list<void*> activeList;    // +0x38: Active actor linked list (+0x40: activeCount)
 };
 ```
 
@@ -827,32 +824,32 @@ When Lua calls `GameObject.SendCommand(target, cmdTable)` (`0x140bfa380`), execu
 
 ```
 [ Lua Script: GameObject.SendCommand(actorId, { id = "SetAlertRoute", ... }) ]
- |
- v (0x140bfa380)
- 1. Unpack actorId: typeIndex = (actorId >> 9) & 0x7F; instanceIndex = actorId & 0x1FF;
- 2. Lookup TypeManager: pTypeMgr = thunk_FUN_147b5c9d0(actorId) -> GameObjectManager::vtable[4];
- 3. Compute Command Hash: cmdHash32 = StrCode32(cmdTable.id);
- 4. Invoke Tier 1 Virtual Method:
- |
- v
- +--------------------------------------------------------------------------+
- | TIER 1: TypeManager::vtable[16] (+0x80) (e.g. FUN_1409e9940 for Soldier2)|
- | - Takes (this, luaState, instanceIndex, cmdHash32) |
- | - Checks high-level engine command hashes (0x6b9d826, 0xc42ccdDF) |
- | - Calls Subsystem QueryInterface: |
- | pSubsystem = pTypeMgr->`subsystemQI->vtable[3](0x3fef1d0298aa)` - 0x0c |
- | - Forwards to Tier 2 Command Jump Table: |
- | pSubsystem->vtable[26] (+0xd0) (0x141356170) |
- +--------------------------------------------------------------------------+
- |
- v
- +--------------------------------------------------------------------------+
- | TIER 2: Gameplay Subsystem Command Table (0x141356170, 131 commands) |
- | - Evaluates cmdHash32 in binary search / switch tree |
- | - "SetAlertRoute" -> 0x141357020 |
- | - "SetCautionRoute" -> 0x141357050 |
- | - "AddDamage" -> 0x141357280 |
- +--------------------------------------------------------------------------+
+                                      |
+                                      v (0x140bfa380)
+   1. Unpack actorId: typeIndex = (actorId >> 9) & 0x7F; instanceIndex = actorId & 0x1FF;
+   2. Lookup TypeManager: pTypeMgr = thunk_FUN_147b5c9d0(actorId) -> GameObjectManager::vtable[4];
+   3. Compute Command Hash: cmdHash32 = StrCode32(cmdTable.id);
+   4. Invoke Tier 1 Virtual Method:
+                                      |
+                                      v
+   +--------------------------------------------------------------------------+
+   | TIER 1: TypeManager::vtable[16] (+0x80) (e.g. FUN_1409e9940 for Soldier2)|
+   | - Takes (this, luaState, instanceIndex, cmdHash32)                       |
+   | - Checks high-level engine command hashes (0x6b9d826, 0xc42ccdDF)        |
+   | - Calls Subsystem QueryInterface:                                        |
+   |     pSubsystem = pTypeMgr->subsystemQI->vtable3 - 0x0c |
+   | - Forwards to Tier 2 Command Jump Table:                                 |
+   |     pSubsystem->vtable[26] (+0xd0) (0x141356170)                         |
+   +--------------------------------------------------------------------------+
+                                      |
+                                      v
+   +--------------------------------------------------------------------------+
+   | TIER 2: Gameplay Subsystem Command Table (0x141356170, 131 commands)     |
+   | - Evaluates cmdHash32 in binary search / switch tree                     |
+   | - "SetAlertRoute"     -> 0x141357020                                     |
+   | - "SetCautionRoute"   -> 0x141357050                                     |
+   | - "AddDamage"         -> 0x141357280                                     |
+   +--------------------------------------------------------------------------+
 ```
 
 #### Dispatch Offsets Across Key Types:
@@ -868,31 +865,34 @@ The delivery path from C++ emission to actor listener execution is completely re
 
 ```
 [ Gameplay Event Fires in C++ (e.g. FUN_140baa010: VehicleTrouble) ]
- |
- v
- 1. Package payload: payload[0] = (instance & 0x1ff) | (typeIndex << 9); payload[1] = tag;
- 2. QuarkSystemTable = FUN_140bff050(); MessageBus = *(QuarkSystemTable + 0x60);
- 3. MessageBus->vtable[8] (+0x40): RaiseMessage(outHandle, 0x6817abdd, payload);
- |
- v
- 4. TaskBucket::EnqueueMessage("GameObject" TaskBucket @ GameObjectManager + 0x08)
- |
+                                |
+                                v
+  1. Package payload: payload[0] = (instance & 0x1ff) | (typeIndex << 9); payload[1] = tag;
+  2. QuarkSystemTable = FUN_140bff050(); MessageBus = *(QuarkSystemTable + 0x60);
+  3. MessageBus->vtable[8] (+0x40): RaiseMessage(outHandle, 0x6817abdd, payload);
+                                |
+                                v
+  4. TaskBucket::EnqueueMessage("GameObject" TaskBucket @ GameObjectManager + 0x08)
+                                |
 ================================+================================ (Frame Boundary)
- |
- v
- 5. TaskScheduler ticks: FUN_140180760 (TaskBucket::DrainAndDispatchMessages)
- 6. Matches event StrCode64 against registered subscription filters
- 7. Invokes Bucket Callback: `callback->vtable[0](callback, bucket, &payload)`
- |
- v
- 8. For "GameObject", callback is GameObjectManager + 0x10 (vtable 0x142307408 slot 0)
- 9. Executes FUN_140bf9a20:
- - Unpacks actorId: typeIndex = (actorId >> 9) & 0x7F
- - Locates TypeManager: pTypeMgr = this->typeSlots[typeIndex]->pTypeDesc->pConcreteTypeManager
- - Invokes TypeManager::vtable[15] (+0x78): DispatchDirectCommand / HandleBucketMessage!
+                                |
+                                v
+  5. TaskScheduler ticks: FUN_140180760 (TaskBucket::DrainAndDispatchMessages)
+  6. Matches event StrCode64 against registered subscription filters
+  7. Invokes Bucket Callback: callback->vtable[0](callback, bucket, &payload)
+                                |
+                                v
+  8. For "GameObject", callback is GameObjectManager + 0x10 (vtable 0x142307408 slot 0)
+  9. Executes FUN_140bf9a20:
+     - Unpacks actorId: typeIndex = (actorId >> 9) & 0x7F
+     - Locates TypeManager: pTypeMgr = this->typeSlots[typeIndex]->pTypeDesc->pConcreteTypeManager
+     - Invokes TypeManager::vtable[15] (+0x78): DispatchDirectCommand / HandleBucketMessage!
 ```
 
 #### Lua `GameObject.SendMessage` FIFO Queue:
 In addition to the TaskBucket bus, Fox Engine provides a high-throughput per-type FIFO queue for Lua scripts:
 - **Emission (`GameObject.SendMessage`, `FUN_140bfa510`)**: Unpacks actorId, calls `FUN_140bfa840`. Enqueues event into linked list at `0x142c399c8 + typeIndex * 0x18` (pooled via freelist `_DAT_142c389b0`).
 - **Drain (`MessageBus::vtable[9]`, `FUN_140bf39c0`)**: Dequeues pending messages for `typeIndex`, popping `actorId` and `messageId` for batch delivery.
+
+---
+<small>Source: `docs/ENGINE.md` in the project repository &middot; generated 2026-10-22.</small>

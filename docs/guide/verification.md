@@ -1,7 +1,4 @@
-> [!NOTE]
-> Generated `from[`docs/guide/Verification.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/guide/Verification.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
-
-# Guide: How we verify
+# How we verify
 
 *Why the specifications on this site can be trusted, and how to tell how sure each statement is.*
 
@@ -31,3 +28,6 @@ Statements in the reference pages carry a tag:
 - The game executable is never modified; all live checks use the game's own Lua interface or small logging plugins in single-player, offline.
 - Code protected by Denuvo is not analysed; when a trace reaches it, the investigation stops there.
 - No game files, extracted data or decompiled code are published.
+
+---
+<small>Source: `docs/guide/Verification.md` in the project repository &middot; generated 2026-10-22.</small>

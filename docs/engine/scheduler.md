@@ -1,9 +1,6 @@
-> [!NOTE]
-> Generated `from[`docs/engine/Scheduler.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/engine/Scheduler.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
+# Scheduler
 
-# Scheduler: GameObjectManager, type slots, per-frame update
-
-Re-verification (2026-10-21) `of[docs/ENGINE.md](Engine-Core-Architecture.md)` milestone 3 (FoxRe agent) against fresh decompiles. Clean-room spec for M3.
+Re-verification (2026-10-21) of [`docs\ENGINE.md`](core-architecture.md) milestone 3 (FoxRe agent) against fresh decompiles. Clean-room spec for M3.
 Tags: [V] read in code this pass, [I] inferred, [?] open, [x] FoxRe claim corrected.
 
 ## GameObjectManager (GOM) [V]
@@ -24,9 +21,9 @@ Tags: [V] read in code this pass, [I] inferred, [?] open, [x] FoxRe claim correc
 ## GOM Tick (`0x140BF9AC0`) [V]
 1. Drain the creation queue (+0x430; under +0x460 when +0x450): for each request find its type (`func_140BF4340(req+0x30)`) and append it to that slot's new-instance list (+0x38, count +0x40).
 2. For every one of the 128 slots, in index order:
- - **Phase 1 `0x140BF9620` — descriptor lifecycle**: if the current descriptor is active and delete-requested, ask the TypeManager (vt+0xA0 "can unload"), remove all instances (vt+0x38), destroy the descriptor; drop flagged pending descriptors; if no current descriptor, activate the next pending one (set bit5, step `FUN_140BF3CB0` until bit2 clears, then `FUN_140BF4480` + `FUN_140BF5520`). ([x] not "pre-physics")
- - **Phase 2 `0x140BF94E0` — add instances**: append the new-instance list to the vector, publish `tm+0x10 = vector.data`, `tm+0x18 = count`, call **TypeManager vt+0x30(firstNew, newCount)**, clear the list.
- - **Phase 3 `0x140BF91B0` — remove instances**: instances flagged dead (`obj+0x48` bit0) are compacted out of the vector (and pending-new list); the removed set is handed to the TypeManager. 
+   - **Phase 1 `0x140BF9620` — descriptor lifecycle**: if the current descriptor is active and delete-requested, ask the TypeManager (vt+0xA0 "can unload"), remove all instances (vt+0x38), destroy the descriptor; drop flagged pending descriptors; if no current descriptor, activate the next pending one (set bit5, step `FUN_140BF3CB0` until bit2 clears, then `FUN_140BF4480` + `FUN_140BF5520`). ([x] not "pre-physics")
+   - **Phase 2 `0x140BF94E0` — add instances**: append the new-instance list to the vector, publish `tm+0x10 = vector.data`, `tm+0x18 = count`, call **TypeManager vt+0x30(firstNew, newCount)**, clear the list.
+   - **Phase 3 `0x140BF91B0` — remove instances**: instances flagged dead (`obj+0x48` bit0) are compacted out of the vector (and pending-new list); the removed set is handed to the TypeManager. 
 
 ## Per-frame update job (`0x140BF5350`) [V]
 Runs once per frame (no static caller: registered at runtime):
@@ -36,9 +33,12 @@ Runs once per frame (no static caller: registered at runtime):
 Updater registration `FUN_140BF4B00(service, typeDescriptor)`: allocates a 0x38-B entry (vtable `0x1423063F8`, ctor `FUN_140BF4690`) wrapping `desc->typeManager`; the TypeManager fills the entry's config via **vt+0x40** (u16 group at +0x08, counts at +0x0C/+0x10/+0x14, bitset allocated for +0x0C bits); the entry goes into one of **4 group lists** (0x20 B each at service+0x00..0x80), each kept sorted (`0x140BF4C40`). Shutdown `FUN_140BF5290` calls every updater's vt+0x10.
 Service singleton `0x142C38478` (0xD8 B); its ctor `0x140BF4770` is a Denuvo thunk (not analysed).
 
-## Command and message entry points (verify next — [docs/engine/Messages.md](Engine-Messages.md))
+## Command and message entry points (verify next — [`docs\engine\Messages.md`](messages.md))
 - Task-bucket listener `0x140BF9A20` [V]: reads the target id from a variant (`+0x20 & 7`: 1/2 integer, 3 double), `typeIndex = id >> 9` (< 128), calls **TypeManager vt+0x78(message)**.
 - SendCommand `0x140BFA380` and MessageBus (`QuarkSystemTable+0x60`) — FoxRe claims, re-check pending.
 
 ## Open / M3 gate
 - Exact per-frame order across systems (which updater groups run when, priorities of each TypeManager) needs a live capture (log-only hook on `0x140BF5350` / the updater vt+8 calls) — `fox-ground-truth`.
+
+---
+<small>Source: `docs/engine/Scheduler.md` in the project repository &middot; generated 2026-10-22.</small>

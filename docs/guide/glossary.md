@@ -1,7 +1,4 @@
-> [!NOTE]
-> Generated `from[`docs/guide/Glossary.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/guide/Glossary.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
-
-# Guide: Glossary
+# Glossary
 
 | Term | Meaning |
 |---|---|
@@ -25,3 +22,6 @@
 | **Round trip** | read then re-write a file and require identical bytes |
 | **Oracle** | a trusted reference to compare against (the original function, or the running game) |
 | **Clean-room** | re-implementing from written specifications only, never from copied code |
+
+---
+<small>Source: `docs/guide/Glossary.md` in the project repository &middot; generated 2026-10-22.</small>

@@ -1,7 +1,4 @@
-> [!NOTE]
-> Generated `from[`docs/BACKGROUND.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/BACKGROUND.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
-
-# Background: game, community, Option A history
+# Background
 
 Condensed 2026-10-21 from the 2026-10-13/14 reports (originals in `Quarantine\Cleanup_2026-10-21\Memory\research\`). Tags: [V] verified, [D] game data, [W] wiki/community, [I] inferred, [?] unknown.
 
@@ -51,3 +48,6 @@ Built as an IH r267 boss (`InfBossEvent` + `InfBossTppSahelan2.lua` + addon), pa
 
 ## 5. Planned next RE milestone (from the FoxRe agent, unverified [?])
 Milestone 4 = FoxLua C API / script bridge: `SetLuaFunctions` 0x1408D81F0 and `FoxLuaRegisterLibrary` 0x14006B8C0, lua_* API addresses 0x141A114D0–0x141A12300, Fox userdata types (Vector3/Quat/Matrix4), the 264 native bindings in `lua_bindings.tsv`. Verify every address before use (that agent had several wrong claims; see `mgsv_unified_server\docs\FOXRE_REVIEW.md`).
+
+---
+<small>Source: `docs/BACKGROUND.md` in the project repository &middot; generated 2026-10-22.</small>

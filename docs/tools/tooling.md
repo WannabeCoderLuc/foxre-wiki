@@ -1,7 +1,4 @@
-> [!NOTE]
-> Generated `from[`docs/TOOLING.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/TOOLING.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
-
-# Tooling: inventory + lessons from awesome-rea (2026-10-21)
+# Installed tools
 
 ## Lessons from github.com/yibie/awesome-rea (AI-assisted RE projects)
 The list's one rule: a project counts only if correctness is a **machine-decidable PASS/FAIL gate** set before agents iterate. What the strongest entries do:
@@ -32,7 +29,10 @@ The list's one rule: a project counts only if correctness is a **machine-decidab
 | **vcpkg** (`C:\Tools\vcpkg`) | git + bootstrap (signed by Microsoft) | C++ libraries for the engine (e.g. `vcpkg install imgui`) |
 | **Blender** | winget | view decoded models/animations |
 | Cheat Engine | existing | memory inspection of the running game (single player) |
-| MCP: mgsv-unified, atomizer, websift | existing | `see[mgsv_unified_server/AI_GUIDE.md](MCP-Server.md)` |
+| MCP: mgsv-unified, atomizer, websift | existing | see [`mgsv_unified_server\AI_GUIDE.md`](mcp-server.md) |
 
 ## Not installed (needs a purchase/licence or was rejected)
-See the links in the 2026-10-21 report ([docs/LOG.md](Session-Log.md)); skipped: paid tools (IDA Pro, 010 Editor), FMDL Studio v2 (Unity plugin, needs a Unity account; our own fmdl codec + Blender instead); rejected: Sogen for the game exe (running Denuvo under an emulator is off-limits), REA (repo gone, closed zip), decomp.wtf (archived; console-only).
+See the links in the 2026-10-21 report ([`docs\LOG.md`](../status/log.md)); skipped: paid tools (IDA Pro, 010 Editor), FMDL Studio v2 (Unity plugin, needs a Unity account; our own fmdl codec + Blender instead); rejected: Sogen for the game exe (running Denuvo under an emulator is off-limits), REA (repo gone, closed zip), decomp.wtf (archived; console-only).
+
+---
+<small>Source: `docs/TOOLING.md` in the project repository &middot; generated 2026-10-22.</small>

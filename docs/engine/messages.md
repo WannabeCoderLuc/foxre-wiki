@@ -1,9 +1,6 @@
-> [!NOTE]
-> Generated `from[`docs/engine/Messages.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/engine/Messages.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
+# Messages and commands
 
-# Messages and commands: MessageBus, SendCommand, SendMessage
-
-Re-verification (2026-10-21) `of[docs/ENGINE.md](Engine-Core-Architecture.md)` milestone 3 §5–6. Tags: [V] read in code this pass, [I], [?], [x] corrected.
+Re-verification (2026-10-21) of [`docs\ENGINE.md`](core-architecture.md) milestone 3 §5–6. Tags: [V] read in code this pass, [I], [?], [x] corrected.
 
 ## GameObject ids [V]
 `id = (typeIndex << 9) | instanceIndex` (16 bit; 128 types × 512 instances). `0xFFFF` = none. Type table: `gameobject_type_index.tsv` (e.g. Player2 0, Soldier2 2, Sahelan2 21, Vehicle 50 → ids 0x6400 | i).
@@ -35,3 +32,6 @@ Re-verification (2026-10-21) `of[docs/ENGINE.md](Engine-Core-Architecture.md)` m
 
 ## Open
 Bucket manager + `FUN_140180760` drain order (FoxRe [I]); full Msg name table per sender; live fixture of a mission-start message sequence (M3 gate).
+
+---
+<small>Source: `docs/engine/Messages.md` in the project repository &middot; generated 2026-10-22.</small>

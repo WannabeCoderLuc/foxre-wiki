@@ -1,7 +1,4 @@
-> [!NOTE]
-> Generated `from[`docs/engine/Entities.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/engine/Entities.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
-
-# Entities: DataSets → typed entity graph
+# Entities and DataSet loading
 
 Engine module `Engine\core\entities.py` (`World`) over `Engine\formats\fox2.py` + `Engine\core\typedb.py` · verifier `Engine\tests\test_entities_s10151.py`.
 **Static gate (2026-10-21), mission s10151:** 419 mission DataSets + 4 link dependencies (transitive closure, 2 rounds) → **8,669 entities of 140 classes, 100 % typed, 100 % property names resolved, 7,728/7,728 EntityPtr resolved**; every unresolved handle/link falls in a named category below. Load time 3.4 s (Python).
@@ -42,3 +39,6 @@ Consequences for the engine: a DataSet is one contiguous allocation; file `addre
 ## Live gate (2026-10-21) [V]
 In Afghanistan free roam (mission 30010) every link of f30010's two `DataIdentifier`s (`CheckPointIdentifier` ×16 checkpoint Locators, `f30010_sovietBase_DataIdentifier` ×1) was queried in the running game over the IH pipe (`DataIdentifier.GetDataWithIdentifier(identifier, key)` → `name`, `IsKindOf(class)`, `worldTransform.translation`). **17/17 match the static graph** (name, class, translation to 1e-3; world = local transform composed up the `parent` chain). Capture: `Tools\capture_identifier_fixture.py` → `Engine\tests\fixtures\f30010_identifiers.json`; verifier `test_live_f30010_identifiers.py`.
 Lua access confirmed: Data properties are readable by name from Lua (`d.name`, `d.worldTransform`), `IsKindOf` works on class names — a cheap channel for future fixtures.
+
+---
+<small>Source: `docs/engine/Entities.md` in the project repository &middot; generated 2026-10-22.</small>

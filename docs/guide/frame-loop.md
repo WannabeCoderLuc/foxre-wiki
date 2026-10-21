@@ -1,9 +1,6 @@
-> [!NOTE]
-> Generated `from[`docs/guide/Frame-Loop.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/guide/Frame-Loop.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
+# How a frame runs
 
-# Guide: How a frame runs
-
-*Covers milestone M3 (in progress). Details: [Scheduler](Engine-Scheduler.md), [Messages and commands](Engine-Messages.md).*
+*Covers milestone M3 (in progress). Details: [Scheduler](../engine/scheduler.md), [Messages and commands](../engine/messages.md).*
 
 ## Game objects and their ids
 Everything that acts in the world (the player, soldiers, vehicles, helicopters, animals, Sahelanthropus) is a **game object**. Each has a 16-bit **id**: the upper 7 bits are the **type** (0 = player, 2 = soldier, 21 = Sahelanthropus, 50 = vehicle ...) and the lower 9 bits are the instance number. One **type manager** per type owns all instances of that type and runs their logic.
@@ -12,10 +9,10 @@ Everything that acts in the world (the player, soldiers, vehicles, helicopters, 
 A single **GameObjectManager** keeps 128 type slots. Every frame it does three things for each type, in order:
 ```mermaid
 flowchart LR
- Q["Creation queue<br/>(objects requested since last frame)"] --> P1
- P1["1. Manager lifecycle<br/>swap in a new type manager if one is pending"] --> P2
- P2["2. Add new instances<br/>tell the type manager about them"] --> P3
- P3["3. Remove dead instances<br/>compact the list"]
+    Q["Creation queue<br/>(objects requested since last frame)"] --> P1
+    P1["1. Manager lifecycle<br/>swap in a new type manager if one is pending"] --> P2
+    P2["2. Add new instances<br/>tell the type manager about them"] --> P3
+    P3["3. Remove dead instances<br/>compact the list"]
 ```
 Creating or destroying objects therefore takes effect at a frame boundary, never in the middle of an update.
 
@@ -35,3 +32,6 @@ A message on the bus carries up to four arguments, each tagged as integer or dec
 ## What is still open
 - The exact per-frame order across all systems (the M3 live capture).
 - Implementing this model in `Engine/runtime/` and checking it against that capture (the M3 gate).
+
+---
+<small>Source: `docs/guide/Frame-Loop.md` in the project repository &middot; generated 2026-10-22.</small>

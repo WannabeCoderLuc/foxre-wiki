@@ -1,7 +1,4 @@
-> [!NOTE]
-> Generated `from[`docs/engine/Reflection.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/engine/Reflection.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
-
-# Reflection: classes, properties, type DB
+# Reflection and type database
 
 Engine module `Engine\core\typedb.py` · data `mgsv_unified_server\data\re\fox_edb.json` (game) + `fox2_typedb.json` (data-derived) · verifier `Engine\tests\test_typedb.py` · tools `Tools\edb_import.py`, `Tools\fox2_typedb.py`.
 Tags: [V] verified (exe code / live game / all data), [D] all game data, [I], [?].
@@ -13,7 +10,7 @@ Contents: platform (win64, little, 64bit, binformat **242** = fox2 magic byte 0x
 Per class: name, super, version, category, size, align, block, loadable, creatable, staticProperties.
 Per property: name, exportname, storage (always `Instance`), type, ptrtype, offset, container, arraysize, valueformat (always `value`), optional enuminfo {type `switch`|`flags`, name, key/value list}.
 
-Base hierarchy [V]: Entity (48 B) ← Data (120) ← DataSet (296), TransformData (304) ← GameObjectLocator (336); Data ← GameObject (152); Entity ← DataElement (56). (The FoxRe agent's sizes `in[docs/ENGINE.md](Engine-Core-Architecture.md)` were right.)
+Base hierarchy [V]: Entity (48 B) ← Data (120) ← DataSet (296), TransformData (304) ← GameObjectLocator (336); Data ← GameObject (152); Entity ← DataElement (56). (The FoxRe agent's sizes in [`docs\ENGINE.md`](core-architecture.md) were right.)
 
 ## Cross-check with the data [V]
 Against `fox2_typedb.json` (all 44,994 DataSets, 403 classes, 3,716 class/property pairs, all names resolved):
@@ -21,7 +18,7 @@ Against `fox2_typedb.json` (all 44,994 DataSets, 403 classes, 3,716 class/proper
 - classVersion in every DataSet entity == the registry version (0 mismatches).
 - 3,372/3,372 static properties seen in data exist in the class chain with identical type and container.
 - Serialization order = base class properties first, then derived (as `TypeDB.properties()` returns).
-- FOX2 entity header `unknown1` = the class instance size **in the build that wrote the file** (reader checks it only for format < 5), which is why it differs from current `sizes[V, [docs/formats/FOX2.md](Format-FOX2.md)`]. The reader also rejects entities whose classVersion != registry version [V].
+- FOX2 entity header `unknown1` = the class instance size **in the build that wrote the file** (reader checks it only for format < 5), which is why it differs from current sizes [V, [`docs/formats/FOX2.md`](../formats/fox2.md)]. The reader also rejects entities whose classVersion != registry version [V].
 
 ## Native registration API (static init per class) [V]
 | VA | Role |
@@ -43,3 +40,6 @@ PropertyInfo (0x48 B): vtable (slot 1 = arraySize), name +0x10, offset +0x18, ar
 
 ## Open
 Fx node classes' properties (from data only); dynamic properties (165 entities) — runtime-only, no registry entry.
+
+---
+<small>Source: `docs/engine/Reflection.md` in the project repository &middot; generated 2026-10-22.</small>

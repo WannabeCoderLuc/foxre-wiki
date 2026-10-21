@@ -1,195 +1,103 @@
-/* ==========================================================================
-   FoxRe Documentation Design System - Professional High-Tech / Tactical Theme
-   ========================================================================== */
+/* FoxRe site theme. Restrained: neutral greys, one amber accent, readable tables, text status badges. */
 
-:root {
-  --fox-amber: #f59e0b;
-  --fox-amber-light: #fbbf24;
-  --fox-amber-dark: #d97706;
-  --fox-pass-bg: rgba(34, 197, 94, 0.15);
-  --fox-pass-text: #4ade80;
-  --fox-pass-border: rgba(34, 197, 94, 0.4);
-  --fox-wip-bg: rgba(245, 158, 11, 0.15);
-  --fox-wip-text: #fbbf24;
-  --fox-wip-border: rgba(245, 158, 11, 0.4);
-  --fox-planned-bg: rgba(148, 163, 184, 0.12);
-  --fox-planned-text: #94a3b8;
-  --fox-planned-border: rgba(148, 163, 184, 0.3);
+:root,
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #1f2328;
+  --md-primary-fg-color--light: #3a3f45;
+  --md-primary-fg-color--dark: #111417;
+  --md-accent-fg-color: #b7791f;
+  --md-typeset-a-color: #9a6212;
+  --fr-surface: #f6f7f8;
+  --fr-border: #d9dde1;
+  --fr-pass: #1a7f37;
+  --fr-wip: #9a6700;
+  --fr-planned: #6e7781;
 }
 
 [data-md-color-scheme="slate"] {
-  --md-primary-fg-color: #0b0f17;
-  --md-primary-bg-color: #f1f5f9;
-  --md-accent-fg-color: #f59e0b;
-  --md-default-bg-color: #0d1117;
-  --md-default-fg-color: #e2e8f0;
-  --md-code-bg-color: #161b22;
+  --md-primary-fg-color: #15181c;
+  --md-primary-fg-color--light: #23272d;
+  --md-primary-fg-color--dark: #0d0f12;
+  --md-accent-fg-color: #e3a33b;
+  --md-typeset-a-color: #e8b04f;
+  --md-default-bg-color: #181b20;
+  --fr-surface: #1f2329;
+  --fr-border: #30363d;
+  --fr-pass: #3fb950;
+  --fr-wip: #d29922;
+  --fr-planned: #8b949e;
 }
 
-[data-md-color-scheme="default"] {
-  --fox-pass-text: #15803d;
-  --fox-wip-text: #b45309;
-  --fox-planned-text: #475569;
-}
+/* Wider content column for spec tables */
+.md-grid { max-width: 1440px; }
 
-/* ---------------- Hero Section on Homepage ---------------- */
-.wiki-hero {
-  text-align: center;
-  padding: 2.5rem 1rem 2rem;
-  margin-bottom: 2rem;
-  background: linear-gradient(180deg, rgba(245, 158, 11, 0.06) 0%, rgba(0, 0, 0, 0) 100%);
-  border-radius: 8px;
-  border-bottom: 1px solid rgba(245, 158, 11, 0.2);
-}
-
-.wiki-hero h1 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  margin-bottom: 0.5rem;
-  color: var(--md-default-fg-color);
-}
-
-.wiki-hero h3 {
-  font-size: 1.15rem;
-  font-weight: 400;
-  color: var(--fox-amber-light);
-  margin-top: 0;
-  margin-bottom: 1.25rem;
-  opacity: 0.9;
-}
-
-.hero-badges {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-.hero-badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.75rem;
-  font-family: var(--md-code-font-family, monospace);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: 4px;
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: var(--md-default-fg-color);
-}
-
-/* ---------------- Status Badges ---------------- */
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--md-code-font-family, monospace);
-  font-size: 0.72rem;
+/* Sidebar: section titles stand out, pages are plain */
+.md-nav--primary .md-nav__item--section > .md-nav__link {
   font-weight: 700;
-  padding: 0.15rem 0.55rem;
-  border-radius: 4px;
+  text-transform: uppercase;
   letter-spacing: 0.04em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  vertical-align: middle;
+  font-size: 0.68rem;
+  opacity: 0.85;
 }
+.md-nav__link--active { font-weight: 600; }
 
-.status-pass {
-  background-color: var(--fox-pass-bg);
-  color: var(--fox-pass-text);
-  border: 1px solid var(--fox-pass-border);
-}
+/* Headings */
+.md-typeset h1 { font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.8em; }
+.md-typeset h2 { font-weight: 650; border-bottom: 1px solid var(--fr-border); padding-bottom: 0.25em; }
 
-.status-wip {
-  background-color: var(--fox-wip-bg);
-  color: var(--fox-wip-text);
-  border: 1px solid var(--fox-wip-border);
-}
-
-.status-planned {
-  background-color: var(--fox-planned-bg);
-  color: var(--fox-planned-text);
-  border: 1px solid var(--fox-planned-border);
-}
-
-/* ---------------- Progress Bar ---------------- */
-.progress-bar-container {
-  display: inline-block;
-  width: 100%;
-  max-width: 320px;
-  height: 10px;
-  background-color: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 5px;
-  overflow: hidden;
-  margin: 0.5rem 0;
-  vertical-align: middle;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #10b981 0%, #f59e0b 100%);
-  border-radius: 4px;
-  transition: width 0.3s ease;
-}
-
-/* ---------------- Tables ---------------- */
+/* Tables: full width, compact, zebra rows, readable code */
 .md-typeset table:not([class]) {
-  border-collapse: separate;
-  border-spacing: 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  overflow: hidden;
+  display: table;
   width: 100%;
-  font-size: 0.85rem;
-  margin-top: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.md-typeset table:not([class]) th {
-  background-color: rgba(255, 255, 255, 0.04);
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 0.65rem 0.9rem;
-}
-
-.md-typeset table:not([class]) td {
-  padding: 0.55rem 0.9rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.md-typeset table:not([class]) tr:hover {
-  background-color: rgba(245, 158, 11, 0.03);
-}
-
-/* ---------------- Code Blocks ---------------- */
-.md-typeset pre > code {
-  font-family: "JetBrains Mono", Consolas, Monaco, "Courier New", monospace;
-  font-size: 0.82rem;
+  font-size: 0.72rem;
+  border: 1px solid var(--fr-border);
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
 }
+.md-typeset table:not([class]) th { background: var(--fr-surface); font-weight: 650; }
+.md-typeset table:not([class]) tr:nth-child(even) td { background: color-mix(in srgb, var(--fr-surface) 55%, transparent); }
+.md-typeset table:not([class]) td,
+.md-typeset table:not([class]) th { padding: 0.45em 0.8em; vertical-align: top; }
+.md-typeset .md-typeset__scrollwrap { margin: 1em 0; }
 
-.md-typeset code {
-  font-family: "JetBrains Mono", Consolas, Monaco, "Courier New", monospace;
-  font-size: 0.85em;
-  border-radius: 3px;
-  padding: 0.15em 0.35em;
-  background-color: rgba(255, 255, 255, 0.06);
+/* Status badges: PASS / IN PROGRESS / PLANNED */
+.md-typeset .status {
+  display: inline-block;
+  padding: 0.1em 0.55em;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  border: 1px solid currentColor;
 }
+.md-typeset .status.pass { color: var(--fr-pass); }
+.md-typeset .status.in-progress { color: var(--fr-wip); }
+.md-typeset .status.planned { color: var(--fr-planned); }
 
-/* ---------------- Navigation Accent ---------------- */
-.md-header {
-  border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+/* Home hero */
+.md-typeset .hero {
+  padding: 1.6rem 1.8rem;
+  margin: 0 0 1.6rem;
+  border: 1px solid var(--fr-border);
+  border-left: 4px solid var(--md-accent-fg-color);
+  border-radius: 8px;
+  background: var(--fr-surface);
 }
+.md-typeset .hero h1 { margin: 0 0 0.4em; font-size: 2.2rem; }
+.md-typeset .hero p { margin: 0.4em 0; }
 
-.md-nav__link--active {
-  color: var(--fox-amber-light) !important;
-  font-weight: 600;
+/* Cards (Material grid cards) */
+.md-typeset .grid.cards > ul > li,
+.md-typeset .grid.cards > ol > li {
+  border: 1px solid var(--fr-border);
+  border-radius: 8px;
+  background: var(--fr-surface);
+  transition: border-color 0.15s;
 }
+.md-typeset .grid.cards > ul > li:hover { border-color: var(--md-accent-fg-color); }
+
+/* Mermaid diagrams centered */
+.md-typeset .mermaid { text-align: center; margin: 1.2em 0; }
+
+/* Source footer line */
+.md-typeset small { opacity: 0.7; }

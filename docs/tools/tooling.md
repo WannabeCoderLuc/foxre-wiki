@@ -63,6 +63,11 @@ Installed now (SnakeBite `snakebite.xml`): IHHook r25, Infinite Heaven r267, V F
 - `mod\modules\`: stock IH only (move the 6 `Inf*Sahelan*/Probe/Noise` modules aside).
 - Game data: uninstall **Sahelanthropus Puppet Pilot** and V Framework in SnakeBite (Luc) so the live game matches the pristine `GameBackup` data the engine reads; fixtures then describe vanilla 1.0.15.4.
 - Switching is done by `game_plugin(profile=engine-clean|mod-baseline)` (backlog 7) from manifests; "mod-baseline" = today's setup, restored when the mod track resumes.
+**State 2026-10-22 (Luc uninstalled Sahelanthropus Puppet Pilot):** SnakeBite now has IHHook, Infinite Heaven, V Framework. The uninstall also removed `InfBossTppSahelan2.lua`, `InfControlSally.lua`, `InfProbe9aDamageLog.lua`, `InfSahelanPuppet.lua`. Still present: `plugins\SahelanControl.dll` (r5c) + `V_FrameWork.dll`, inert `mod\modules\InfVSahelanNoise.lua` + `InfVSauceNoise.lua`, V_F Lua modules (`V_*.lua`).
+**TODO (noted by Luc 2026-10-22):**
+
+- [ ] **Move aside during captures:** `SahelanControl.dll`, `V_FrameWork.dll` and the remaining Sahelan IH modules (`InfVSahelanNoise.lua`, `InfVSauceNoise.lua`) — V Framework hooks the same Lua entry points M4 will trace. Restore them after each run (backlog item 7 automates this).
+- [ ] **Check Nexus** for IH / IHHook builds newer than r267 / r25, and whether IH can skip the logos and title screen (would cut the ~75 s boot).
 **Newer versions:** IH r267 / IHHook r25 / V_F 1.6.0.1 are the newest we have (Sept–Oct 2026); check Nexus for later IH/IHHook builds before M4 [?] — IHHook updates may move hook addresses FoxTrace chains onto.
 **Boot speed:** ~75 s cold boot to free roam; IH options for skipping logos/title [?] (check IH r267 docs) would shorten every capture.
 

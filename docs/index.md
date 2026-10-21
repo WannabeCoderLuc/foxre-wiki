@@ -16,7 +16,7 @@
 
 `PC 1.0.15.4 EN` · `runtime hooks only` · `no game files in this repo` · `every claim backed by a machine-checked gate`
 
-`###.......`<br>
+`###+......`<br>
 **3 / 10 milestones done** · now: **M3 Runtime core**
 
 </div>
@@ -29,7 +29,7 @@
 | **[Roadmap](Roadmap.md)** | Milestones M0–M9 and the PASS/FAIL gate each one must meet |
 | **[Engine modules](Engine-Modules.md)** | What exists in `Engine/` today and how it is verified |
 | **File formats** | [QAR](Format-QAR.md) · [FPK](Format-FPK.md) · [FOX2](Format-FOX2.md) · [FRT](Format-FRT.md) · [NAV2](Format-NAV2.md) |
-| **Engine internals** | [Reflection / type DB](Engine-Reflection.md) · [Entities](Engine-Entities.md) · [Core architecture](Engine-Core-Architecture.md) |
+| **Engine internals** | [Reflection / type DB](Engine-Reflection.md) · [Entities](Engine-Entities.md) · [Scheduler](Engine-Scheduler.md) · [Messages](Engine-Messages.md) · [Core architecture](Engine-Core-Architecture.md) |
 | **Game systems** | [Sahelanthropus](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/SAHELAN.md) · [Battlefield AI](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/BATTLEFIELD.md) |
 | **Tooling** | [MCP server](MCP-Server.md) · [Tooling](Tooling.md) · [Background](Background.md) |
 
@@ -39,7 +39,7 @@
 | **M0** | Foundations | `PASS` |
 | **M1** | Data layer — read every file container and the core data formats | `PASS` |
 | **M2** | Entity & reflection core — fox2 → live typed entity graph | `PASS` |
-| **M3** | Runtime core — scheduler, messages, GameObjects | `PLANNED` |
+| **M3** | Runtime core — scheduler, messages, GameObjects | `IN PROGRESS` |
 | **M4** | Script host — Lua 5.1 + Fox/Tpp API | `PLANNED` |
 | **M5** | World — terrain, collision, navigation, routes | `PLANNED` |
 | **M6** | Assets & rendering | `PLANNED` |
@@ -61,11 +61,11 @@
 | `formats/nav2.py` | Python (+numpy) | [docs/NAVMESH.md](Format-NAV2.md) | PASS | 840/840 navmeshes byte-identical |
 
 ## Latest
+- 2026-10-21: M3 specs: scheduler + messages re-verified from the exe (`docs\engine\Scheduler.md`, `Messages.md`); 3 FoxRe claims corrected.
 - 2026-10-21: **M2 PASS**: DataSet reader/writer decoded (magic checked, ASCII version, instanceSize, classVersion check); live gate 17/17 identifier targets match the game. Pages site + text statuses set up.
 - 2026-10-21: M2 entity graph (static): s10151 + link closure → 8,669 typed entities, all refs resolved or categorised (`docs\engine\Entities.md`).
 - 2026-10-21: M2 reflection: game type DB dumped live (1,153 classes, 6,062 props) → `Engine\core\typedb.py`, `docs\engine\Reflection.md`; matches all DataSets. Game run restored to baseline.
 - 2026-10-21: **M1 done**: FPK 16,354/16,354, QAR 134,241 entries MD5-ok, FRT 307/307, NAV2 840/840; 68 route event names recovered.
-- 2026-10-21: M1 FOX2 gate passed (44,994/44,994 byte-identical); `docs/formats/FOX2.md`; ENGINE.md §1.2 marked wrong.
 
 [Full session log →](Session-Log.md)
 

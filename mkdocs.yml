@@ -75,6 +75,8 @@ nav:
       - Core Architecture: Engine-Core-Architecture.md
       - Reflection & Type DB: Engine-Reflection.md
       - Entity System: Engine-Entities.md
+      - Scheduler: Engine-Scheduler.md
+      - Messages & Commands: Engine-Messages.md
   - File Formats:
       - QAR Archives: Format-QAR.md
       - FPK Packages: Format-FPK.md

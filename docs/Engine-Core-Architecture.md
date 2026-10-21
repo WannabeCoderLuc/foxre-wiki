@@ -682,6 +682,8 @@ All additions have been verified via `foxhash.py` StrCode64 computation, committ
 
 # Milestone 3 Investigation Report: Master GameObject Scheduler, TypeManager Architecture, and Event Message Bus
 
+> **Re-verified 2026-10-21:** clean specs now `in[docs/engine/Scheduler.md](Engine-Scheduler.md)` `and[docs/engine/Messages.md](Engine-Messages.md)` (use those). Corrections [x]: GetTypeManager uses `id >> 9` (no mask); Phase 1 is the type-descriptor lifecycle, not pre-physics; `0x140BF3FC0` is a Denuvo thunk, not a plain lookup.
+
 > **Review 2026-10-19:** type registration 0x140BF4620 (84 = 16 + 47 calls) and SendCommand routing [V]; struct layouts not re-checked [I]. Details: `mgsv_unified_server/docs/FOXRE_REVIEW.md`.
 
 **Investigator:** Antigravity (Advanced Static Reverse Engineering Reviewer) 

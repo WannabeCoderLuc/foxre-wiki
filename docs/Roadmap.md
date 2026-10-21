@@ -32,8 +32,11 @@ Output: `Engine\formats\` (ported from ATOMIZER/Tools into one package), `docs\f
 - **Gate:** load all DataSets of one mission (e.g. s10151) into typed entities; 100 % classes and properties typed; references resolve; live fixture (entity counts/values after load) matches.
 Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 
-## M3 Runtime core [PLANNED] — scheduler, messages, GameObjects
+## M3 Runtime core [IN PROGRESS] — scheduler, messages, GameObjects
 - Quark system table, GameObjectManager/TypeManager, 3-phase tick, MessageBus, SendCommand dispatch ([docs/ENGINE.md](Engine-Core-Architecture.md) milestone 3).
+- PASS: Scheduler re-verified → [docs/engine/Scheduler.md](Engine-Scheduler.md) (GOM tick: creation queue + 3 per-type phases; per-frame job 0x140BF5350 = GOM tick + priority-sorted updaters in 4 groups).
+- PASS: Messages re-verified → [docs/engine/Messages.md](Engine-Messages.md) (MessageBus Quark+0x60 vt+0x40, 4-arg payload with 3-bit type tags; SendCommand → TypeManager vt+0x80; SendMessage per-type Lua-ref FIFO).
+- PLANNED: live capture (log-only hook on the per-frame job / updater calls, MessageBus raise) → fixtures; engine scheduler + message model in `Engine/runtime/`.
 - **Gate:** live fixtures for one frame's tick order and the message sequence of a mission start reproduced by the engine's scheduler model.
 
 ## M4 Script host [PLANNED] — Lua 5.1 + Fox/Tpp API

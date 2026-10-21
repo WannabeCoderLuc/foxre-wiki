@@ -34,6 +34,8 @@ PAGE_SLUGS = {
     "Engine-Modules": "Engine-Modules.md",
     "Engine-Reflection": "Engine-Reflection.md",
     "Engine-Entities": "Engine-Entities.md",
+    "Engine-Scheduler": "Engine-Scheduler.md",
+    "Engine-Messages": "Engine-Messages.md",
     "Engine-Core-Architecture": "Engine-Core-Architecture.md",
     "Format-QAR": "Format-QAR.md",
     "Format-FPK": "Format-FPK.md",

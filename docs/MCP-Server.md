@@ -1,5 +1,5 @@
 > [!NOTE]
-> Generated `from[`mgsv_unified_server/AI_GUIDE.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/mgsv_unified_server/AI_GUIDE.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [ Home](index.md) · [ Roadmap](Roadmap.md)
+> Generated `from[`mgsv_unified_server/AI_GUIDE.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/mgsv_unified_server/AI_GUIDE.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
 
 # mgsv-unified: MCP server + knowledge DB
 

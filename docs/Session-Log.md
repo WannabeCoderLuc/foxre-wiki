@@ -1,5 +1,5 @@
 > [!NOTE]
-> Generated `from[`docs/LOG.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/LOG.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [ Home](index.md) · [ Roadmap](Roadmap.md)
+> Generated `from[`docs/LOG.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/LOG.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
 
 # Session log (newest first)
 

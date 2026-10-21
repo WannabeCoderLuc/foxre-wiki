@@ -1,5 +1,5 @@
 > [!NOTE]
-> Generated `from[`docs/ENGINE.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/ENGINE.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [ Home](index.md) · [ Roadmap](Roadmap.md)
+> Generated `from[`docs/ENGINE.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/ENGINE.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
 
 # Fox Engine core: Quark/class registry, fox2 reflection, GameObject scheduler + MessageBus
 

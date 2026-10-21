@@ -1,5 +1,5 @@
 > [!NOTE]
-> Generated `from[`docs/engine/Reflection.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/engine/Reflection.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [ Home](index.md) · [ Roadmap](Roadmap.md)
+> Generated `from[`docs/engine/Reflection.md`](https://github.com/WannabeCoderLuc/mgsvtpp-foxre/blob/main/docs/engine/Reflection.md)` on 2026-10-21. Edit the source doc; this page is overwritten on every sync. · [Home](index.md) · [Roadmap](Roadmap.md)
 
 # Reflection: classes, properties, type DB
 

@@ -15,8 +15,11 @@ All integers little-endian. All names are **StrCode64** (48-bit; upper 16 bits o
 ## Layout
 ```
 Header (32 bytes)
- 0x00 u32 magic 0x786F62F2 ("\xf2box") [D]
- 0x04 u32 version 53 [D]
+ 0x00 u8 magic 0xF2 (= EDB binformat 242), then "box" [V, checked by FUN_1400ED040]
+ 0x04 char version '5' (ASCII; value = char - '0'; 2..6 accepted, 5-6 = hashed strings) [V]
+ 0x05 u8 0 [V]
+ 0x06 u8 flag 0 in all files [D]
+ 0x07 u8 flag must be 0 (reader stops otherwise) [V]
  0x08 i32 entityCount
  0x0C i32 stringTableOffset
  0x10 i32 entitiesOffset always 32 [D]
@@ -31,14 +34,14 @@ String table
 | Off | Type | Field | Notes |
 |---|---|---|---|
 | 0x00 | u16 | headerSize | 64 [D] |
-| 0x02 | u16 | unknown1 | **constant per class** (317/317 classes, 0 exceptions) [D]; not the native instance size (TexturePackLoadConditioner: 72 vs alloc 0x80 in factory 0x1404BCCF0) [V]; meaning [?] |
-| 0x04 | u16 | 0 | [D] |
+| 0x02 | u32 | instanceSize | native instance size of the class **in the build that wrote the file**; the reader (`FUN_1400EEE00`) checks it == class size (desc+0xD0) only for format < 5, so TPP's v5 files keep stale editor sizes (e.g. TexturePackLoadConditioner 72 vs 128 today) [V]; constant per class (317/317) [D]. (Read as one u32 with the next 2 zero bytes.) |
+| 0x04 | u16 | 0 | high half of instanceSize [V] |
 | 0x06 | u32 | tag | `"ent\0"` 0x00746E65 [D] |
-| 0x0A | u32 | address | file-local entity id, 16-byte aligned (low 4 bits 0 in all 2.3 M entities) [D]; target of EntityPtr/EntityHandle values |
+| 0x0A | u64 | address | file-local entity id, 16-byte aligned (low 4 bits 0 in all 2.3 M entities) [D]; target of EntityPtr/EntityHandle values; read as u64 with the next 4 zero bytes and passed to entity creation [V] |
 | 0x0E | u32 | 0 | [D] |
-| 0x12 | i32 | unknown2 | 0 in 11 % of entities, otherwise small increasing values per file (deltas 1–11 dominate) [D]; editor/serial id [I] |
+| 0x12 | u64 | unknown2 | read as u64 together with the next 4 zero bytes [V]; 0 in 11 % of entities, otherwise small increasing values per file [D]; not used by the reader [V]; editor serial id [I] |
 | 0x16 | i32 | 0 | [D] |
-| 0x1A | u16 | classVersion | 0 for 91 % of entities [D] |
+| 0x1A | u16 | classVersion | must equal the registry class version (desc+0xDA) or the load fails with 0x84E89055 [V]; 0 for 91 % of entities [D] |
 | 0x1C | u64 | classHash | StrCode64 of the class name |
 | 0x24 | u16 | staticCount | |
 | 0x26 | u16 | dynamicCount | dynamic properties on 0.25 % of entities [D] |
@@ -84,9 +87,9 @@ Usage (property instances over all files) [D]: EntityHandle 3.57 M, EntityPtr 2.
 - The writer emits the canonical layout above; since every game file is canonical, `write(read(b)) == b` holds for all of them.
 
 ## Exe side
-- The loader does **not** validate magic, `ent` or `end` (none of these constants occur in `.xtext`) [V]: offsets are trusted.
-- Parsing happens in the generic resource loader before `DataSetFile2::OnLoad` (0x140113750 casts the loaded object via `FUN_1401071B0` and stores it at +0x70) [V]. The byte parser itself is not yet located [?] — next: follow the resource factory that calls vtable +0x48.
+- **Corrected 2026-10-21:** the loader **does** check the magic — byte compare `0xF2` + "box" in `FUN_1400ED040` (an earlier immediate-value search missed it); non-matching files go to the XML reader. `ent`/`end` tags are not checked. Full reader/writer: [docs/engine/Entities.md](Engine-Entities.md) §Runtime instantiation (reader `FUN_1400EDE50` state machine, writer `FUN_1400EF290`).
+- Parsing happens in the generic resource loader before `DataSetFile2::OnLoad` (0x140113750 casts the loaded object via `FUN_1401071B0` and stores it at +0x70) [V]. The byte parser is the binary reader FUN_1400EDE50 (see Entities.md) [V].
 - [docs/ENGINE.md](Engine-Core-Architecture.md) §1.2/§1.3 (FoxRe agent) give a different header/entity layout: **wrong [x]**, superseded by this spec.
 
 ## Open
-unknown1 / unknown2 meaning; PropertyInfo encoding (type 23 unused in TPP data); exe parser VA.
+unknown2 meaning (unused by the reader); PropertyInfo encoding (type 23 unused in TPP data).

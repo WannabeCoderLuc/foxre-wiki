@@ -11,7 +11,7 @@ Run all gates: MCP `engine_verify` (or `python -m pytest Engine\tests -q` from t
 |---|---|---|---|---|
 | `core/strcode.py` | Python | docstring | PASS | StrCode64 = exe 0x141A09AC0 (`re_emulate`, incl. > 64-byte strings) |
 | `core/typedb.py` | Python | [docs/engine/Reflection.md](Engine-Reflection.md) | PASS | game registry dump == all DataSets (3,372/3,372 props) |
-| `core/entities.py` | Python | [docs/engine/Entities.md](Engine-Entities.md) | PASS (static) | s10151: 8,669 entities typed, all refs resolved/categorised |
+| `core/entities.py` | Python | [docs/engine/Entities.md](Engine-Entities.md) | PASS | s10151: 8,669 entities typed, all refs resolved/categorised; live: 17/17 f30010 identifier targets match the game |
 | `core/pathcode.py` | Python | [docs/formats/QAR.md](Format-QAR.md) | PASS | 111,394 QAR entry hashes matched by names |
 | `formats/qar.py` | Python | [docs/formats/QAR.md](Format-QAR.md) | PASS | 134,241 entries MD5-verified, headers/tables re-encode exactly |
 | `formats/fpk.py` | Python | [docs/formats/FPK.md](Format-FPK.md) | PASS | 16,354/16,354 packages byte-identical, 732 Lua decode + compile |

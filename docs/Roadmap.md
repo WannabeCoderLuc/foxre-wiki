@@ -25,10 +25,10 @@ Status keys: PASS = gate passed · IN PROGRESS · PLANNED. Update this file when
 Remaining M1 polish: FOX2 name-resolution %, texture name gap (22.8k unnamed `.ftexs`), exe-side parser VAs (all [?]).
 Output: `Engine\formats\` (ported from ATOMIZER/Tools into one package), `docs\formats\{QAR,FPK,FOX2,FRT,NAV2}.md`. Skill: `fox-format`.
 
-## M2 Entity & reflection core [IN PROGRESS] — fox2 → live typed entity graph
+## M2 Entity & reflection core [PASS] (gates passed 2026-10-21) — fox2 → live typed entity graph
 - PASS: Reflection spec + type DB (2026-10-21): the game's own registry dump (`Fox.ExportSerializeInfo()`, 1,153 classes / 6,062 properties) → `Engine/core/typedb.py`, [docs/engine/Reflection.md](Engine-Reflection.md); matches all 44,994 DataSets (3,372/3,372 properties, all versions; 17 Fx node classes only in data).
 - PASS: Entity graph (static, 2026-10-21): `Engine/core/entities.py`, [docs/engine/Entities.md](Engine-Entities.md) — s10151 + link closure: 8,669 entities 100 % typed, 7,728/7,728 EntityPtr, all handles/links resolved or in named categories.
-- PLANNED: Runtime instantiation spec (factory, field offsets, DataSet name map) + live fixture of one loaded DataSet → closes M2.
+- PASS: Runtime instantiation decoded (format select 0x1400ED040, binary reader state machine 0x1400EDE50, arena allocation, writer 0x1400EF290) → [docs/engine/Entities.md](Engine-Entities.md); live gate: 17/17 f30010 DataIdentifier targets (name, class, world translation) match the running game (`test_live_f30010_identifiers.py`).
 - **Gate:** load all DataSets of one mission (e.g. s10151) into typed entities; 100 % classes and properties typed; references resolve; live fixture (entity counts/values after load) matches.
 Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 

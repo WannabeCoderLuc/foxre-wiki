@@ -21,7 +21,7 @@ Against `fox2_typedb.json` (all 44,994 DataSets, 403 classes, 3,716 class/proper
 - classVersion in every DataSet entity == the registry version (0 mismatches).
 - 3,372/3,372 static properties seen in data exist in the class chain with identical type and container.
 - Serialization order = base class properties first, then derived (as `TypeDB.properties()` returns).
-- FOX2 entity header `unknown1` is constant per class but equals none of size / align / version / super size / property extents [?].
+- FOX2 entity header `unknown1` = the class instance size **in the build that wrote the file** (reader checks it only for format < 5), which is why it differs from current `sizes[V, [docs/formats/FOX2.md](Format-FOX2.md)`]. The reader also rejects entities whose classVersion != registry version [V].
 
 ## Native registration API (static init per class) [V]
 | VA | Role |
@@ -42,4 +42,4 @@ PropertyInfo (0x48 B): vtable (slot 1 = arraySize), name +0x10, offset +0x18, ar
 `TypeDB().classes[name]`, `.chain(name)`, `.is_a(name, base)`, `.properties(name)` (inherited, serialization order), `.property(name, name_or_hash)`, `.resolve(class_hash)`.
 
 ## Open
-`unknown1` meaning; Fx node classes' properties (from data only); dynamic properties (165 entities) — runtime-only, no registry entry.
+Fx node classes' properties (from data only); dynamic properties (165 entities) — runtime-only, no registry entry.

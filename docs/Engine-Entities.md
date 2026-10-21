@@ -25,6 +25,20 @@ Unresolved link categories (all expected): 130 archives absent from the shipped 
 - Several asset paths exist in multiple packages (e.g. `mbt.ph` ×6); the copies differ in addresses but share names. The loader keys files by inventory path and maps each asset path to the first copy loaded.
 - Dynamic properties (165 entities game-wide) are kept in `Entity.dynamic`.
 
-## Open (rest of M2)
-- How the runtime instantiates these entities (factory per class, writes fields at the EDB offsets, DataSet+0x78 name map, link resolution across packages at load) — `fox-system`.
-- Live fixture of one loaded DataSet (entity count + field values) — `fox-ground-truth`.
+## Runtime instantiation (exe, 2026-10-21) [V static]
+Load path: `LoadDataSetFile` (Lua) → resource system (`FUN_1400CDF40`, status +0x44) → `EntityFile` (desc 0x142B661D0, 0x70 B; `DataSetFile2` derives, vtable 0x1420D0D00) → reader object at EntityFile+0x60 (0x140189xxx, async job `FUN_1401B13B0` or sync `FUN_1401893A0`) → **format selection `FUN_1400ED040`**: byte 0 == 0xF2 and bytes 1–3 == "box" → **binary reader** (ctor `FUN_1400EABE0`, 0x178 B, vtable 0x1420C5308); otherwise the **XML reader** (`FUN_1400EADC0`, vtable 0x1420C52D0) — the engine also loads XML DataSets.
+Binary reader vtable: +0x20 `FUN_1400EDE50` = **time-sliced step** (called repeatedly by `EntityFile::Update` 0x1400F7D20), +0x28 `FUN_1400F0680` = attach buffer (data, size) to the stream at +0xC8.
+Step state machine (+0x50):
+| State | Function | Work |
+|---|---|---|
+| 0 | `FUN_1400EDBC0` header + `FUN_1400EDB00` entity headers | header: `F2 'b' 'o' 'x'`, version char − '0' (supported list `FUN_1400EBED0`; 5–6 = hashed-string format, +0x171), 0, flag byte, flag byte (must be 0), u32 entityCount, u32 stringTableOffset, u32 entitiesOffset; string table `FUN_1400EE6E0`; per-entity header + class lookup `FUN_1400EEE00`. Then **one arena** `BlockHeapAlloc(Σ align_up(class.size), max align)` for every entity whose class has no custom creator (desc+0xC0 == 0) |
+| 1 | `FUN_1400EEB80(i)` | one entity per step: place at the next aligned arena offset (desc+0xD0 size, +0xD8 align) or call the class factory (`FUN_1400EB970`) when desc+0xC0 ≠ 0; read **static properties in class order** (iterator `FUN_1400754E0`), skipping hidden ones (PropertyInfo+0x2C bit 0), each via `FUN_1400EF250` |
+| 2 | `FUN_1400EBF80` | second pass per entity: create the dynamic-property holder (desc+0x90 → vt+8), read `dynamicCount` dynamic properties (`FUN_1400EF210`), finish entity `FUN_1400EBC30` |
+| 3 | `FUN_1400725F0` | post-load pass on the DataSet object [I: reference fixups] |
+| 4 | `FUN_1400ECE70` | finalize / done |
+The binary writer is `FUN_1400EF290` (DataSetFile2::Save): mirror image of the above (writes version as `'0'+5`).
+Consequences for the engine: a DataSet is one contiguous allocation; file `address` fields are editor-session addresses (unique per build), mapped to new objects at load [I]; property order on disk = class-chain order (matches `TypeDB.properties()`).
+
+## Live gate (2026-10-21) [V]
+In Afghanistan free roam (mission 30010) every link of f30010's two `DataIdentifier`s (`CheckPointIdentifier` ×16 checkpoint Locators, `f30010_sovietBase_DataIdentifier` ×1) was queried in the running game over the IH pipe (`DataIdentifier.GetDataWithIdentifier(identifier, key)` → `name`, `IsKindOf(class)`, `worldTransform.translation`). **17/17 match the static graph** (name, class, translation to 1e-3; world = local transform composed up the `parent` chain). Capture: `Tools\capture_identifier_fixture.py` → `Engine\tests\fixtures\f30010_identifiers.json`; verifier `test_live_f30010_identifiers.py`.
+Lua access confirmed: Data properties are readable by name from Lua (`d.name`, `d.worldTransform`), `IsKindOf` works on class names — a cheap channel for future fixtures.

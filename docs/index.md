@@ -26,6 +26,7 @@
 ## Start here
 | | |
 |---|---|
+| **[Guide](Guide-Overview.md)** | Plain-language introduction: what the project does and how the engine works so far |
 | **[Roadmap](Roadmap.md)** | Milestones M0–M9 and the PASS/FAIL gate each one must meet |
 | **[Engine modules](Engine-Modules.md)** | What exists in `Engine/` today and how it is verified |
 | **File formats** | [QAR](Format-QAR.md) · [FPK](Format-FPK.md) · [FOX2](Format-FOX2.md) · [FRT](Format-FRT.md) · [NAV2](Format-NAV2.md) |

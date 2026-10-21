@@ -28,6 +28,12 @@ LOCAL_FALLBACK_PATHS = [
 
 # Pages included in the documentation site
 PAGE_SLUGS = {
+    "Guide-Overview": "Guide-Overview.md",
+    "Guide-Game-Data": "Guide-Game-Data.md",
+    "Guide-Classes-And-Entities": "Guide-Classes-And-Entities.md",
+    "Guide-Frame-Loop": "Guide-Frame-Loop.md",
+    "Guide-Verification": "Guide-Verification.md",
+    "Guide-Glossary": "Guide-Glossary.md",
     "Home": "index.md",
     "Roadmap": "Roadmap.md",
     "Session-Log": "Session-Log.md",

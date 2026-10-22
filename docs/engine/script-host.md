@@ -61,7 +61,7 @@ Fixture `Engine\tests\fixtures\m4_lua_bindings.json` (`{library: {name: VA}}`): 
 - **Loader** 0x141A18520(L, buf, size, key, chunkname): 0x141A182B0 decodes buffers whose first byte is 0x1B or 0x1C (XOR with a rolling 8-byte key `~key`, key = 0x14006B4D0(file name without directory); 0x1C additionally inflated by 0x141A37520), then `luaL_loadbuffer`. Plain text passes through unchanged.
 - **Fox dofile** 0x14006BC10(L, path): reads the file through the Fox file system, strips a UTF-8 BOM, chunk name `@<path>` (format `@%s`), loads with the loader above. Callers: boot driver and the script-resource loader. The Lua global `dofile` stays stock (`luaL_loadfile`, 0x141A2E450); vanilla boot chunks all come through the Fox path (`@…` names, caller 0x141A18582); `loadstring` (0x141A2E324) is used by IH.
 - **Boot driver** 0x140063C60: creates the Lua environment, runs an optional configured script, then `init.lua` (both synchronously), then `<app>/start.lua` (format `%s/%s`) **as a coroutine** (`lua_newthread` + `lua_resume`); a yield (status 1) keeps the thread for later resumption. Matches the live order init.lua → … → Tpp/start.lua.
-- **Script resource** 0x14018BE10: loads a library chunk from a path or an in-memory buffer, `lua_pcall(L, 0, 1, 0)`, and if the chunk returns a table stores it (0x1400F1AA0) under the library name. `Script.LoadLibrary` (0x1400E9A70) requests the resource (0x1400CDF40) and records it in the pending-library map 0x142B65790 keyed by `fox::Path`; `LoadLibraryAsync` (0x1400E9DD0) requests it only if the path is not already in the map; `IsLoadingLibrary` (0x1400E98E0) checks the map. So `start.lua`'s `while Script.IsLoadingLibrary(x) do coroutine.yield() end` is how the boot coroutine waits [I for the wait semantics].
+- **Script resource** 0x14018BE10: loads a library chunk from a path or an in-memory buffer, `lua_pcall(L, 0, 1, 0)`, and if the chunk returns a table stores it (0x1400F1AA0) under the library name. `Script.LoadLibrary` (0x1400E9A70) requests the resource (0x1400CDF40) and records it in the pending-library map 0x142B65790 keyed by `fox::Path`; `LoadLibraryAsync` (0x1400E9DD0) requests it only if the path is not already in the map; `IsLoadingLibrary` (0x1400E98E0) checks the map. So `start.lua`'s `while Script.IsLoadingLibrary(x) do coroutine.yield() end` is how the boot coroutine waits. `LoadLibrary` is synchronous: `start.lua` uses each library on the next line, and in the live order no `LoadLibrary` chunk ever moves (only the async ones do) [V live + usage]. A library loads once (`TppDefine` is in `Tpp.requires` and loaded again by `start.lua`, but appears once live) and, after its chunk returns a table, the engine loads the table's `requires` list in order (`Tpp.requires` = live chunks 33–74) [V live].
 
 ## C → Lua calls per frame [V live]
 Capture `trace_m4_lua_pcall_20261022_191611` (config `Tools\FoxTrace\configs\m4_lua_pcall.cfg`, 2 runs, same callers and per-frame rates): ~49,100 `lua_pcall` per run from 249 callers, 430 `lua_resume` from 8. Steady state in free roam (last 3,000 frames):
@@ -71,18 +71,38 @@ Capture `trace_m4_lua_pcall_20261022_191611` (config `Tools\FoxTrace\configs\m4_
 | 0x141A2E6C0 (Lua `pcall` builtin) | ~4.9 | script-side `pcall`, not a C entry |
 | 0x140184650 | 2 | for each of 8 script-block slots (0x142B72C30) whose block is in state 2–3 with flags 0x20 set / 0x01 clear: `table.OnUpdate()` (0 args); slot's id in global 0x1429E4BF0 during the call |
 | 0x140ADA420 | 1 | 2 callback slots at 0x142C33368 (registry refs: function + argument), `pcall(f, arg)` — next to `ScriptUpdater.Create` 0x140AD9EA0 [I: ScriptUpdater] |
-| 0x140A1CC20 | 1 | vtable 0x1422A9710 slot 16 (class unnamed [?]): when its block is active, `OnSynchronizeSVars(id)` on a flag, then one call per changed var `(name, index)` |
+| 0x140A1CC20 | 1 | vtable 0x1422A9710 slot 16, the mission-script owner (its constructor 0x140A1B760 subscribes the script to 22 message categories: Mission, Block, Demo, GameObject, Marker, Player, Radio, Sound, Timer, Weather …) [V static; class name [?]]: when its block is active, `OnSynchronizeSVars(id)` on a flag, then one call per changed var `(name, index)` |
 
 - **Boot pump** 0x140064030: resumes the `start.lua` coroutine (registry ref at owner+0x388) every frame until it finishes (197 resumes per boot), then drops the ref. `coroutine.resume` (0x141A2EAC0) accounts for 216 more during boot.
 - Load-time: 0x14018BE10 (library chunks, 162 pcalls per boot), 0x140D5B410 (167, boot) and ~240 rare callers (messages, UI, demo).
+
+## More registration paths: plain values [V static]
+Two paths store plain values instead of closures, so FoxTrace's binding capture does not see them; `Tools\static_lua_consts.py` reads them from the exe into `Engine\tests\fixtures\m4_lua_consts.json`:
+
+- **pushnumber + setfield**: `lua_pushnumber(k)` + `lua_setfield(-2, name)` inside a registrar. Example: the `Pad` class registrar 0x14043AA70 fills the global `fox` with 140 pad/key constants (`fox.PAD_A = 1`, `PAD_B = 2`, `PAD_X = 0`, `PAD_Y = 3` …; values come from `movsd xmm1, [const]`, `movaps xmm1, xmm14/15` or `xorps`). Also `TppPadType` (4), `TppBuddyDog` (7), `GsRoute.ROUTE_ID_EMPTY`, `foxmath.PI = 3.1415927` (float).
+- **enum arrays**: a stack array of 16-B `{int value, char* name}` entries, then a loop `lua_pushlstring(name)` + `lua_pushnumber(value)` + `lua_settable(-3)` into the global named by `lua_getfield(GLOBALS, name)` (created when missing). `TppEquip` 2,439 values, `TppDamage` 523, `TppCollection` 65 (registrar 0x140A0AA60; `TppTerminal.lua` reads `TppCollection.TYPE_*` at load, before `TppCollection`'s functions are registered by `luaI_openlib` at frame 222 — the table exists earlier because of this array).
+- **Constant return tables**: `TppScriptVars.GetProgramVersionTable` (0x1409AA780) returns `{[0]=0, [1]=0, [2]=0, [4]=1, [8]=3, [16]=0, [32]=5, [64]=0, [128]=1}` (category bit → program save version).
+- **Declared vars** [V static]: `TppScriptVars.DeclareGVars` 0x140AE1C10 / `DeclareSVars` 0x140AE1C70 → 0x140AE0F70 build the globals **`gvars`** and **`svars`** (name pointers 0x142A7EC30 / 0x142A7EC38; `mvars` follows in the same table) from the script's declaration list (`name`, `type`, `value`, `arraySize`, `save`, `sync`, `category`); `DeclareSVars` runs once.
+
+## Engine-side script loads [V]
+Some chunks are loaded by natives, not by Lua: `TppSoundDaemon{…}` (constructor 0x14096F690) loads `SoundTppPlayer/Soldier/Animal.lua`; `UiDaemon.SetExecLuaFile(path)` runs its file a frame later (`TppUiPrefetchTexture.lua`); `TppCassetteTapeInfo.Setup()` → `PreinstallTape.lua` (0x140975580) next frame [I for the frame]; `Player.RegisterScriptFunc(path, …)` loads `TppPlayer2CallbackScript.lua` immediately. A UI object (vtable 0x14227F940, 0x140969A60) loads the `mbdvc_map_*_parameter.lua` tables through the script resource; `mbdvc_pause_help_table.lua` likewise — trigger [?].
+
+## Engine host: `Engine\script\` (M4 module)
+`host.py` (lupa Lua 5.1) + `vfs.py` (extracted archives, patch first; 0x1B/0x1C decode via `formats.fpk`) + `foxmath.lua`. Built from this spec and the three fixtures, no game code:
+
+- every library appears at the boot point the game registers it (`registered_after_chunks`); functions are counted stubs, the 74 stripped ones no-ops; class tables answer unknown members with stubs and are callable; `<Lib>.GetInstance` returns a per-library proxy [I]; `vars`/`cvars` are plain storage (scalars 0, other names 0-based arrays) [I];
+- natives: `Script.LoadLibrary*`/`IsLoadingLibrary` (sync, load-once, `requires`), Fox `dofile`/`loadfile`, `Fox.StrCode32`, `bit.*`, `DeclareGVars/SVars`, `GetProgramVersionTable`, the engine-side loads above, and four environment answers fixed by the live boot (`Fox.GetPlatformName` = Windows, `GrTools.GetDeviceName` = directx11, `AssetConfiguration.IsDiscOrHddImage` = true, `TppSystemUtility.GetCurrentGameMode` = TPP);
+- boot = class scripts → `init.lua` → `Tpp/start.lua` coroutine resumed per frame (deferred loads, then async libraries, then resume).
+
+**Result (test `Engine\tests\test_m4_script_host.py`):** the boot runs to the end in 34 frames with **no Lua error** and loads **108 chunks in exactly the live order** (live chunks 0–111 minus the 4 UI tables above). API surface touched: 346 distinct functions, 15 native, 3 stripped, 328 stubs (5 %). The live boot continues with the init mission (`init_sequence.lua`, `mission_main.lua`, location scripts): those come from mission packs loaded by the block system — next step.
 
 ## FoxTrace lesson: enable hooks together
 FoxTrace installs hooks on its own thread while the game keeps booting. With 16 hooks enabled one by one (each `MH_EnableHook` suspends all threads) the late hooks went live after the registrations they were meant to see (capture 3: `fox_class_add` 0 calls, early stock libs missing, runs disagreeing). Fixed 2026-10-22: create all hooks, then one `MH_EnableHook(MH_ALL_HOOKS)` → capture 4 complete and identical over 2 runs. New arg types for Fox strings: `S` (`char**`), `T` (`fox::String*`), `n`/`N` (`int*`/`double*`); per-hook `skip=<caller VAs>`.
 
 ## Open [?]
-- Class behind vtable 0x1422A9710 (per-frame `OnSynchronizeSVars`), and the ~240 rare `lua_pcall` callers (message handlers).
-- Exact wait semantics of `Script.LoadLibrary` (blocks, or only queues like the async version?) and when the resource system runs 0x14018BE10.
-- Which global the declared-vars tables (0x140AE0F70: `__rt`, `__as`, `__index`, `__newindex`) become (`svars` / `gvars` / `mvars`).
+- Mission load: how the init mission's packs and scripts (`init_sequence.lua`, `mission_main.lua`, location scripts) are loaded (`TppMission` / block system), and the pack-scoped VFS that needs.
+- Trigger of the UI parameter tables (UI object vtable 0x14227F940) and the class name behind vtable 0x1422A9710.
+- Return values of the 328 stubbed functions the boot touches (the host returns nil).
 
 ## Evidence
 | VA | Proves | Tag |
@@ -97,6 +117,10 @@ FoxTrace installs hooks on its own thread while the game keeps booting. With 16 
 | 0x141A18520 / 0x141A182B0 | chunk loader, 0x1B/0x1C XOR (+inflate) decoding | [V] |
 | 0x140063C60 | boot driver: init.lua, start.lua as coroutine | [V] |
 | trace_m4_lua_bindings4_20261022_190858 | binding map, 2 identical runs | [V live] |
+| 0x14043AA70 / 0x140A0AA60 | plain-value registrars: `fox` pad constants, enum arrays (`TppCollection`) | [V] |
+| 0x140AE1C10 / 0x140AE1C70 | DeclareGVars / DeclareSVars build `gvars` / `svars` | [V] |
+| 0x1409AA780 | GetProgramVersionTable constant table | [V] |
+| test_m4_script_host.py | host boot: 108 chunks in live order, no error | [V] |
 | trace_m4_lua_pcall_20261022_191611 | per-frame C → Lua callers (OnUpdate ×2, ScriptUpdater, svars sync), boot pump | [V live] |
 | trace_m4_lua_boot_20261022_182621 | boot chunk order (170), 147 openlib calls, 11 metatables, identical over 2 runs | [V live] |
 

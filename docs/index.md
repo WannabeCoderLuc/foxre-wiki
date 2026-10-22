@@ -67,10 +67,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-10-22: **M4 binding map** (4 FoxTrace captures, hook-race fix): `m4_lua_bindings.json` 399 libs / 5,532 bindings, static oracle test; chunk loading C side, per-frame C → Lua callers. mod-baseline re-snapshot without V Framework.
 - 2026-10-22: **MCP 1.5.0** (11-item tool upkeep, selftest 39/39, FoxTrace 2) + **M4 started**: Lua layout [V], live boot capture (170 chunks, 147 libs, 2 identical runs) → `m4_lua_boot.json`, [`docs\engine\ScriptHost.md`](engine/script-host.md). Nexus: IH/IHHook current.
 - 2026-10-22: **M3 PASS**: FoxTrace live capture (2 identical boots) → `m3_frame_trace.json`; `Engine\runtime\` reproduces updater order + message sequence; suite 28/28. Site tables fixed.
 - 2026-10-21: M3 specs: scheduler + messages re-verified from the exe ([`docs\engine\Scheduler.md`](engine/scheduler.md), `Messages.md`); 3 FoxRe claims corrected.
 - 2026-10-21: **M2 PASS**: DataSet reader/writer decoded (magic checked, ASCII version, instanceSize, classVersion check); live gate 17/17 identifier targets match the game. Pages site + text statuses set up.
-- 2026-10-21: M2 entity graph (static): s10151 + link closure → 8,669 typed entities, all refs resolved or categorised ([`docs\engine\Entities.md`](engine/entities.md)).
 
 [Full session log](status/log.md)

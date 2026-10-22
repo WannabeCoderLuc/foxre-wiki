@@ -54,6 +54,7 @@ SITE = [
         ("Entities and DataSet loading", "entities", "docs/engine/Entities.md", "Typed entity graph, references, how the runtime loads a DataSet, live gate."),
         ("Scheduler", "scheduler", "docs/engine/Scheduler.md", "GameObjectManager, type slots, the per-frame update."),
         ("Messages and commands", "messages", "docs/engine/Messages.md", "MessageBus, SendCommand and SendMessage."),
+        ("Script host", "script-host", "docs/engine/ScriptHost.md", "The Lua 5.1 runtime, boot script order and native library registration (M4, in progress)."),
         ("Core architecture notes (2026-10-19)", "core-architecture", "docs/ENGINE.md", "Earlier research notes on boot, Quark systems and the class registry; partly superseded, see banners."),
     ]),
     ("File formats", "formats", "Byte-level specifications of the game's file formats. Every format listed here is "
@@ -77,7 +78,7 @@ NOT_PUBLISHED = {"docs/SAHELAN.md", "docs/BATTLEFIELD.md", "docs/PROBES.md", "do
 WIKI_NAMES = {
     "Home": None, "Roadmap": "docs/ROADMAP.md", "Session-Log": "docs/LOG.md", "Engine-Modules": "Engine/README.md",
     "Engine-Reflection": "docs/engine/Reflection.md", "Engine-Entities": "docs/engine/Entities.md",
-    "Engine-Scheduler": "docs/engine/Scheduler.md", "Engine-Messages": "docs/engine/Messages.md",
+    "Engine-Scheduler": "docs/engine/Scheduler.md", "Engine-Messages": "docs/engine/Messages.md", "Engine-ScriptHost": "docs/engine/ScriptHost.md",
     "Engine-Core-Architecture": "docs/ENGINE.md", "Format-QAR": "docs/formats/QAR.md", "Format-FPK": "docs/formats/FPK.md",
     "Format-FOX2": "docs/formats/FOX2.md", "Format-FRT": "docs/formats/FRT.md", "Format-NAV2": "docs/NAVMESH.md",
     "MCP-Server": "mgsv_unified_server/AI_GUIDE.md", "Tooling": "docs/TOOLING.md", "Background": "docs/BACKGROUND.md",

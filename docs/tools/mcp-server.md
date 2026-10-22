@@ -4,7 +4,7 @@ Single MCP endpoint for MGSV:TPP 1.0.15.4 EN work: static RE of `mgsvtpp.exe`, f
 
 - Entry: `server\mgsv_unified_server.py` (stdio JSON-RPC, protocol 2024-11-05), run by `C:/Python313/python.exe`, registered in `..\.mcp.json` (+ `..\.agents\mcp_config.json`), enabled in `..\.claude\settings.local.json`. Restart the Claude session after changing tool schemas.
 - Self-test: `python mgsv_unified_server\server\mgsv_unified_server.py --selftest` (must stay all-pass).
-- Version 1.4.0, 30 tools. History: §8.
+- Version 1.5.0, 34 tools. History: §8. Parameter names are forgiving: `va` / `address` / `query` / `name` … map to the tool's main parameter, plus tool-specific aliases (e.g. `offset` → `offset_hex`); unknown names fail with the list of accepted ones.
 
 ## 1. Which tool first
 | Question | Start | Then |
@@ -20,7 +20,9 @@ Single MCP endpoint for MGSV:TPP 1.0.15.4 EN work: static RE of `mgsvtpp.exe`, f
 | Sahelan code/data | `sahelan_inventory` | |
 | fox2 entities/props | `re_fox2` | |
 | Navmesh | `navmesh_inspect` → edit → `navmesh_validate` (ship only `VALID`) | |
-| Live game | `game_status` → `game_send_keys` / `game_pipe_lua` / `game_screenshot` | restore r5c after any run |
+| Live game | `game_status` → `game_session(boot)` → `game_send_keys` / `game_pipe_lua` / `game_screenshot` → `game_session(stop)` | `game_plugin(restore)` after any run |
+| Ground-truth capture | `trace_capture(run, config, seconds, runs)` → `trace_capture(status)` | `fox-ground-truth` skill |
+| Raw exe bytes / exact vtable slots | `re_bytes(va, n)` | `re_class(addr, exact=true)` |
 
 `mgsv_query_knowledge(all, q)` samples every category when you don't know where something lives.
 
@@ -38,12 +40,13 @@ Single MCP endpoint for MGSV:TPP 1.0.15.4 EN work: static RE of `mgsvtpp.exe`, f
 
 | Tool | Inputs | Notes |
 |---|---|---|
-| `re_decompile` | `va_or_name` | Ghidra server; FUN_ → names; hashes `/*"name"*/` (`s32` 32-bit match, `~` unverified candidate) |
+| `re_decompile` | `va_or_name`, `max_lines` | Ghidra server; FUN_ → names; hashes `/*"name"*/` (`s32` 32-bit match, `~` unverified candidate) |
 | `re_decompile_batch` | `va_list`, `grep`, `head_lines` | `.c` → `data\re\decomp\mcp\` |
-| `re_xrefs` | `va_or_name` | callers, refs, vtable slots, callees, hashes, ABI |
-| `re_class` | name / vt / ctor / QI hash | vtables, ctors, slot map, `[rcx+disp]` fields |
-| `re_field_access` | `offset_hex`, `region` (`sahelan\|nav\|action\|indexed`, `lo-hi`, function) | readers/writers |
-| `re_hash` | `query`, `fox2` | ≤12 s scan |
+| `re_xrefs` | `va_or_name`, `abi`, `limit` | callers, refs, vtable slots, callees, hashes, ABI |
+| `re_class` | name / vt / ctor / QI hash, `exact` | vtables, ctors, slot map, `[rcx+disp]` fields; an address inside a vtable run is dumped from exactly that address (pristine exe), never snapped to the run start |
+| `re_field_access` | `offset_hex`, `region` (default `all` = whole exe; `sahelan\|nav\|action\|indexed`, `lo-hi`, function), `byte_only`, `ctx`, `limit` | readers/writers from the static_map `fields` index (whole `.xtext`, 1.28 M operands, ranges in `meta.fields_ranges`), < 0.1 s |
+| `re_hash` | `query`, `fox2`, `limit` | ≤12 s scan; GameObject types: `type:<index>`, `id:<goid>`, `GAME_OBJECT_TYPE_*` / short name (shared resolver `Tools\foxnames.py`) |
+| `re_bytes` | `va`, `n` (≤4096), `disasm` | hex dump of the pristine exe + every qword pointing into the image, named |
 | `re_fox2` | `query_type` (`classes\|class\|props\|value\|files\|file\|entity`), `target` (`entity` = `path#id`) | 5.4 GB fox2.db |
 | `re_sendcommand` | `command`, `handler`, `context` | id → handler → branch |
 | `re_closure` | `va`, `depth` 1–6, `mode` callees\|callers\|both, `limit` | |
@@ -52,7 +55,11 @@ Single MCP endpoint for MGSV:TPP 1.0.15.4 EN work: static RE of `mgsvtpp.exe`, f
 
 **Docs:** `wiki_search(query)`, `wiki_read(article_name)` (178 community articles, not authoritative), `vframework_guide(topic)`, `vframework_search(query, mode=grep|commands|constants|address)` (AddressSet_day3900: first block EN, second JP).
 **Navmesh:** `navmesh_inspect(file_path)`, `navmesh_validate(file_path)`.
-**Live:** `game_status` (PID, focus, SHA1 + build tag of installed DLLs), `game_screenshot(output_path)`, `game_send_keys(sequence)` e.g. `"enter, wait 1000, NUMPAD8"`, `game_pipe_lua(lua_code)` (IHHook pipe).
+**Live:** `game_status` (PID, focus, every file in `plugins\` + `mod\modules\` with SHA1 + tag, diffed against the profiles), `game_screenshot(output_path)`, `game_send_keys(sequence)` e.g. `"enter, wait 1000, NUMPAD8"`, `game_pipe_lua(lua_code)` (IHHook pipe).
+
+- `game_session(action=boot|stop|status, mission=30010, timeout=300)`: `Tools\mgsv_ctl.py` boot (Steam launch → Enter through notices/logos/title CONTINUE until Lua reports the mission, ~75–90 s, takes keyboard focus) / stop (normal close, forced after 30 s).
+- `game_plugin(action=status|apply|deploy|restore, profile, name, config)`: profiles + overlays from `..\Tools\game_baseline.json` (`Tools\game_profiles.py`, also a CLI). `engine-clean` = only the files SnakeBite lists for IHHook + Infinite Heaven (no SahelanControl, no V Framework DLL/Lua, no Sahelan modules); `mod-baseline` = the 2026-10-22 setup (r5c + V_F 1.6), the restore target. `deploy foxtrace` applies the overlay's profile, then copies `FoxTrace.dll` + `FoxTrace.cfg`; `restore` archives logs + overlay files to `Memory\research\<name>_<time>\` and re-applies a profile. Nothing is deleted: files leaving the game go to `Backups\game_profiles\stash\<sha1>\` (content-addressed) and come back from there. Game must be closed.
+- `trace_capture(action=run|status|compare, config, seconds=60, runs=2, name, profile=engine-clean, mission, distill, out, logs)`: `Tools\trace_capture.py` in the background (run returns at once): per run deploy FoxTrace → boot → wait → stop → archive into `trace_<name>_<time>\runN\`; then compare (M3 updater/group/raise events; FoxTrace 2 per-hook counts, order, args with heap pointers masked, callers) → `summary.txt` / `summary.json`. The game always ends on `mod-baseline`, also after a failure. FoxTrace 2 config (header of `Tools\FoxTrace\foxtrace.cpp`): `builtin m3`, `hook <name> <va> <args> [max=N]` with args `i f d s L` per Win64 slot (`L` = lua_State*: nargs + first 4 arg types/values; layout [V] static, see [`..\docs\TOOLING.md`](tooling.md)), `heartbeat`, `maxlines`. Off-game stub check: `Tools\FoxTrace\build.ps1 -Test`.
 **Adapters:** `atomizer_call(tool_function, arguments)` (`Tools\atom.py`), `websift_call(tool_name, arguments)` (`Tools\sift.mjs`).
 
 **Engine oracles** (`server\oracle_tools.py`; machine-decidable PASS/FAIL, see [`..\docs\TOOLING.md`](tooling.md))
@@ -60,10 +67,10 @@ Single MCP endpoint for MGSV:TPP 1.0.15.4 EN work: static RE of `mgsvtpp.exe`, f
 - `re_emulate(va, args, memory, max_insns)`: one function of the `GameBackup` `mgsvtpp.exe` in unicorn; sections mapped from the file (lief, relocs not parsed). Win64 ABI: args `int | "0x.." | "@buf" | "@buf+off" | "len:buf" | {"f": x} | {"f32": x}` → rcx/rdx/r8/r9 or xmm0-3 by position, the rest on the stack; `memory` = `[{name, hex|str|size, nul, align}]`. Returns status `ok|refused|insn_limit|error`, rax (+ u48/eax), xmm0, buffers after the call, insn count, writes into image sections (= not pure). Refused: execution outside `.xtext`, any touch of `.xdata`/`.ecode`/`.trace` (never mapped), import calls (IAT slots → trap addresses, reported by name), unmapped reads (gs:/TEB, heap).
   StrCode64: `0x141A09AC0(s, strlen)` (`ff_stringid_hash_n`) → `0x141A09770` `fox::StrCode64_Seeded(s, strlen+1, ((int8)s[0]<<16)+strlen)` (signed first byte). Body: CityHash 1.0.3 for ≤ 64 hashed bytes, CityHash 1.1 long-string loop above (0x141A08CB0 unaligned / 0x141A091F0 aligned, picked by pointer alignment). [V] `Tools\foxhash.py` == game for byte lengths 0–300 incl. non-ASCII (fixed 2026-10-21; verifier `Engine\tests\test_strcode64_oracle.py`). The game code is the oracle.
 
-- `engine_verify(target, relock)`: pytest over `..\Engine\tests\` (or one file / dir / node id), junit → counts, `PASS`/`FAIL`. `Engine\tests\verifiers.lock.json` holds each verifier's sha256: changed/removed verifiers are reported and the lock is kept until `relock=true` (review first); new files are locked automatically.
+- `engine_verify(target, quick, relock)`: `quick=true` deselects the all-game-file verifiers (marker `slow` from `Engine\tests\conftest.py`: fox2/qar/fpk round-trips; ~30 s instead of ~10 min). pytest over `..\Engine\tests\` (or one file / dir / node id), junit → counts, `PASS`/`FAIL`. `Engine\tests\verifiers.lock.json` holds each verifier's sha256: changed/removed verifiers are reported and the lock is kept until `relock=true` (review first); new files are locked automatically.
 - `lua51_run(code, files, stubs, max_insns)`: lupa Lua 5.1 without os/io/debug/package/require/dofile/loadfile/string.dump, no Python attribute access, text chunks only (bytecode refused), instruction limit. `files` = vanilla Lua (Assets-relative path or unique substring), each return value bound to the file's base name. `stubs` auto-creates unknown capitalised globals (a stub used as a number = 0); real `StrCode32/64` (+ `Fox.`), `bit` (LuaBitOp). Returns output, returns, errors, loaded, stubbed_globals.
 
-Boundaries: paths resolve inside `C:\Users\Luc\Desktop\MetalGear` (traversal rejected). Only `game_send_keys`, `game_pipe_lua`, `game_screenshot` mutate; knowledge tools write only `data\knowledge\` and `logs\`; `engine_verify` writes `..\Engine\tests\verifiers.lock.json` and `logs\engine_verify_junit.xml`.
+Boundaries: paths resolve inside `C:\Users\Luc\Desktop\MetalGear` (traversal rejected). Only `game_send_keys`, `game_pipe_lua`, `game_screenshot`, `game_session`, `game_plugin`, `trace_capture` mutate (the last two only `plugins\` + `mod\modules\` of the closed game, through the stash); knowledge tools write only `data\knowledge\` and `logs\`; `engine_verify` writes `..\Engine\tests\verifiers.lock.json` and `logs\engine_verify_junit.xml`.
 
 ## 3. Evidence levels
 - **Hash status:** `verified` (curated `strcode_bruteforced.tsv`, 48-bit StrCode64 match at a code/data site, or SendCommand id), `derived32` (low 32 bits of a verified name), `derived64` (StrCode64 of a command id), `site-match32`, `lua_literal` (unverified), `lua_literal+site` (also in code; still check). Record names only after verifying.
@@ -121,11 +128,13 @@ Ingest formats: TSV `address|addr|va`+name → symbols; `strcode*|hash`+name →
 |---|---|
 | `re_decompile` connection refused | `python Tools\ghidra_client.py start` |
 | "DB not built" / stale results | `mgsv_update_knowledge_db(mode="sync")`; `mode="status"` |
-| `game_send_keys` window not found | `game_status`; `python Tools\mgsv_ctl.py boot` |
+| `game_send_keys` window not found | `game_status`; `game_session(boot)` |
+| Live files differ from a profile | `game_status` lists missing/changed/extra; `game_plugin(restore)` (game closed) |
 | `navmesh_validate` mismatch | run nav2lib rebuild helpers before serialize |
 | tool missing in client | restart the Claude session |
 
 ## 8. History
+- 1.5.0 (2026-10-22): tool upkeep (11-item backlog in [`..\docs\TOOLING.md`](tooling.md)): `game_status` diffs every file against manifest profiles; new `game_plugin`, `game_session`, `trace_capture`, `re_bytes`; `re_class` exact mode; parameter aliases on every tool; `re_field_access` default whole exe (static_map index over all of `.xtext`); `engine_verify(quick)`; `re_hash` GameObject type names + shared resolver `Tools\foxnames.py`; FoxTrace 2 (config-driven entry hooks, stub tested off-game). Selftest +8 cases incl. `_upkeep_checks`.
 - 1.4.0 (2026-10-21): engine oracles `re_emulate`, `engine_verify`, `lua51_run` (`server\oracle_tools.py`); `..\Engine\tests\` (nav2 round-trip verifier + sha256 lock); selftest 31/31 with real assertions (`_oracle_checks`: StrCode64 x5 vs foxhash, refusals, Lua sandbox).
 - 1.3.1 (2026-10-19): FoxRe review + ingest (`foxre` source, raw48 hash sites).
 - 1.3.0 (2026-10-19): dedicated workspace `mgsv_unified_server\`, RE data moved to `data\re`, `mgsv_paths.py`, knowledge engine (4 `mgsv_*` tools). Undo: `changes\CR-20261019-01_workspace\`.

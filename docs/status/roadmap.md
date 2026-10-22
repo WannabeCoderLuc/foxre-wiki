@@ -39,7 +39,9 @@ Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 - Open (not gate-blocking): updater identities, who walks the 4 type groups, when the GameObject listener fires, updater removal path, >32-updater sort.
 - **Gate passed:** live fixtures for the tick order (every captured updater-vector change, ties included) and the boot → free-roam message sequence reproduced by the engine's scheduler/bus model.
 
-## M4 Script host [PLANNED] — Lua 5.1 + Fox/Tpp API
+## M4 Script host [IN PROGRESS] — Lua 5.1 + Fox/Tpp API
+- Spec [`docs\engine\ScriptHost.md`](../engine/script-host.md) (2026-10-22): Lua runtime = stock 5.1 except TString chars behind a pointer [V]; live boot capture (FoxTrace 2): 170-chunk boot order, 147 library registrations, identical over 2 runs → `Engine	ests
+ixtures\m4_lua_boot.json`.
 - Lua 5.1 host (lupa prototype → embedded), the Fox/Tpp/GameObject API surface (264 native bindings, 2,433 used API functions in `mgsv_query_knowledge(lua_api)`), StrCode in Lua.
 - **Gate:** `TppDefine`, `TppMain` and one mission script load and run their init with no unstubbed API calls (coverage % reported by `lua51_run`), API call log matches a live capture.
 

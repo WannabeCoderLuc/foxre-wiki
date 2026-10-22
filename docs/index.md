@@ -11,7 +11,7 @@ hide:
 
 PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &middot; every claim backed by a pass/fail test
 
-**4 of 10 milestones passed** &middot; current: ****
+**4 of 10 milestones passed** &middot; current: **M4 Script host**
 
 </div>
 
@@ -43,7 +43,7 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 | M1 | Data layer | read every file container and the core data formats | <span class="status pass">PASS</span> |
 | M2 | Entity & reflection core | fox2 → live typed entity graph | <span class="status pass">PASS</span> |
 | M3 | Runtime core | scheduler, messages, GameObjects | <span class="status pass">PASS</span> |
-| M4 | Script host | Lua 5.1 + Fox/Tpp API | <span class="status planned">PLANNED</span> |
+| M4 | Script host | Lua 5.1 + Fox/Tpp API | <span class="status in-progress">IN PROGRESS</span> |
 | M5 | World | terrain, collision, navigation, routes | <span class="status planned">PLANNED</span> |
 | M6 | Assets & rendering | textures, models, materials, renderer | <span class="status planned">PLANNED</span> |
 | M7 | Animation | clips, motion graphs, rigs | <span class="status planned">PLANNED</span> |
@@ -67,10 +67,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-10-22: **MCP 1.5.0** (11-item tool upkeep, selftest 39/39, FoxTrace 2) + **M4 started**: Lua layout [V], live boot capture (170 chunks, 147 libs, 2 identical runs) → `m4_lua_boot.json`, [`docs\engine\ScriptHost.md`](engine/script-host.md). Nexus: IH/IHHook current.
 - 2026-10-22: **M3 PASS**: FoxTrace live capture (2 identical boots) → `m3_frame_trace.json`; `Engine\runtime\` reproduces updater order + message sequence; suite 28/28. Site tables fixed.
 - 2026-10-21: M3 specs: scheduler + messages re-verified from the exe ([`docs\engine\Scheduler.md`](engine/scheduler.md), `Messages.md`); 3 FoxRe claims corrected.
 - 2026-10-21: **M2 PASS**: DataSet reader/writer decoded (magic checked, ASCII version, instanceSize, classVersion check); live gate 17/17 identifier targets match the game. Pages site + text statuses set up.
 - 2026-10-21: M2 entity graph (static): s10151 + link closure → 8,669 typed entities, all refs resolved or categorised ([`docs\engine\Entities.md`](engine/entities.md)).
-- 2026-10-21: M2 reflection: game type DB dumped live (1,153 classes, 6,062 props) → `Engine\core\typedb.py`, [`docs\engine\Reflection.md`](engine/reflection.md); matches all DataSets. Game run restored to baseline.
 
 [Full session log](status/log.md)

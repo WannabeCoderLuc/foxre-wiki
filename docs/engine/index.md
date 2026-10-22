@@ -24,6 +24,10 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
     MessageBus, SendCommand and SendMessage.
 
+-   **[Script host](script-host.md)**
+
+    The Lua 5.1 runtime, boot script order and native library registration (M4, in progress).
+
 -   **[Core architecture notes (2026-10-19)](core-architecture.md)**
 
     Earlier research notes on boot, Quark systems and the class registry; partly superseded, see banners.

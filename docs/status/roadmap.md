@@ -54,7 +54,10 @@ Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 - Pack/block system, async resource requests, the mission load flow (`start2nd.lua` / `TppMission` / block groups), pack-scoped VFS (mission scripts become visible only once their pack is loaded). Spec [`docs\engine\Resources.md`](../engine/resources.md).
 - [x] Mission load decoded (2026-10-23, [`docs\engine\Resources.md`](../engine/resources.md)): `Mission.LoadLocation/LoadMission` latch requests; location loader + mission block controller (vtable 0x1422A9710, from `TppSimpleMissionBlockControllerData`) ask the Lua package-path functions; `.lua` entries of loaded packages are script resources (reverse entry order); `OnAllocate`/`OnInitialize` coroutines; `mvars` reset by the mission object [V].
 - [x] `Engine\resources\` (loader, FSTB common-package header) + pack-scoped `Engine\script\vfs.py`: host loads **46 chunks in the exact live order** from live chunk 112 (init → title 40010 → f30010, minus 9 UI tables), block events match (`test_m5_mission_load.py`).
-- Open for the gate: UI table trigger (live 114–122), script blocks reinforce/quest/animal (live 167–169, need the mission scripts to finish `OnAllocate`/`OnInitialize` → M4 record/replay).
+- [x] Script blocks (2026-10-23): 8-slot system decoded (`ScriptBlock.*`, slot update 0x140184340, OnAllocate/OnInitialize/OnUpdate/OnTerminate) → `Engine
+esourceslocks.py`; svars change log → `OnChangeSVars`, mission `OnUpdate`, save boundary `LoadVarsFromSlot` (live save image), 2nd luaret capture (663 natives) + IH Lua trace. Host loads **49/49 chunks from live 112 to the end of the boot** (UI tables excluded), script blocks quest / reinforce / animal in vanilla order, slots and `ScriptBlock.Load` calls as live (`test_m5_mission_load.py`, `test_m5_script_blocks.py`). Live tail order differs only by IH's patched `f30010.fpkd` [V].
+
+- Open for the gate: UI table trigger (live 114–122, 9 chunks).
 - **Gate:** chunk + block event order from live chunk 112 to the end of the boot (`m4_lua_boot.json` chunks 112–169) reproduced by the host.
 
 ## Mod checkpoint (after M5) — short Option B sprint

@@ -35,7 +35,9 @@ Every milestone ends on a test a computer decides: pass or fail. A file reader o
 | M1 Data layer | read every archive, package and core data file | <span class="status pass">PASS</span> |
 | M2 Entities and reflection | turn level data into typed, connected objects | <span class="status pass">PASS</span> |
 | M3 Runtime core | how a frame runs: object manager, updates, messages | <span class="status pass">PASS</span> |
-| M4 to M9 | Lua host, world, rendering, animation, gameplay, playable slice | <span class="status planned">PLANNED</span> |
+| M4 Script host | run the game's own Lua scripts against recorded engine answers | <span class="status in-progress">IN PROGRESS</span> |
+| M5 Resources and mission load | packs, blocks and how a mission gets loaded | <span class="status in-progress">IN PROGRESS</span> |
+| M6 to M11 | world, animation, gameplay core, gameplay extended, rendering, playable slice | <span class="status planned">PLANNED</span> |
 
 ## Reading order
 1. [Game data: from disk to objects](game-data.md)
@@ -45,4 +47,4 @@ Every milestone ends on a test a computer decides: pass or fail. A file reader o
 5. [Glossary](glossary.md)
 
 ---
-<small>Source: `docs/guide/Overview.md` in the project repository &middot; generated 2026-10-22.</small>
+<small>Source: `docs/guide/Overview.md` in the project repository &middot; generated 2026-10-23.</small>

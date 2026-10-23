@@ -28,6 +28,10 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
     The Lua 5.1 runtime, boot script order and native library registration (M4, in progress).
 
+-   **[Resources and mission load](resources.md)**
+
+    Packages, blocks and how the game loads a location and a mission (M5, in progress).
+
 -   **[Core architecture notes (2026-10-19)](core-architecture.md)**
 
     Earlier research notes on boot, Quark systems and the class registry; partly superseded, see banners.

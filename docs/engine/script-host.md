@@ -71,7 +71,7 @@ Capture `trace_m4_lua_pcall_20261022_191611` (config `Tools\FoxTrace\configs\m4_
 | 0x141A2E6C0 (Lua `pcall` builtin) | ~4.9 | script-side `pcall`, not a C entry |
 | 0x140184650 | 2 | for each of 8 script-block slots (0x142B72C30) whose block is in state 2–3 with flags 0x20 set / 0x01 clear: `table.OnUpdate()` (0 args); slot's id in global 0x1429E4BF0 during the call |
 | 0x140ADA420 | 1 | 2 callback slots at 0x142C33368 (registry refs: function + argument), `pcall(f, arg)` — next to `ScriptUpdater.Create` 0x140AD9EA0 [I: ScriptUpdater] |
-| 0x140A1CC20 | 1 | vtable 0x1422A9710 slot 16, the mission-script owner (its constructor 0x140A1B760 subscribes the script to 22 message categories: Mission, Block, Demo, GameObject, Marker, Player, Radio, Sound, Timer, Weather …) [V static; class name [?]]: when its block is active, `OnSynchronizeSVars(id)` on a flag, then one call per changed var `(name, index)` |
+| 0x140A1CC20 | 1 | vtable 0x1422A9710 slot 16, the mission-script owner (the mission block controller, `Resources.md`; its constructor 0x140A1B760 subscribes it to 24 message categories: Mission, Block, Demo, GameObject, Marker, Player, Radio, Sound, Timer, Weather …) [V static; class name [?]]: when its block is active, `OnSynchronizeSVars(id)` on a flag, then one call per changed var `(name, index)` |
 
 - **Boot pump** 0x140064030: resumes the `start.lua` coroutine (registry ref at owner+0x388) every frame until it finishes (197 resumes per boot), then drops the ref. `coroutine.resume` (0x141A2EAC0) accounts for 216 more during boot.
 - Load-time: 0x14018BE10 (library chunks, 162 pcalls per boot), 0x140D5B410 (167, boot) and ~240 rare callers (messages, UI, demo).
@@ -96,13 +96,22 @@ Some chunks are loaded by natives, not by Lua: `TppSoundDaemon{…}` (constructo
 
 **Result (test `Engine\tests\test_m4_script_host.py`):** the boot runs to the end in 34 frames with **no Lua error** and loads **108 chunks in exactly the live order** (live chunks 0–111 minus the 4 UI tables above). API surface touched: 346 distinct functions, 15 native, 3 stripped, 328 stubs (5 %). The live boot continues with the init mission (`init_sequence.lua`, `mission_main.lua`, location scripts): those come from mission packs loaded by the block system — next step.
 
+## Record/replay of native answers (M4 gate, started 2026-10-23)
+- **Thunks** [V static]: class functions run through 0x1400F6630 (`target = *(void**)lua_touserdata(L, upvalueindex(1))`, called as `target(ctx)`), builder functions with a C++ target through 0x141A154D0 (`target = lua_touserdata(L, upvalueindex(1))`, ctx = `{L, gettop, nret}`); both return the result count. Most bindings are plain `lua_CFunction`s and bypass both.
+- **FoxTrace 3 `luaret`** (`Tools\FoxTrace\foxtrace.cpp`): typed detour per hook (up to 1024); kinds `c` / `b` for the two thunks, `d` for a `lua_CFunction` itself (calls whose argument does not look like a `lua_State` pass through). Logs target VA, arguments and the returned stack values for the first K calls per (target, argument list). Generator `Tools\FoxTrace\make_luaret_cfg.py` (host stubs + their libraries), distiller `Tools\FoxTrace\distill_returns.py` → `Engine\tests\fixtures\m4_lua_returns.json`.
+- Captures (profile engine-clean, cold boot → f30010, 45 s): `trace_m4_luaret_20261023_110720` (thunk hooks, 387 returns per run) and `trace_m4_luaret_direct_20261023_111747` (2 thunk + 1,022 direct hooks from `configs\m4_luaret.cfg`, 2,919 returns per run, 427 hooks hit); each 2 runs identical → **536 binding names, 534 stable** in `m4_lua_returns.json`. 12 hooks did not install (names > 63 chars broke the config tokenizer; fixed in the parser after the run). The first attempt crashed the game for the same reason (VA parsed as 0 → `EnableAll` read an unmapped target; read now SEH-guarded).
+- Host (`ScriptHost(replay=load_returns())`): a stubbed function with recorded answers replays them per argument list in call order, then repeats the last; userdata results become the host's stub proxy, table results an empty table [I]; `GetInstance` stays a proxy. Test `test_m4_replay.py`.
+- **Coverage of the M5 scenario** (boot → init → title 40010 → f30010 + 300 frames): without replay 360 functions called, 20 native, 3 stripped, 337 stubs (6.4 % answered); the f30010 `OnAllocate` waits forever in `TppMission.WaitFinishMissionEndPresentation` on `TppUiCommand.IsEndMissionTelop()` (stub nil; live answer `true` [V]). **With replay: 387 called, 20 native, 319 replayed, 6 stripped, 48 stubs (89.1 % answered); `OnAllocate` and `OnInitialize` finish for 40010 and 30010.**
+- Remaining failure: table-valued natives (`Vehicle.svars{instanceCount=}` in `TppEnemy` svars declaration) are captured only as "a table", so the declaration list is empty → `svars` undeclared in `OnInitialize` (`TppScriptBlock.ClearSavedScriptBlockInfo`). Next: shallow table serialisation in `luaret`, and the 48 remaining stubs (mostly class-instance methods `UiDaemon:`, `PhDaemon:`, `GrTools:`).
+
 ## FoxTrace lesson: enable hooks together
 FoxTrace installs hooks on its own thread while the game keeps booting. With 16 hooks enabled one by one (each `MH_EnableHook` suspends all threads) the late hooks went live after the registrations they were meant to see (capture 3: `fox_class_add` 0 calls, early stock libs missing, runs disagreeing). Fixed 2026-10-22: create all hooks, then one `MH_EnableHook(MH_ALL_HOOKS)` → capture 4 complete and identical over 2 runs. New arg types for Fox strings: `S` (`char**`), `T` (`fox::String*`), `n`/`N` (`int*`/`double*`); per-hook `skip=<caller VAs>`.
 
 ## Open [?]
-- Mission load: how the init mission's packs and scripts (`init_sequence.lua`, `mission_main.lua`, location scripts) are loaded (`TppMission` / block system), and the pack-scoped VFS that needs.
-- Trigger of the UI parameter tables (UI object vtable 0x14227F940) and the class name behind vtable 0x1422A9710.
-- Return values of the 328 stubbed functions the boot touches (the host returns nil).
+- Mission load: answered 2026-10-23 in `Resources.md` (location loader, mission block controller, script resources, `OnAllocate`/`OnInitialize` coroutines, pack-scoped VFS).
+- Class behind vtable 0x1422A9710: the mission block controller created by the `TppSimpleMissionBlockControllerData` DataBody (`Resources.md`) [V identity; class name "TppSimpleMissionBlockController" [I]].
+- UI parameter tables (`mbdvc_map_*_parameter.lua`, `mbdvc_pause_help_table.lua`): (re)loaded by slot 0 (0x140969A60) of the object with vtable 0x14227F940, built inside a large UI owner (vtable 0x14226ED40, ctor 0x14091FC60, created from 0x140920F90); what triggers the two reloads after the init mission (live chunks 114–122) is still open. `emblem_list.lua` comes from 0x1405D0BF0 (emblem setup) [V static].
+- Return values of the stubbed functions the boot touches (the host returns nil): record/replay capture with FoxTrace 3 `luaret` hooks (M4 gate).
 
 ## Evidence
 | VA | Proves | Tag |
@@ -125,4 +134,4 @@ FoxTrace installs hooks on its own thread while the game keeps booting. With 16 
 | trace_m4_lua_boot_20261022_182621 | boot chunk order (170), 147 openlib calls, 11 metatables, identical over 2 runs | [V live] |
 
 ---
-<small>Source: `docs/engine/ScriptHost.md` in the project repository &middot; generated 2026-10-22.</small>
+<small>Source: `docs/engine/ScriptHost.md` in the project repository &middot; generated 2026-10-23.</small>

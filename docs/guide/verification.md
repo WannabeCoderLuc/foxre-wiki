@@ -31,4 +31,4 @@ Statements in the reference pages carry a tag:
 - No game files, extracted data or decompiled code are published.
 
 ---
-<small>Source: `docs/guide/Verification.md` in the project repository &middot; generated 2026-10-22.</small>
+<small>Source: `docs/guide/Verification.md` in the project repository &middot; generated 2026-10-23.</small>

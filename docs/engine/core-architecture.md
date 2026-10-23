@@ -696,7 +696,7 @@ All additions have been verified via `foxhash.py` StrCode64 computation, committ
 
 # Milestone 3 Investigation Report: Master GameObject Scheduler, TypeManager Architecture, and Event Message Bus
 
-> **Re-verified 2026-10-21:** clean specs now in [`docs/engine/Scheduler.md`](scheduler.md) and [`docs/engine/Messages.md`](messages.md) (use those). Corrections [x]: GetTypeManager uses `id >> 9` (no mask); Phase 1 is the type-descriptor lifecycle, not pre-physics; `0x140BF3FC0` is a Denuvo thunk, not a plain lookup.
+> **Re-verified 2026-10-21:** clean specs now in [`docs/engine/Scheduler.md`](scheduler.md) and [`docs/engine/Messages.md`](messages.md) (use those). Lua host: [`docs/engine/ScriptHost.md`](script-host.md); mission load / packages / blocks: [`docs/engine/Resources.md`](resources.md). Corrections [x]: GetTypeManager uses `id >> 9` (no mask); Phase 1 is the type-descriptor lifecycle, not pre-physics; `0x140BF3FC0` is a Denuvo thunk, not a plain lookup.
 
 > **Review 2026-10-19:** type registration 0x140BF4620 (84 = 16 + 47 calls) and SendCommand routing [V]; struct layouts not re-checked [I]. Details: `mgsv_unified_server/docs/FOXRE_REVIEW.md`.
 
@@ -913,4 +913,4 @@ In addition to the TaskBucket bus, Fox Engine provides a high-throughput per-typ
 - **Drain (`MessageBus::vtable[9]`, `FUN_140bf39c0`)**: Dequeues pending messages for `typeIndex`, popping `actorId` and `messageId` for batch delivery.
 
 ---
-<small>Source: `docs/ENGINE.md` in the project repository &middot; generated 2026-10-22.</small>
+<small>Source: `docs/ENGINE.md` in the project repository &middot; generated 2026-10-23.</small>

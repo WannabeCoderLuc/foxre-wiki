@@ -17,9 +17,10 @@ Run all gates: MCP `engine_verify` (or `python -m pytest Engine\tests -q` from t
 | `formats/nav2.py` | Python (+numpy) | [`docs/NAVMESH.md`](../formats/nav2.md) | <span class="status pass">PASS</span> | 840/840 navmeshes byte-identical |
 | `runtime/` (gameobjects, scheduler, messages) | Python | [`docs/engine/Scheduler.md`](scheduler.md), `Messages.md` | <span class="status pass">PASS</span> | live FoxTrace fixture: every updater-vector change and 43-message boot sequence reproduced (`test_m3_runtime.py`) |
 | `script/` (host, vfs, foxmath.lua) | Python + Lua 5.1 (lupa) | [`docs/engine/ScriptHost.md`](script-host.md) | <span class="status in-progress">IN PROGRESS</span> | boot runs the game's own init.lua + Tpp/start.lua with no error, 108 chunks in the live order up to the mission load (`test_m4_script_host.py`); API: 399 libraries from the binding map, 15 natives, 328 stubs touched |
+| `resources/` (loader, fstb) + pack mounts in `script/vfs.py` | Python | [`docs/engine/Resources.md`](resources.md) | <span class="status in-progress">IN PROGRESS</span> | location/mission loading driven by the game's own Lua package lists: 46 chunks in the exact live order from live chunk 112 (init -> title 40010 -> f30010), block events match (`test_m5_mission_load.py`) |
 
 `Tools\foxhash.py` and `Tools\nav2lib.py` are shims to `core/strcode.py` and `formats/nav2.py`.
 Tests: `tests\` (pytest; `verifiers.lock.json` = sha256 of each verifier, enforced by `engine_verify`). Census tools that produce the spec statistics: `Tools\{fox2,fpk,qar}_census.py`, `Tools\qar_harvest_paths.py`.
 
 ---
-<small>Source: `Engine/README.md` in the project repository &middot; generated 2026-10-22.</small>
+<small>Source: `Engine/README.md` in the project repository &middot; generated 2026-10-23.</small>

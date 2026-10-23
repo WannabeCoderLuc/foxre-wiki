@@ -6,7 +6,7 @@ Where the project stands: milestones with their pass/fail gates, and the full da
 
 -   **[Roadmap](roadmap.md)**
 
-    Milestones M0-M9 and the gate each one must pass.
+    Milestones M0-M11 and the gate each one must pass.
 
 -   **[Session log](log.md)**
 

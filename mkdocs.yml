@@ -101,6 +101,7 @@ nav:
       - "Scheduler": engine/scheduler.md
       - "Messages and commands": engine/messages.md
       - "Script host": engine/script-host.md
+      - "Resources and mission load": engine/resources.md
       - "Core architecture notes (2026-10-19)": engine/core-architecture.md
   - File formats:
       - formats/index.md

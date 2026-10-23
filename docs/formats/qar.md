@@ -62,4 +62,4 @@ Sources (in `Tools\qar_census.DICTS`): GzsTool `qar_dictionary.txt`, `mgsv-looku
 Not traced yet [?] (loader = FoxFS / `foxfs.dat`, `foxpatch.dat` strings at 0x1420AE6E8).
 
 ---
-<small>Source: `docs/formats/QAR.md` in the project repository &middot; generated 2026-10-22.</small>
+<small>Source: `docs/formats/QAR.md` in the project repository &middot; generated 2026-10-23.</small>

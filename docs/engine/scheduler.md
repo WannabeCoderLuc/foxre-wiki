@@ -57,4 +57,4 @@ Shutdown `FUN_140BF5290` calls vt+0x10 on each registered object (entries vs. up
 - Removal path of updaters (`0x140BF5630` / `0x140BF5770` via service wrappers) not yet read.
 
 ---
-<small>Source: `docs/engine/Scheduler.md` in the project repository &middot; generated 2026-10-22.</small>
+<small>Source: `docs/engine/Scheduler.md` in the project repository &middot; generated 2026-10-23.</small>

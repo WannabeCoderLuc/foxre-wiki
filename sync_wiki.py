@@ -44,7 +44,7 @@ SITE = [
     ]),
     ("Project status", "status", "Where the project stands: milestones with their pass/fail gates, and the full "
      "dated log of every working session.", [
-        ("Roadmap", "roadmap", "docs/ROADMAP.md", "Milestones M0-M9 and the gate each one must pass."),
+        ("Roadmap", "roadmap", "docs/ROADMAP.md", "Milestones M0-M11 and the gate each one must pass."),
         ("Session log", "log", "docs/LOG.md", "Every session, newest first, with addresses and test counts."),
     ]),
     ("Engine", "engine", "Clean-room specifications of Fox Engine subsystems, and the state of the new engine "
@@ -55,6 +55,7 @@ SITE = [
         ("Scheduler", "scheduler", "docs/engine/Scheduler.md", "GameObjectManager, type slots, the per-frame update."),
         ("Messages and commands", "messages", "docs/engine/Messages.md", "MessageBus, SendCommand and SendMessage."),
         ("Script host", "script-host", "docs/engine/ScriptHost.md", "The Lua 5.1 runtime, boot script order and native library registration (M4, in progress)."),
+        ("Resources and mission load", "resources", "docs/engine/Resources.md", "Packages, blocks and how the game loads a location and a mission (M5, in progress)."),
         ("Core architecture notes (2026-10-19)", "core-architecture", "docs/ENGINE.md", "Earlier research notes on boot, Quark systems and the class registry; partly superseded, see banners."),
     ]),
     ("File formats", "formats", "Byte-level specifications of the game's file formats. Every format listed here is "

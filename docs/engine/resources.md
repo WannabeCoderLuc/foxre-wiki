@@ -81,7 +81,7 @@ Global object 0x142C011A0 (class registered by 0x140993ED0 with a `Start` method
 5. The quest's `OnAllocate` (`TppEnemy.OnAllocateQuestFova` → `LoadQuestHeli`) → **`ScriptBlock.Load(0, "/Assets/tpp/pack/soldier/reinforce/reinforce_heli_afgh.fpk")`** (no script in that pack).
 6. Transitions seen live (Block message `OnScriptBlockStateTransition`): quest LOADED f4608, reinforce LOADED f4621, animal LOADED f4695 → ACTIVATED f4698 (the animal load passes `activate = true`).
 
-The host reproduces 1–5. Inputs at the boundary: the stage small-block index is the recorded native answer (world streaming is M6); the save values are the live dump `Engine\tests\fixtures\m5_save_image.json`; with no texture streaming the prepare step takes its 30 s timeout (host clock 60 frames/s), which keeps step 3 before step 4 as live.
+The host reproduces 1–5. Inputs at the boundary: the stage small-block index is the recorded native answer (world streaming is M6); the save values are the minimal set the gate reads, taken from the live dump (`Engine\tests\fixtures\m5_save_image.json`: gvars `sav_varRestoreForContinue`, `qst_currentQuestName`, `qst_questActiveFlag` + svars `sbl_*`, each tagged; found by ablation; the full 271-gvar dump stays in `Memory\research\m5_sbtrace_20261023`); with no texture streaming the prepare step takes its 30 s timeout (host clock 60 frames/s), which keeps step 3 before step 4 as live.
 
 ## Script blocks [V]
 Engine: `Engine\resources\blocks.py` (`ScriptBlocks`), test `Engine\tests\test_m5_script_blocks.py`.
@@ -113,7 +113,7 @@ Engine: `Engine\resources\blocks.py` (`ScriptBlocks`), test `Engine\tests\test_m
 
 ## Open [?]
 - Script blocks: the per-frame caller of the slot update (vtable 0x1420EA438 slot 2) and its order against the mission controller; the countdown trigger (slot 4 0x1401838C0); the order in which 0x140184080 walks a block's resources (engine: first table in run order); the `OnScriptBlockStateTransition` message category (9) and its delivery (no message bus in the host yet).
-- svars change log: the per-var flag 0x40 tested at 0x140AE0E5E is taken to be the declaration's `notify` bit; whether an unchanged write is logged (engine: changes only).
+- svars change log (implemented only for TppSequence entering `Seq_Mission_Prepare`): the per-var flag 0x40 tested at 0x140AE0E5E is taken to be the declaration's `notify` bit; whether an unchanged write is logged (engine: changes only); the second path 0x140AE29D0, `OnSynchronizeSVars`, overflow, other `OnChangeSVars` consumers (`ScriptHost.md`).
 - The location loader's update function and the exact frame order between location, common block and mission block.
 - The two Quark-table services that receive the mission package list (+0x2D8, +0x2F8 of the table at QuarkSystemTable+0x98).
 - FSTB beyond the common-package header.

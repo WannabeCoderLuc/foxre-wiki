@@ -71,10 +71,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-10-23: **Claims ledger**: community facts (IHHook, IH Lua, V_F, wiki) as claims with provenance, mechanical verifiers (prologue/instruction match, xrefs, binding map, StrCode sites, field access), 1,071 [V] of 3,018; promoted names visible in `re_decompile`.
 - 2026-10-23: **M5 script blocks** (8-slot system decoded + `Engine\resources\blocks.py`, svars change log, mission OnUpdate, save image behind `LoadVarsFromSlot`, 2nd `luaret` capture 663 natives, IH Lua trace): **49/49 live chunks from 112 to the end of the boot (UI tables excluded)**; live `reinforce_block.lua` position = IH's patched f30010.fpkd.
 - 2026-10-23: **Roadmap re-order** (M5 Resources & mission load, Mod checkpoint after M5, M6–M11) + **M5 mission load** (Resources.md, `Engine\resources\`, pack-scoped VFS, 46/49 live chunks) + **M4 record/replay** (FoxTrace 3 `luaret`, 536 natives, 89.1 % answered). session-end now writes a next-session prompt.
 - 2026-10-22: **M4 script host**: `Engine\script\` boots init.lua + start.lua with no error, 108 chunks in live order; static constants (`fox`, enum arrays), gvars/svars, LoadLibrary semantics answered.
 - 2026-10-22: **M4 binding map** (4 FoxTrace captures, hook-race fix): `m4_lua_bindings.json` 399 libs / 5,532 bindings, static oracle test; chunk loading C side, per-frame C → Lua callers. mod-baseline re-snapshot without V Framework.
-- 2026-10-22: **MCP 1.5.0** (11-item tool upkeep, selftest 39/39, FoxTrace 2) + **M4 started**: Lua layout [V], live boot capture (170 chunks, 147 libs, 2 identical runs) → `m4_lua_boot.json`, [`docs\engine\ScriptHost.md`](engine/script-host.md). Nexus: IH/IHHook current.
 
 [Full session log](status/log.md)

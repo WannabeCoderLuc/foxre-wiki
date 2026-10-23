@@ -23,6 +23,7 @@ Single MCP endpoint for MGSV:TPP 1.0.15.4 EN work: static RE of `mgsvtpp.exe`, f
 | Live game | `game_status` → `game_session(boot)` → `game_send_keys` / `game_pipe_lua` / `game_screenshot` → `game_session(stop)` | `game_plugin(restore)` after any run |
 | Ground-truth capture | `trace_capture(run, config, seconds, runs)` → `trace_capture(status)` | `fox-ground-truth` skill |
 | Raw exe bytes / exact vtable slots | `re_bytes(va, n)` | `re_class(addr, exact=true)` |
+| What do IHHook / IH / V_F / wiki say about X? | `mgsv_query_knowledge(claims, "X")` (V/W/x verdicts) | `..\docs\CLAIMS.md`; re-run `python Tools\claims_import.py all` |
 
 `mgsv_query_knowledge(all, q)` samples every category when you don't know where something lives.
 
@@ -74,7 +75,7 @@ Boundaries: paths resolve inside `C:\Users\Luc\Desktop\MetalGear` (traversal rej
 
 ## 3. Evidence levels
 - **Hash status:** `verified` (curated `strcode_bruteforced.tsv`, 48-bit StrCode64 match at a code/data site, or SendCommand id), `derived32` (low 32 bits of a verified name), `derived64` (StrCode64 of a command id), `site-match32`, `lua_literal` (unverified), `lua_literal+site` (also in code; still check). Record names only after verifying.
-- **Function `name_source`:** `re`/`ihhook`/`lua` verified; `inferred*` rule-based [I]; `vframework` = V_F AddressSet; `sahelan_inventory` = proposal. Roles are a search aid, not proof.
+- **Function `name_source`:** `re`/`ihhook`/`lua` verified; `inferred*` rule-based [I]; `vframework` = V_F AddressSet; `claims_<src>` = community claim promoted after mechanical verification (`..\docs\CLAIMS.md`); `sahelan_inventory` = proposal. Roles are a search aid, not proof.
 - **Docs:** `[V]`/`[I]`/`[?]`/`[x]` tags; research docs rank first; wiki = `(wiki)`.
 - **FoxRe** (`Community\FoxReWiki`, `FoxRe\`): another agent's wiki; several claims wrong. Read `docs\FOXRE_REVIEW.md` before reusing.
 - Lua = vanilla 1.0.15.4 only (733 files; duplicates across packs inflate counts).
@@ -95,6 +96,7 @@ Derived, rebuildable (~30 s full). Each source has a fingerprint (input path/siz
 | decomp | `data\re\decomp\**\*.c` | `decomp_files`, `decomp_fts` |
 | foxre | `Community\FoxReWiki\js\wiki_database.js` | docs kind `foxre` (with verdicts), hashes `foxre_entity` |
 | ingest | `ingest\**` + registered paths | `src='ingest'` rows, `ext_rows`, `ext_fts` |
+| claims | `claims.tsv` (`Tools\claims_import.py`: IHHook, IH Lua, V_F, wiki → verified claims) | `claims` (category `claims`, filters `status:` `kind:` `source:`) |
 
 `xrefs.db` (calls, refs, vtables, funcs) is attached read-only as `x`, not copied.
 CLI: `python mgsv_unified_server\knowledge\mgsv_knowledge_db.py build [--force] [--only a,b] | status | ingest <path> | q <cat> <query> | explain <system> | inspect <cmd>`.
@@ -134,6 +136,7 @@ Ingest formats: TSV `address|addr|va`+name → symbols; `strcode*|hash`+name →
 | tool missing in client | restart the Claude session |
 
 ## 8. History
+- 2026-10-23: claims ledger: knowledge source + category `claims`, V_F qualified names (`tpp::…`) in `symbols`; promoted names carry source `claims_<src>` (`..\docs\CLAIMS.md`).
 - 1.5.0 (2026-10-22): tool upkeep (11-item backlog in [`..\docs\TOOLING.md`](tooling.md)): `game_status` diffs every file against manifest profiles; new `game_plugin`, `game_session`, `trace_capture`, `re_bytes`; `re_class` exact mode; parameter aliases on every tool; `re_field_access` default whole exe (static_map index over all of `.xtext`); `engine_verify(quick)`; `re_hash` GameObject type names + shared resolver `Tools\foxnames.py`; FoxTrace 2 (config-driven entry hooks, stub tested off-game). Selftest +8 cases incl. `_upkeep_checks`.
 - 1.4.0 (2026-10-21): engine oracles `re_emulate`, `engine_verify`, `lua51_run` (`server\oracle_tools.py`); `..\Engine\tests\` (nav2 round-trip verifier + sha256 lock); selftest 31/31 with real assertions (`_oracle_checks`: StrCode64 x5 vs foxhash, refusals, Lua sandbox).
 - 1.3.1 (2026-10-19): FoxRe review + ingest (`foxre` source, raw48 hash sites).

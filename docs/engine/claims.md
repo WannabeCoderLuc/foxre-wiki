@@ -57,10 +57,10 @@ Not `x`: code sites inside a function at an instruction boundary or on an immedi
 | wiki | global_address | 8 | 0 | 0 | 8 |
 | wiki | hash_name | 17 | 27 | 0 | 44 |
 | wiki | lua_binding | 34 | 0 | 0 | 34 |
-| v_sahelan | function_address | 33 | 33 | 0 | 66 |
+| v_sahelan | function_address | 33 | 32 | 0 | 65 |
 | v_sahelan | global_address | 0 | 3 | 0 | 3 |
 | v_sahelan | hash_name | 2 | 0 | 0 | 2 |
-| **all** | | **1111** | **1973** | **5** | **3089** |
+| **all** | | **1111** | **1972** | **5** | **3088** |
 
 Contradictions: 5 (all listed in `claims.tsv`, status `x`; first 25):
 

@@ -1,6 +1,6 @@
-# File formats
+# Reference: file formats
 
-Byte-level specifications of the game's file formats. Every format listed here is read and re-written identically for every file of that type in the game.
+Byte-level specifications of the game's file formats, generated from the project's working documents. Every format listed here is read and re-written identically for every file of that type in the game.
 
 <div class="grid cards" markdown>
 

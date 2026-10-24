@@ -2,6 +2,9 @@
 
 *Covers milestone M2. Details: [Reflection and type DB](../engine/reflection.md), [Entities](../engine/entities.md).*
 
+## Why it matters
+A DataSet is only a list of numbers until you know what each class and property means. With the engine's own type catalogue, a `.fox2` file becomes a graph of typed objects that can be checked, edited and loaded into the new engine, and mods can add entities with exactly the properties the game expects.
+
 ## The engine's own catalogue of types
 Fox Engine keeps a **class registry**: a list of every data class it knows (1,153 of them). For each class it records
 
@@ -39,4 +42,4 @@ The project's loader (`Engine/core/entities.py`) resolves all three. For a whole
 In Afghanistan free roam we asked the running game for 17 objects through its own Lua function `DataIdentifier.GetDataWithIdentifier`. For all 17, the name, class and world position match what our loader computed from the files alone. That was the M2 pass condition.
 
 ---
-<small>Source: `docs/guide/Classes-And-Entities.md` in the project repository &middot; generated 2026-10-24.</small>
+<small>Hand-written article (`docs/site/explain/Classes-And-Entities.md`) &middot; published 2026-10-24.</small>

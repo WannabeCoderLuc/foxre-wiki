@@ -17,21 +17,29 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 <div class="grid cards" markdown>
 
--   **[Guide](guide/index.md)**
+-   **[Start here](start/index.md)**
 
-    Plain-language explanations of how the game's data and engine work. Start here.
+    What the project is and how this site is organised.
 
--   **[Engine](engine/index.md)**
+-   **[Explanations](explain/index.md)**
 
-    Specifications of engine subsystems and the state of the new engine.
+    One topic per page in plain language: what it is, why it matters, how the engine does it.
 
--   **[File formats](formats/index.md)**
+-   **[Modding guides](mods/index.md)**
 
-    Byte-level format specs, each verified on every game file.
+    What the findings mean for a mod, each with a worked example.
+
+-   **[Reference](engine/index.md)**
+
+    Generated specifications: [engine](engine/index.md) and [file formats](formats/index.md), with confidence tags.
 
 -   **[Project status](status/index.md)**
 
-    Roadmap with milestone gates, and the full session log.
+    Roadmap with milestone gates, numbers and the full session log.
+
+-   **[Library](library/index.md)**
+
+    Sources, tools, test fixtures, live captures, external references.
 
 </div>
 

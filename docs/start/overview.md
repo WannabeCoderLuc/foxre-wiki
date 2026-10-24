@@ -1,6 +1,6 @@
 # What this project is
 
-*Plain-language introduction. The reference pages (formats, engine specs) hold the exact details; this guide explains how the pieces fit together. Refreshed at the end of each milestone.*
+*Plain-language introduction. The Reference sections hold the exact details; the Explanations show how the pieces fit together. Hand-written; refreshed at the end of each milestone.*
 
 ## The goal in one paragraph
 *Metal Gear Solid V: The Phantom Pain* runs on Konami's **Fox Engine**, whose source code has never been published. This project works out, piece by piece, how the engine stores its data and how it runs a game world, writes that knowledge down as specifications, and re-implements it in a new engine (`Engine/` in the repository). The new engine reads the player's own copy of the game; it contains no Konami code or assets.
@@ -26,7 +26,7 @@ flowchart LR
 3. **Ask the running game** (live checks): start the game, ask it questions through its own Lua interface, and compare its answers with what our tools predicted.
 
 ## How we know we are right
-Every milestone ends on a test a computer decides: pass or fail. A file reader only counts as correct if it can read and re-write every game file of that type byte for byte; an object loader only counts as correct if the running game reports the same names, classes and positions. See [How we verify](verification.md).
+Every milestone ends on a test a computer decides: pass or fail. A file reader only counts as correct if it can read and re-write every game file of that type byte for byte; an object loader only counts as correct if the running game reports the same names, classes and positions. See [How we verify](../explain/verification.md).
 
 ## Where we are
 | Milestone | What it means | Status |
@@ -39,16 +39,13 @@ Every milestone ends on a test a computer decides: pass or fail. A file reader o
 | M5 Resources and mission load | packs, blocks and how a mission gets loaded | <span class="status pass">PASS</span> |
 | M6 to M11 | world, animation, gameplay core, gameplay extended, rendering, playable slice | <span class="status planned">PLANNED</span> |
 
-M5 passed on 2026-10-24: from the start-up mission to free roam the engine loads all 58 script chunks in the same order as the real game, including the iDroid's UI tables (see [Scripts and how a mission loads](scripts-and-missions.md)). Next: the M4 gate (timers, messages, full call-log comparison), then a short mod checkpoint, then M6 World.
+M5 passed on 2026-10-24: from the start-up mission to free roam the engine loads all 58 script chunks in the same order as the real game, including the iDroid's UI tables (see [The iDroid and the language reload](../explain/idroid.md)). Next: the M4 gate (timers, messages, full call-log comparison), then a short mod checkpoint, then M6 World.
 
-## Reading order
-1. [Game data: from disk to objects](game-data.md)
-2. [Classes, properties and entities](classes-and-entities.md)
-3. [How a frame runs](frame-loop.md)
-4. [Scripts and how a mission loads](scripts-and-missions.md)
-5. [How we verify](verification.md)
-6. [Glossary](glossary.md)
-7. [For modders](for-modders.md)
+## Where to go next
+- New here: [How to use this site](how-to-read.md), then the [Explanations](../explain/game-data.md) in order.
+- Modding: [Modding guides](../mods/for-modders.md).
+- Exact details (addresses, layouts, evidence): the Reference sections ([engine](../engine/modules.md), [file formats](../formats/qar.md)).
+- Sources, tools, test fixtures and captures: [Library](../library/sources.md).
 
 ---
-<small>Source: `docs/guide/Overview.md` in the project repository &middot; generated 2026-10-24.</small>
+<small>Hand-written article (`docs/site/start/Overview.md`) &middot; published 2026-10-24.</small>

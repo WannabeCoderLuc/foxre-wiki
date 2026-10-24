@@ -1,4 +1,4 @@
-# For modders
+# For modders: findings at a glance
 
 *Plain-language summary of the project's findings that matter when you mod MGSV:TPP (build 1.0.15.4, Steam EN). Each point links to the reference page with the exact details. Tags as on the rest of the site: [V] verified in the game's code or live, [I] inferred, [?] open. Addresses are for 1.0.15.4 EN only.*
 
@@ -9,8 +9,20 @@
 - **Which packages a mission loads is decided in Lua** (`TppMissionList` / `TppPackList`), not in the executable. You can add or swap packages without touching the exe.
 - We have a **list of every native Lua function the game registers** (5,532 of them, with their addresses), plus recorded examples of what many of them return in a real session.
 
+## Step-by-step guides
+| Guide | Finding it builds on |
+|---|---|
+| [Add a package to a mission](add-a-package.md) | mission package lists are decided in Lua |
+| [Run your own Lua from a package](lua-from-packages.md) | package scripts run on load, in path order |
+| [Find and call Lua natives](lua-natives.md) | binding map of 5,532 natives, recorded return values |
+| [Side content with script blocks](script-blocks.md) | 8 script-block slots with their own lifecycle |
+| [Patching the iDroid tables](idroid-tables.md) | the iDroid reloads its tables on every language change |
+| [Editing fox2 DataSets](editing-datasets.md) | the engine's type registry, byte-exact DataSet codec |
+| [Tracing the game with FoxTrace](foxtrace.md) | log-only hooks and native return recording |
+| [Checking community addresses](claims.md) | 3,018 community facts checked against the executable |
+
 ## 1. Files and packages
-**What we found.** The game stores files in `.dat` archives (QAR), which hold packages (`.fpk` for assets, `.fpkd` for data and scripts), which hold DataSets (`.fox2`), routes (`.frt`), navmeshes (`.nav2`) and scripts (`.lua`). Our readers and writers reproduce all 134,241 archive entries, 16,354 packages, 44,994 DataSets, 307 route files and 840 navmeshes exactly [V]. Details: [Game data](game-data.md), [QAR](../formats/qar.md), [FPK](../formats/fpk.md), [FOX2](../formats/fox2.md), [FRT](../formats/frt.md), [NAV2](../formats/nav2.md).
+**What we found.** The game stores files in `.dat` archives (QAR), which hold packages (`.fpk` for assets, `.fpkd` for data and scripts), which hold DataSets (`.fox2`), routes (`.frt`), navmeshes (`.nav2`) and scripts (`.lua`). Our readers and writers reproduce all 134,241 archive entries, 16,354 packages, 44,994 DataSets, 307 route files and 840 navmeshes exactly [V]. Details: [Game data](../explain/game-data.md), [QAR](../formats/qar.md), [FPK](../formats/fpk.md), [FOX2](../formats/fox2.md), [FRT](../formats/frt.md), [NAV2](../formats/nav2.md).
 
 **How it works.** Names inside the game are hashes, not text. A file path becomes a 64-bit PathCode, other names a StrCode32/64 [V]. That is why you sometimes see numbers where you expect names: the name list we have covers 83 % of archive entries.
 
@@ -21,7 +33,7 @@
 - Script files in packages are lightly obfuscated: a byte `0x1B` / `0x1C` header means "XOR with a key from the file name" (`0x1C` is also compressed). Our reader decodes both [V]; plain-text `.lua` files are accepted by the game as they are.
 
 ## 2. Classes, entities and DataSets
-**What we found.** The engine knows 1,153 classes with 6,062 typed properties (exported from the game's own registry) [V]. A `.fox2` DataSet is a list of entities of those classes. See [Classes and entities](classes-and-entities.md) and [Reflection](../engine/reflection.md).
+**What we found.** The engine knows 1,153 classes with 6,062 typed properties (exported from the game's own registry) [V]. A `.fox2` DataSet is a list of entities of those classes. See [Classes and entities](../explain/classes-and-entities.md) and [Reflection](../engine/reflection.md).
 
 **Use it for.** Writing or editing `.fox2` files with the right property types and containers; knowing which properties a class really has before you add an entity. Several entity classes are "loaders" that make the engine do something when their DataSet loads; the useful ones are listed below.
 
@@ -93,4 +105,4 @@ We imported 3,018 facts from IHHook, Infinite Heaven, V_Framework and the commun
 - Source code (private repository for now): `Engine\formats\` (readers/writers), `Engine\script\` (Lua host), `Engine\resources\` (package and block loading), `Tools\FoxTrace\` (tracer).
 
 ---
-<small>Source: `docs/guide/For-Modders.md` in the project repository &middot; generated 2026-10-24.</small>
+<small>Hand-written article (`docs/site/mods/For-Modders.md`) &middot; published 2026-10-24.</small>

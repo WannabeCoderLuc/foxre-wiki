@@ -1,6 +1,6 @@
 # Roadmap
 
-Goal: an engine in `Engine\` that loads the player's own MGSV:TPP 1.0.15.4 data and reproduces its behaviour, written from specs (`docs\formats\`, `docs\engine\`), never from copied game code or assets. Every milestone ends on a **machine-decidable gate** (lesson from awesome-rea, [`docs\TOOLING.md`](../tools/tooling.md)); a milestone is done only when `engine_verify` is green for its gate tests.
+Goal: an engine in `Engine\` that loads the player's own MGSV:TPP 1.0.15.4 data and reproduces its behaviour, written from specs (`docs\formats\`, `docs\engine\`), never from copied game code or assets. Every milestone ends on a **machine-decidable gate** (lesson from awesome-rea, [`docs\TOOLING.md`](../library/tooling.md)); a milestone is done only when `engine_verify` is green for its gate tests.
 
 Status keys: PASS = gate passed · IN PROGRESS · PLANNED. Update this file when a gate passes.
 

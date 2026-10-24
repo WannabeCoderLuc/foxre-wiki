@@ -1,6 +1,6 @@
-# Engine
+# Reference: engine
 
-Clean-room specifications of Fox Engine subsystems, and the state of the new engine that implements them. Each statement carries a confidence tag ([V], [D], [I], [?]).
+Clean-room specifications of Fox Engine subsystems, and the state of the new engine that implements them. Generated from the project's working documents on every sync; each statement carries a confidence tag ([V], [D], [I], [?]).
 
 <div class="grid cards" markdown>
 
@@ -26,7 +26,7 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
 -   **[Script host](script-host.md)**
 
-    The Lua 5.1 runtime, boot script order and native library registration (M4, in progress).
+    The Lua 5.1 runtime, boot script order and native library registration (M4, IN PROGRESS).
 
 -   **[Resources and mission load](resources.md)**
 

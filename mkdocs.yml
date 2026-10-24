@@ -81,21 +81,34 @@ validation:
 
 nav:
   - Home: index.md
-  - Guide:
-      - guide/index.md
-      - "What this project is": guide/overview.md
-      - "Game data: from disk to objects": guide/game-data.md
-      - "Classes, properties and entities": guide/classes-and-entities.md
-      - "How a frame runs": guide/frame-loop.md
-      - "Scripts and how a mission loads": guide/scripts-and-missions.md
-      - "How we verify": guide/verification.md
-      - "For modders": guide/for-modders.md
-      - "Glossary": guide/glossary.md
-  - Project status:
-      - status/index.md
-      - "Roadmap": status/roadmap.md
-      - "Session log": status/log.md
-  - Engine:
+  - "Start here":
+      - start/index.md
+      - "What this project is": start/overview.md
+      - "How to use this site": start/how-to-read.md
+      - "Glossary": start/glossary.md
+  - "Explanations":
+      - explain/index.md
+      - "Game data: from disk to objects": explain/game-data.md
+      - "Classes, properties and entities": explain/classes-and-entities.md
+      - "How a frame runs": explain/frame-loop.md
+      - "The Lua script host": explain/script-host.md
+      - "How a mission loads": explain/mission-load.md
+      - "Script blocks": explain/script-blocks.md
+      - "The iDroid and the language reload": explain/idroid.md
+      - "Routes and navmeshes": explain/routes-and-navmeshes.md
+      - "How we verify": explain/verification.md
+  - "Modding guides":
+      - mods/index.md
+      - "For modders: findings at a glance": mods/for-modders.md
+      - "Add a package to a mission": mods/add-a-package.md
+      - "Run your own Lua from a package": mods/lua-from-packages.md
+      - "Find and call Lua natives": mods/lua-natives.md
+      - "Side content with script blocks": mods/script-blocks.md
+      - "Patching the iDroid tables": mods/idroid-tables.md
+      - "Editing fox2 DataSets": mods/editing-datasets.md
+      - "Tracing the game with FoxTrace": mods/foxtrace.md
+      - "Checking community addresses": mods/claims.md
+  - "Reference: engine":
       - engine/index.md
       - "Engine modules": engine/modules.md
       - "Reflection and type database": engine/reflection.md
@@ -107,15 +120,25 @@ nav:
       - "Claims ledger": engine/claims.md
       - "Claims: contradictions": engine/claims-contradictions.md
       - "Core architecture notes (2026-10-19)": engine/core-architecture.md
-  - File formats:
+  - "Reference: file formats":
       - formats/index.md
       - "QAR archives": formats/qar.md
       - "FPK / FPKD packages": formats/fpk.md
       - "FOX2 DataSets": formats/fox2.md
       - "FRT route sets": formats/frt.md
       - "NAV2 navmeshes": formats/nav2.md
-  - Tools:
-      - tools/index.md
-      - "MCP server and knowledge DB": tools/mcp-server.md
-      - "Installed tools": tools/tooling.md
-      - "Background": tools/background.md
+  - "Project status":
+      - status/index.md
+      - "Roadmap": status/roadmap.md
+      - "Numbers at a glance": status/numbers.md
+      - "Session log": status/log.md
+  - "Library":
+      - library/index.md
+      - "Sources": library/sources.md
+      - "Tools": library/tools.md
+      - "Test fixtures": library/fixtures.md
+      - "Live captures": library/captures.md
+      - "External references": library/external.md
+      - "MCP server and knowledge DB": library/mcp-server.md
+      - "Installed tools": library/tooling.md
+      - "Background": library/background.md

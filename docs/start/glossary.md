@@ -30,4 +30,4 @@
 | **Native boundary** | the line between the game's Lua and the engine's own code, where the engine answers calls |
 
 ---
-<small>Source: `docs/guide/Glossary.md` in the project repository &middot; generated 2026-10-24.</small>
+<small>Hand-written article (`docs/site/start/Glossary.md`) &middot; published 2026-10-24.</small>

@@ -2,6 +2,9 @@
 
 *Covers milestone M1. Exact layouts: [QAR](../formats/qar.md), [FPK](../formats/fpk.md), [FOX2](../formats/fox2.md), [FRT](../formats/frt.md), [NAV2](../formats/nav2.md).*
 
+## Why it matters
+Everything the game shows or does starts as bytes in these files. An engine that cannot read them exactly cannot load a level; a mod tool that writes them slightly wrong can corrupt a package in ways that only show up as a crash hours later. So the first milestone was to read **and write back** every container and core format exactly.
+
 ## Three layers of containers
 ```mermaid
 flowchart TB
@@ -36,4 +39,4 @@ Fifteen file extensions (`.fox2`, `.parts`, `.tgt`, `.sim`, `.ph` and others) ar
 For each format we read and re-write **every** file of that type in the game and require the output to be identical byte for byte: 44,994 DataSets, 16,354 packages, 840 navmeshes and 307 route sets. If our understanding of even one field were wrong, at least one file would come out different.
 
 ---
-<small>Source: `docs/guide/Game-Data.md` in the project repository &middot; generated 2026-10-24.</small>
+<small>Hand-written article (`docs/site/explain/Game-Data.md`) &middot; published 2026-10-24.</small>

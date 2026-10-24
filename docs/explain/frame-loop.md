@@ -2,6 +2,9 @@
 
 *Covers milestone M3 (PASS, 2026-10-22). Details: [Scheduler](../engine/scheduler.md), [Messages and commands](../engine/messages.md).*
 
+## Why it matters
+Whether a soldier reacts before or after the player moves, and whether a message arrives this frame or the next, decides how the game feels and whether scripted sequences work. An engine with the right data but the wrong update order would behave differently in small, hard-to-debug ways.
+
 ## Game objects and their ids
 Everything that acts in the world (the player, soldiers, vehicles, helicopters, animals, Sahelanthropus) is a **game object**. Each has a 16-bit **id**: the upper 7 bits are the **type** (0 = player, 2 = soldier, 21 = Sahelanthropus, 50 = vehicle ...) and the lower 9 bits are the instance number. One **type manager** per type owns all instances of that type and runs their logic.
 
@@ -50,4 +53,4 @@ From boot to free roam the game raised 43 bus messages, the same ones in the sam
 - Which updater walks the four update groups, and how bus messages reach individual objects.
 
 ---
-<small>Source: `docs/guide/Frame-Loop.md` in the project repository &middot; generated 2026-10-24.</small>
+<small>Hand-written article (`docs/site/explain/Frame-Loop.md`) &middot; published 2026-10-24.</small>

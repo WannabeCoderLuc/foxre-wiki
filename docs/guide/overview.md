@@ -45,6 +45,7 @@ Every milestone ends on a test a computer decides: pass or fail. A file reader o
 3. [How a frame runs](frame-loop.md)
 4. [How we verify](verification.md)
 5. [Glossary](glossary.md)
+6. [For modders](for-modders.md)
 
 ---
-<small>Source: `docs/guide/Overview.md` in the project repository &middot; generated 2026-10-23.</small>
+<small>Source: `docs/guide/Overview.md` in the project repository &middot; generated 2026-10-24.</small>

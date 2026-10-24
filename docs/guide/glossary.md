@@ -24,4 +24,4 @@
 | **Clean-room** | re-implementing from written specifications only, never from copied code |
 
 ---
-<small>Source: `docs/guide/Glossary.md` in the project repository &middot; generated 2026-10-23.</small>
+<small>Source: `docs/guide/Glossary.md` in the project repository &middot; generated 2026-10-24.</small>

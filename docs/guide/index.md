@@ -24,6 +24,10 @@ Plain-language explanations of how the game and its engine work, written for rea
 
     Pass/fail gates, evidence types and confidence tags.
 
+-   **[For modders](for-modders.md)**
+
+    What the findings mean for modding: packages, mission load, Lua, script blocks, tracing.
+
 -   **[Glossary](glossary.md)**
 
     Short definitions of the terms used on this site.

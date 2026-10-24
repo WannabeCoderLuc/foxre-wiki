@@ -88,6 +88,7 @@ nav:
       - "Classes, properties and entities": guide/classes-and-entities.md
       - "How a frame runs": guide/frame-loop.md
       - "How we verify": guide/verification.md
+      - "For modders": guide/for-modders.md
       - "Glossary": guide/glossary.md
   - Project status:
       - status/index.md
@@ -102,6 +103,8 @@ nav:
       - "Messages and commands": engine/messages.md
       - "Script host": engine/script-host.md
       - "Resources and mission load": engine/resources.md
+      - "Claims ledger": engine/claims.md
+      - "Claims: contradictions": engine/claims-contradictions.md
       - "Core architecture notes (2026-10-19)": engine/core-architecture.md
   - File formats:
       - formats/index.md

@@ -40,6 +40,7 @@ SITE = [
         ("Classes, properties and entities", "classes-and-entities", "docs/guide/Classes-And-Entities.md", "The engine's type catalogue and how a level becomes live objects."),
         ("How a frame runs", "frame-loop", "docs/guide/Frame-Loop.md", "Game objects, the object manager, updates and messages."),
         ("How we verify", "verification", "docs/guide/Verification.md", "Pass/fail gates, evidence types and confidence tags."),
+        ("For modders", "for-modders", "docs/guide/For-Modders.md", "What the findings mean for modding: packages, mission load, Lua, script blocks, tracing."),
         ("Glossary", "glossary", "docs/guide/Glossary.md", "Short definitions of the terms used on this site."),
     ]),
     ("Project status", "status", "Where the project stands: milestones with their pass/fail gates, and the full "
@@ -56,6 +57,8 @@ SITE = [
         ("Messages and commands", "messages", "docs/engine/Messages.md", "MessageBus, SendCommand and SendMessage."),
         ("Script host", "script-host", "docs/engine/ScriptHost.md", "The Lua 5.1 runtime, boot script order and native library registration (M4, in progress)."),
         ("Resources and mission load", "resources", "docs/engine/Resources.md", "Packages, blocks and how the game loads a location and a mission (M5, in progress)."),
+        ("Claims ledger", "claims", "docs/CLAIMS.md", "Facts from IHHook, Infinite Heaven, V_Framework and the wiki, checked against the executable."),
+        ("Claims: contradictions", "claims-contradictions", "docs/CLAIMS_CONTRADICTIONS.md", "Ours vs theirs for every contradicted community address."),
         ("Core architecture notes (2026-10-19)", "core-architecture", "docs/ENGINE.md", "Earlier research notes on boot, Quark systems and the class registry; partly superseded, see banners."),
     ]),
     ("File formats", "formats", "Byte-level specifications of the game's file formats. Every format listed here is "
@@ -86,6 +89,8 @@ WIKI_NAMES = {
     "Guide-Overview": "docs/guide/Overview.md", "Guide-Game-Data": "docs/guide/Game-Data.md",
     "Guide-Classes-And-Entities": "docs/guide/Classes-And-Entities.md", "Guide-Frame-Loop": "docs/guide/Frame-Loop.md",
     "Guide-Verification": "docs/guide/Verification.md", "Guide-Glossary": "docs/guide/Glossary.md",
+    "Guide-For-Modders": "docs/guide/For-Modders.md", "Engine-Resources": "docs/engine/Resources.md",
+    "Claims": "docs/CLAIMS.md", "Claims-Contradictions": "docs/CLAIMS_CONTRADICTIONS.md",
     "Sahelanthropus": "docs/SAHELAN.md", "Battlefield-AI": "docs/BATTLEFIELD.md",
 }
 

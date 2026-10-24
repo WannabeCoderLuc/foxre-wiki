@@ -41,4 +41,4 @@ Every `.lua` inside a package (732/732) is XOR-chained: first byte 0x1B or 0x1C 
 Exe parser VA; meaning of version 2 (constant).
 
 ---
-<small>Source: `docs/formats/FPK.md` in the project repository &middot; generated 2026-10-23.</small>
+<small>Source: `docs/formats/FPK.md` in the project repository &middot; generated 2026-10-24.</small>

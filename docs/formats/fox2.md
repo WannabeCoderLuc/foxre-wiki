@@ -92,4 +92,4 @@ Usage (property instances over all files) [D]: EntityHandle 3.57 M, EntityPtr 2.
 unknown2 meaning (unused by the reader); PropertyInfo encoding (type 23 unused in TPP data).
 
 ---
-<small>Source: `docs/formats/FOX2.md` in the project repository &middot; generated 2026-10-23.</small>
+<small>Source: `docs/formats/FOX2.md` in the project repository &middot; generated 2026-10-24.</small>

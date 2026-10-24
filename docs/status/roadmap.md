@@ -92,4 +92,4 @@ esourceslocks.py`; svars change log → `OnChangeSVars`, mission `OnUpdate`, sa
 Feature-complete pending Luc's playtests (`STATUS.md`); resumes at the **Mod checkpoint** above. Its RE (`docs\SAHELAN.md`, `docs\PROBES.md`) feeds M8/M9.
 
 ---
-<small>Source: `docs/ROADMAP.md` in the project repository &middot; generated 2026-10-23.</small>
+<small>Source: `docs/ROADMAP.md` in the project repository &middot; generated 2026-10-24.</small>

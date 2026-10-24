@@ -50,4 +50,4 @@ From boot to free roam the game raised 43 bus messages, the same ones in the sam
 - Which updater walks the four update groups, and how bus messages reach individual objects.
 
 ---
-<small>Source: `docs/guide/Frame-Loop.md` in the project repository &middot; generated 2026-10-23.</small>
+<small>Source: `docs/guide/Frame-Loop.md` in the project repository &middot; generated 2026-10-24.</small>

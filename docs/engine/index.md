@@ -32,6 +32,14 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
     Packages, blocks and how the game loads a location and a mission (M5, in progress).
 
+-   **[Claims ledger](claims.md)**
+
+    Facts from IHHook, Infinite Heaven, V_Framework and the wiki, checked against the executable.
+
+-   **[Claims: contradictions](claims-contradictions.md)**
+
+    Ours vs theirs for every contradicted community address.
+
 -   **[Core architecture notes (2026-10-19)](core-architecture.md)**
 
     Earlier research notes on boot, Quark systems and the class registry; partly superseded, see banners.

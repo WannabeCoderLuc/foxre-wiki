@@ -53,7 +53,7 @@ Shutdown `FUN_140BF5290` calls vt+0x10 on each registered object (entries vs. up
 - SendCommand `0x140BFA380`, SendMessage `0x140BFA510`, MessageBus raise `0x140BF3A30` — verified, see Messages.md.
 
 ## Open
-- Updater identities (class names) and which updater walks the 4 type groups.
+- Updater identities (class names) and which updater walks the 4 type groups. Known 2026-10-24: prio 2 (0x1409950A0) = Lua callback updater (up to 2 registered Lua functions, table 0x142C33368, `lua_pcall` per frame) [V static + live]; 0x140645940 = shared empty update (10 updaters) [V static]; prio 4 = mission block controller (0x140A1CC20).
 - Removal path of updaters (`0x140BF5630` / `0x140BF5770` via service wrappers) not yet read.
 
 ---

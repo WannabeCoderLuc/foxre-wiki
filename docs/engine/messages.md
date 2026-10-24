@@ -18,7 +18,7 @@ Re-verification (2026-10-21) of [`docs\ENGINE.md`](core-architecture.md) milesto
   - `BuddyAppear` (StrCode32 `0x5ACD262A`) arg0 = `0x2600` (BuddyDog2 #0), tags 2 — at title and again ~110 frames after the f30010 load.
   - `VehicleDisappeared` (`0xB3077E03`) for vehicles `0x6402..0x6414` when the title scene unloads, and `0x6400, 0x6402..0x6414` at quit; caller `0x1416F860F`.
   - `SwitchGimmick` (`0x0E9C20BE`) ×2, args `{0x9E20 (ImportantBreakable #32), 0xAA865930, 0x20F5607B, 1}`, tags `0x492` (four integer args).
-- The GameObject listener `0x140BF9A20` was **not called once** in either run → these bus messages are not routed through it; its trigger is still [?].
+- The GameObject listener `0x140BF9A20` was **not called once** in either run → these bus messages are not routed through it; its trigger is still [?] (0 calls again in a third boot, 2026-10-24 `trace_oq_callers`; only reference vtable 0x1423073C0 slot 9).
 - Names are 32-bit dictionary matches (one candidate each) [s32]. Fixture: `Engine\tests\fixtures\m3_frame_trace.json`.
 
 ## SendCommand (Lua → object, synchronous) [V]

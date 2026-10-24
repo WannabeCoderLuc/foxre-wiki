@@ -79,10 +79,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-10-24: **Mod checkpoint rework session 1**: Luc's 3.1 run read (pilot works in game; release-key bug; gatling hit no soldier; 0 player damage), mod-baseline + t2b (MATCH 98 files), `vsahelan.ps1 restore` fix; `docs\OPEN_QUESTIONS.md` (13 answered/narrowed, capture `trace_oq_callers`); rework plan `SAHELAN_FEASIBILITY.md` §6.
 - 2026-10-24: **Mod checkpoint 3.1 implemented offline** (`SahelanControl.GetKeys()` / `IsKeyDown` in V_Sahelan r7b keys, IH module `InfVSahelanPilot.lua`, Numpad `*` toggle; bench 7/7; build `B5C2A5A9…`, not deployed).
 - 2026-10-24: **Mod checkpoint 3.1 prep + 3.5 tail** (keyboard → Lua map [V live] `m_pad_20261024_1555`: unbound keys invisible, toggle Numpad `*` via the DLL; V_Sahelan startup `CheckAddresses()` built, 42 checked prologues in the ledger).
 - 2026-10-24: **Mod checkpoint 3.5 + 3.6 PASS** (V_Sahelan address audit via claims source `v_sahelan`: 59 addresses, 35 V / 36 W / 0 x; offline mod bench `test_mod_sahelan_bench.py`); 3.4 decode: `ScriptBlock.Load(id, "")` = unload [V static].
 - 2026-10-24: **M5 PASS** (iDroid reload per `ChangeLanguage`, 3 per boot, live `trace_m5_lang`; emblem setup 0x1405CF950; `Engine\resources\ui.py`; 58/58 live chunks). **Site restructure** (hand-written `docs\site\`: Start here, Explanations, Modding guides, Library; generated reference; redirects). **Mod feasibility study** `docs\SAHELAN_FEASIBILITY.md`.
-- 2026-10-23: **Claims ledger**: community facts (IHHook, IH Lua, V_F, wiki) as claims with provenance, mechanical verifiers (prologue/instruction match, xrefs, binding map, StrCode sites, field access), 1,071 [V] of 3,018; promoted names visible in `re_decompile`.
 
 [Full session log](status/log.md)

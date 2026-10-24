@@ -61,6 +61,7 @@ Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 ## Mod checkpoint (after M5) — short Option B sprint
 - Luc's playtests (V_Sahelan / Unbound t2b), gatling soldier damage, cockpit view framing, using the M0–M5 findings. Then on to M6.
 - Opened 2026-10-24 (M5 PASS). Candidates and order: `docs\SAHELAN_FEASIBILITY.md` (address audit, offline test bench, in-game controls, events, package scripts, on-demand script-block loading, ...).
+- 2026-10-24: 3.5 address audit PASS (`docs\SAHELAN.md` §12, 0 contradicted) and 3.6 offline test bench PASS (`test_mod_sahelan_bench.py`); 3.4 decode settled (`ScriptBlock.Load(id, "")` = unload). Open: in-DLL build-time address check, 3.1 in-game controls, 3.2 events.
 
 ## M6 World [PLANNED] — terrain, collision, navigation, routes
 - `.htre`/`.tre2` terrain, `.geom` collision, nav2 A* over portal graph, route following.

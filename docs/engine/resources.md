@@ -94,7 +94,7 @@ Engine: `Engine\resources\blocks.py` (`ScriptBlocks`), test `Engine\tests\test_m
 |---|---|---|
 | `GetScriptBlockId(name or hash)` | 0x1401839F0 | number = StrCode32, string = hashed; first slot with that hash, else `SCRIPT_BLOCK_ID_INVALID` (4294967295) |
 | `GetCurrentScriptBlockId()` | 0x1401839C0 | global 0x1429E4BF0 = slot whose script is being called, else INVALID |
-| `Load(id, nil / path / {paths})` | 0x140183B50 → 0x140183200 | builds the list (string paths; numbers = path ids; empty = none); a list different from +0x40 replaces it and sets flags `(f & ~0x08) \| 0x01` (request, activate cleared) |
+| `Load(id, nil / path / {paths})` | 0x140183B50 → 0x140183200 | builds the list (string paths; numbers = path ids; empty = none); a string becomes a path through 0x140085670 → 0x1400858D0 → path code 0x14003DB30 and is appended only when the code is non-zero: `""` fails the normaliser 0x14003DF90 (length 0 → false) → code 0 → nothing appended, so **`Load(id, "")` = `Load(id, nil)` = empty list = unload** [V static, both resolver branches 0x14003DB60 / 0x14003DD20 end in `xor eax, eax`]; a list different from +0x40 replaces it and sets flags `(f & ~0x08) \| 0x01` (request, activate cleared) |
 | `Activate(id)` / `Deactivate(id)` | 0x140183910 → 0x140181E30 / 0x140183960 → 0x140182700 | set / clear 0x08; acts at once when the block is loaded+initialized / active |
 | `Reload(id)` | 0x140184020 → 0x1401837B0 | ignored while a request is pending; processing → flag 0x04; loaded → reload now |
 | `GetScriptBlockState(id)` | 0x140183A80 → 0x140182A90 | request pending → PROCESSING (1); block empty → EMPTY (0); loaded → INACTIVE (2) once initialized, else PROCESSING; active → ACTIVE (3) |

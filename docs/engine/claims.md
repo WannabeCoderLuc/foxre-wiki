@@ -44,7 +44,7 @@ Not `x`: code sites inside a function at an instruction boundary or on an immedi
 |---|---|---:|---:|---:|---:|
 | ihhook | function_address | 119 | 63 | 4 | 186 |
 | ihhook | global_address | 0 | 1 | 0 | 1 |
-| vframework | function_address | 63 | 612 | 0 | 675 |
+| vframework | function_address | 68 | 607 | 0 | 675 |
 | vframework | global_address | 0 | 42 | 0 | 42 |
 | vframework | struct_offset | 74 | 157 | 0 | 231 |
 | ih_lua | behaviour | 0 | 139 | 0 | 139 |
@@ -57,7 +57,10 @@ Not `x`: code sites inside a function at an instruction boundary or on an immedi
 | wiki | global_address | 8 | 0 | 0 | 8 |
 | wiki | hash_name | 17 | 27 | 0 | 44 |
 | wiki | lua_binding | 34 | 0 | 0 | 34 |
-| **all** | | **1071** | **1942** | **5** | **3018** |
+| v_sahelan | function_address | 33 | 33 | 0 | 66 |
+| v_sahelan | global_address | 0 | 3 | 0 | 3 |
+| v_sahelan | hash_name | 2 | 0 | 0 | 2 |
+| **all** | | **1111** | **1973** | **5** | **3089** |
 
 Contradictions: 5 (all listed in `claims.tsv`, status `x`; first 25):
 
@@ -69,7 +72,7 @@ Contradictions: 5 (all listed in `claims.tsv`, status `x`; first 25):
 | C00182 | ihhook | function_address | `StateRadio` | 0x140d69140 | inside function 0x140d69000 at +0x140: middle of an instruction ('je 0x140d6949b' at 0x140d6913c) |
 | C02928 | wiki | function_address | `memcpy` | 0x141a5a0e9 | inside function 0x141a59f70 at +0x179: middle of an instruction ('movzx r11d, word ptr [rbx + 8]' at 0x141a5a0 |
 
-Promotion: symbol_map +25 new names, 0 unnamed/inferred rows replaced, 0 addresses already named differently (kept ours); strcode_bruteforced +34 names.
+Promotion: symbol_map +25 new names, 0 unnamed/inferred rows replaced, 2 addresses already named differently (kept ours); strcode_bruteforced +0 names.
 <!-- claims:counts:end -->
 
 Notes on the numbers: the 4 IHHook contradictions are entries (mostly commented out in IHHook) that point into the middle of an instruction in our build. Most V_F `W` rows are real function entries with callers but no second identity check; they stay queryable in the ledger (`mgsv_query_knowledge(claims, "source:vframework <name>")`) and are not promoted. IH `equipStr32` hashes without a site are equipment names that occur in no exe immediate and in no `equipIdStrCode32` fox2 value.

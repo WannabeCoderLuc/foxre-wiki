@@ -79,10 +79,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-10-24: **Mod checkpoint 3.1 implemented offline** (`SahelanControl.GetKeys()` / `IsKeyDown` in V_Sahelan r7b keys, IH module `InfVSahelanPilot.lua`, Numpad `*` toggle; bench 7/7; build `B5C2A5A9…`, not deployed).
 - 2026-10-24: **Mod checkpoint 3.1 prep + 3.5 tail** (keyboard → Lua map [V live] `m_pad_20261024_1555`: unbound keys invisible, toggle Numpad `*` via the DLL; V_Sahelan startup `CheckAddresses()` built, 42 checked prologues in the ledger).
 - 2026-10-24: **Mod checkpoint 3.5 + 3.6 PASS** (V_Sahelan address audit via claims source `v_sahelan`: 59 addresses, 35 V / 36 W / 0 x; offline mod bench `test_mod_sahelan_bench.py`); 3.4 decode: `ScriptBlock.Load(id, "")` = unload [V static].
 - 2026-10-24: **M5 PASS** (iDroid reload per `ChangeLanguage`, 3 per boot, live `trace_m5_lang`; emblem setup 0x1405CF950; `Engine\resources\ui.py`; 58/58 live chunks). **Site restructure** (hand-written `docs\site\`: Start here, Explanations, Modding guides, Library; generated reference; redirects). **Mod feasibility study** `docs\SAHELAN_FEASIBILITY.md`.
 - 2026-10-23: **Claims ledger**: community facts (IHHook, IH Lua, V_F, wiki) as claims with provenance, mechanical verifiers (prologue/instruction match, xrefs, binding map, StrCode sites, field access), 1,071 [V] of 3,018; promoted names visible in `re_decompile`.
-- 2026-10-23: **M5 script blocks** (8-slot system decoded + `Engine\resources\blocks.py`, svars change log, mission OnUpdate, save image behind `LoadVarsFromSlot`, 2nd `luaret` capture 663 natives, IH Lua trace): **49/49 live chunks from 112 to the end of the boot (UI tables excluded)**; live `reinforce_block.lua` position = IH's patched f30010.fpkd.
 
 [Full session log](status/log.md)

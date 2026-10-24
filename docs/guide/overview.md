@@ -36,16 +36,19 @@ Every milestone ends on a test a computer decides: pass or fail. A file reader o
 | M2 Entities and reflection | turn level data into typed, connected objects | <span class="status pass">PASS</span> |
 | M3 Runtime core | how a frame runs: object manager, updates, messages | <span class="status pass">PASS</span> |
 | M4 Script host | run the game's own Lua scripts against recorded engine answers | <span class="status in-progress">IN PROGRESS</span> |
-| M5 Resources and mission load | packs, blocks and how a mission gets loaded | <span class="status in-progress">IN PROGRESS</span> |
+| M5 Resources and mission load | packs, blocks and how a mission gets loaded | <span class="status pass">PASS</span> |
 | M6 to M11 | world, animation, gameplay core, gameplay extended, rendering, playable slice | <span class="status planned">PLANNED</span> |
+
+M5 passed on 2026-10-24: from the start-up mission to free roam the engine loads all 58 script chunks in the same order as the real game, including the iDroid's UI tables (see [Scripts and how a mission loads](scripts-and-missions.md)). Next: the M4 gate (timers, messages, full call-log comparison), then a short mod checkpoint, then M6 World.
 
 ## Reading order
 1. [Game data: from disk to objects](game-data.md)
 2. [Classes, properties and entities](classes-and-entities.md)
 3. [How a frame runs](frame-loop.md)
-4. [How we verify](verification.md)
-5. [Glossary](glossary.md)
-6. [For modders](for-modders.md)
+4. [Scripts and how a mission loads](scripts-and-missions.md)
+5. [How we verify](verification.md)
+6. [Glossary](glossary.md)
+7. [For modders](for-modders.md)
 
 ---
 <small>Source: `docs/guide/Overview.md` in the project repository &middot; generated 2026-10-24.</small>

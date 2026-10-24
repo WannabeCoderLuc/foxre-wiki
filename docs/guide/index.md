@@ -20,6 +20,10 @@ Plain-language explanations of how the game and its engine work, written for rea
 
     Game objects, the object manager, updates and messages.
 
+-   **[Scripts and how a mission loads](scripts-and-missions.md)**
+
+    The Lua script host, packages that carry code, the mission load, script blocks and the iDroid reload (M4, M5).
+
 -   **[How we verify](verification.md)**
 
     Pass/fail gates, evidence types and confidence tags.

@@ -87,6 +87,7 @@ nav:
       - "Game data: from disk to objects": guide/game-data.md
       - "Classes, properties and entities": guide/classes-and-entities.md
       - "How a frame runs": guide/frame-loop.md
+      - "Scripts and how a mission loads": guide/scripts-and-missions.md
       - "How we verify": guide/verification.md
       - "For modders": guide/for-modders.md
       - "Glossary": guide/glossary.md

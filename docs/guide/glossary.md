@@ -22,6 +22,12 @@
 | **Round trip** | read then re-write a file and require identical bytes |
 | **Oracle** | a trusted reference to compare against (the original function, or the running game) |
 | **Clean-room** | re-implementing from written specifications only, never from copied code |
+| **Script resource** | a `.lua` file inside a package; it runs when the package loads |
+| **Block / block group** | a memory region the engine loads packages into (location, mission, script blocks) |
+| **Script block** | one of 8 global slots for side content (quests, reinforcements, animals) with its own script |
+| **iDroid (MbDvc)** | the in-game device UI; its tables reload on every language change |
+| **Record / replay** | answering a native function with what the real game returned in a recorded session |
+| **Native boundary** | the line between the game's Lua and the engine's own code, where the engine answers calls |
 
 ---
 <small>Source: `docs/guide/Glossary.md` in the project repository &middot; generated 2026-10-24.</small>

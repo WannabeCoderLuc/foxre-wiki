@@ -30,7 +30,7 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
 -   **[Resources and mission load](resources.md)**
 
-    Packages, blocks and how the game loads a location and a mission (M5, in progress).
+    Packages, blocks, script blocks, UI tables and how the game loads a location and a mission (M5, PASS).
 
 -   **[Claims ledger](claims.md)**
 

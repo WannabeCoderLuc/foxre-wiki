@@ -11,7 +11,7 @@ hide:
 
 PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &middot; every claim backed by a pass/fail test
 
-**4 of 12 milestones passed** &middot; current: **M4 Script host**
+**5 of 12 milestones passed** &middot; current: **M4 Script host**
 
 </div>
 
@@ -44,7 +44,7 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 | M2 | Entity & reflection core | fox2 → live typed entity graph | <span class="status pass">PASS</span> |
 | M3 | Runtime core | scheduler, messages, GameObjects | <span class="status pass">PASS</span> |
 | M4 | Script host | Lua 5.1 + Fox/Tpp API | <span class="status in-progress">IN PROGRESS</span> |
-| M5 | Resources & mission load | packs, blocks, async resources, mission start | <span class="status in-progress">IN PROGRESS</span> |
+| M5 | Resources & mission load | packs, blocks, async resources, mission start | <span class="status pass">PASS</span> |
 | M6 | World | terrain, collision, navigation, routes | <span class="status planned">PLANNED</span> |
 | M7 | Animation | clips, motion graphs, rigs | <span class="status planned">PLANNED</span> |
 | M8 | Gameplay core | Player, Soldier AI, SendCommand handlers, damage (headless) | <span class="status planned">PLANNED</span> |

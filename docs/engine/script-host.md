@@ -130,7 +130,7 @@ FoxTrace installs hooks on its own thread while the game keeps booting. With 16 
 ## Open [?]
 - Mission load: answered 2026-10-23 in `Resources.md` (location loader, mission block controller, script resources, `OnAllocate`/`OnInitialize` coroutines, pack-scoped VFS).
 - Class behind vtable 0x1422A9710: the mission block controller created by the `TppSimpleMissionBlockControllerData` DataBody (`Resources.md`) [V identity; class name "TppSimpleMissionBlockController" [I]].
-- UI parameter tables (`mbdvc_map_*_parameter.lua`, `mbdvc_pause_help_table.lua`): (re)loaded by slot 0 (0x140969A60) of the object with vtable 0x14227F940, built inside a large UI owner (vtable 0x14226ED40, ctor 0x14091FC60, created from 0x140920F90); what triggers the two reloads after the init mission (live chunks 114–122) is still open. `emblem_list.lua` comes from 0x1405D0BF0 (emblem setup) [V static].
+- UI parameter tables: answered 2026-10-24 in `Resources.md` ("UI parameter tables"): the `mb_dvc_top.fpk` package scripts, reloaded by the iDroid on every `TppUiCommand.ChangeLanguage()` (3 per boot); `emblem_list.lua` chunk 114 from the emblem setup 0x1405CF950 [V]. Host: `Engine/resources/ui.py`. Still open for the host: timers + message delivery to the mission `OnMessage` (the init title flow starts on `Timer.Finish`), M4 gate.
 - Return values of the stubbed functions the boot touches (the host returns nil): record/replay capture with FoxTrace 3 `luaret` hooks (M4 gate).
 
 ## Evidence

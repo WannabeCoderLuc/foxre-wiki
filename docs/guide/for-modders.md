@@ -42,7 +42,7 @@
 
 - Knowing which native exists, what it is called and where it lives before you hook or call it.
 - Not wasting time on `Fox.Log`.
-- Testing Lua offline: our engine host (`Engine\script\`) boots the game's own `init.lua` and `start.lua` with no game running and reproduces the game's own script load order. A mod's Lua can be run in the same environment to catch errors early.
+- Testing Lua offline: our engine host (`Engine\script\`) boots the game's own `init.lua` and `start.lua` with no game running and reproduces the game's own script load order, from cold boot through the start-up mission to free roam (M5 PASS). A mod's Lua can be run in the same environment to catch errors early.
 
 ## 4. How a mission gets loaded
 **What we found.** Details: [Resources and mission load](../engine/resources.md).
@@ -67,9 +67,9 @@
 **Use it for.** Custom quests or side content that should load and unload with the area instead of living in the mission package: same package rules as above, driven through `TppScriptBlock` / `ScriptBlock.Load`.
 
 ## 6. The iDroid UI reloads on language change
-**What we found.** The iDroid's map/pause tables (`mbdvc_*_parameter.lua`, `mbdvc_pause_help_table.lua`) live in the package `/Assets/tpp/pack/mbdvc/mb_dvc_top.fpk`. It is loaded once at boot, and **reloaded whenever the UI language changes** (`TppUiCommand.ChangeLanguage()`), which happens during start-up after the config save is read [V static and live; the exact pair of calls in the boot is still [?]].
+**What we found.** The iDroid's map/pause tables (`mbdvc_*_parameter.lua`, `mbdvc_pause_help_table.lua`) live in the package `/Assets/tpp/pack/mbdvc/mb_dvc_top.fpk`. The UI loads it as the last step of every language change: each `TppUiCommand.ChangeLanguage()` sets a "change pending" flag (`TppUiCommand.IsChangeLanguage()` reads it), the iDroid reloads fonts, texts and then `mb_dvc_top`, and clears the flag [V]. A normal start-up calls it **three times**: `TppUiBootInit.lua` during the boot, `init_sequence` after reading the config save (`Seq_Demo_SetSavedLanguage`), and again while loading the save data (`CreateOrLoadSaveData`) [V live]. Even with the same language every call reloads. `emblem_list.lua` is loaded by the emblem setup (`0x1405CF950`) shortly after the start-up mission's package [V].
 
-**Use it for.** If you patch those tables, expect them to be re-run on every language change; keep your changes in the package rather than patching the globals once.
+**Use it for.** If you patch those tables, expect them to run at least three times per start-up and again on every language change in the options; keep your changes in the package (or re-apply them after `IsChangeLanguage()` turns false) rather than patching the globals once. Calling `ChangeLanguage()` yourself is a way to force the iDroid tables to reload.
 
 ## 7. Watching the game: FoxTrace
 **What we found / built.** FoxTrace is a log-only plugin (loaded by IHHook) that hooks functions without changing game state and writes one JSON line per event [V]. Version 3 adds `luaret` hooks that record **what a native Lua function returned**, per argument list, for any `lua_CFunction` or the two internal call thunks (`0x1400F6630` class functions, `0x141A154D0` builder functions) [V]. Our recordings cover 663 natives over identical repeated runs.

@@ -66,6 +66,7 @@ Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 - 2026-10-24: 3.1 implemented offline (`SahelanControl.GetKeys()` / `IsKeyDown` in V_Sahelan r7b keys + IH module `InfVSahelanPilot.lua`, Numpad `*` toggle; bench 7/7; build B5C2A5A9, not deployed). Open: 3.1 live run (Luc), 3.2 events.
 - 2026-10-24: 3.1 PASS live (Luc; `docs\SAHELAN.md` §13.1). Rework session 1: open-question audit `docs\OPEN_QUESTIONS.md`, rework plan + R1–R5 order `docs\SAHELAN_FEASIBILITY.md` §6 (stops before 3.9 navmesh = M6).
 - 2026-10-24: Rework 1 Foundation PASS (`docs\SAHELAN.md` §13.2): `vsahelan` game_plugin overlay, merged module `InfSahelanPilot.lua` (one gate owner, edge release), build on `Engine\formats` (byte-identical), bench 13/13.
+- 2026-10-24: Rework 2 DLL rebuild PASS (`docs\SAHELAN.md` §13.3): pilot split into `src\hooks\sahelan\pilot\` (same API, probes behind `SAHELAN_DEBUG`), one phase owner (A10: PhaseSneakAi PreUpdate not called in free roam), V_F-owned hooks explicit, Luc smoke test same as 3.1.
 
 ## M6 World [PLANNED] — terrain, collision, navigation, routes
 - `.htre`/`.tre2` terrain, `.geom` collision, nav2 A* over portal graph, route following.

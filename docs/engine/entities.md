@@ -43,4 +43,4 @@ In Afghanistan free roam (mission 30010) every link of f30010's two `DataIdentif
 Lua access confirmed: Data properties are readable by name from Lua (`d.name`, `d.worldTransform`), `IsKindOf` works on class names — a cheap channel for future fixtures.
 
 ---
-<small>Source: `docs/engine/Entities.md` in the project repository &middot; generated 2026-10-24.</small>
+<small>Source: `docs/engine/Entities.md` in the project repository &middot; generated 2026-10-28.</small>

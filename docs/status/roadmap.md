@@ -48,6 +48,8 @@ Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 - [x] Host boot (2026-10-22): `Engine\script\` runs init.lua + Tpp/start.lua (coroutine per frame) with no error; 108 chunks in the exact live order up to the mission load; static plain-value constants (`m4_lua_consts.json`).
 - Lua 5.1 host (lupa prototype → embedded), the Fox/Tpp/GameObject API surface (264 native bindings, 2,433 used API functions in `mgsv_query_knowledge(lua_api)`), StrCode in Lua.
 - [x] Record/replay started (2026-10-23): FoxTrace 3 `luaret` (thunk + direct `lua_CFunction` return recorder), 2 captures x 2 identical runs -> `m4_lua_returns.json` (536 names, 534 stable); host replay answers 89.1 % of the API the M5 scenario touches (6.4 % without) and the f30010 `OnAllocate`/`OnInitialize` finish (`test_m4_replay.py`). Open: table-valued natives (svars declarations), 48 remaining stubs, API call-log comparison.
+- [x] Timers + message delivery (2026-10-28, gate a): mission bucket listener 0x140A1D7D0 decoded (`OnMessage(subScripts, sender, messageId, arg0..3)`, result 1 = resend, `Mission.GetCurrentMessageResendCount`), `GkEventTimerManager` Start/Stop/StopAll/IsTimerActive (`Engine/runtime/timers.py`); the init mission's title flow runs from its own `Timer.Finish` and matches live for 7 sequence transitions up to the autosave popup (`test_m4_messages.py`).
+- [x] UI popups (2026-10-28, gate a part 2): popup UI state machine 0x140898500 sends `UI.PopupClose(id, selection)` when the close animation ends, `ErasePopup` = request flag [V static], 12-frame close [V live] (`Engine/runtime/popups.py`); `SignIn.Is*` = true, `GetScriptVersionFromSlot` from the save image. Host title flow runs by itself to `Seq_Demo_LogInKonamiServer` (10 live transitions, its own `ChangeLanguage` calls, Timer/UI order = live except IH's skipped autosave popup and the undecoded `UI.RequestPlayRecordClearInfo`); `test_m5_mission_load.py` uses it (58/58 kept), hand-driven from LogInKonamiServer. Open: Konami login / DLC / title-menu messages, `RequestPlayRecordClearInfo` raiser.
 - **Gate (re-agreed 2026-10-22):** init + f30010 mission scripts run against **recorded** native return values (record/replay fixture from a live capture); chunk order and API call log match the live capture. (Dropped: "no unstubbed API calls"; natives are answered from the replay fixture.)
 
 ## M5 Resources & mission load [PASS] — packs, blocks, async resources, mission start
@@ -97,4 +99,4 @@ Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 Feature-complete pending Luc's playtests (`STATUS.md`); resumes at the **Mod checkpoint** above. Its RE (`docs\SAHELAN.md`, `docs\PROBES.md`) feeds M8/M9.
 
 ---
-<small>Source: `docs/ROADMAP.md` in the project repository &middot; generated 2026-10-24.</small>
+<small>Source: `docs/ROADMAP.md` in the project repository &middot; generated 2026-10-28.</small>

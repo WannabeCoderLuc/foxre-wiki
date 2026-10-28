@@ -19,4 +19,4 @@ Every FoxTrace capture: the game booted with log-only hooks, usually twice, then
 | 2026-10-22 | `m4_lua_bindings2` | 2 | 9 | `luaL_loadbuffer`, `luaI_openlib`, `luaL_newmetatable`, `lua_pushcclosure`, `lua_setfield`, `fox_tbl_begin` and 3 more |
 
 ---
-<small>Generated 2026-10-24 from the project repository.</small>
+<small>Generated 2026-10-28 from the project repository.</small>

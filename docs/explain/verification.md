@@ -39,4 +39,4 @@ Statements in the reference pages carry a tag:
 - No game files, extracted data or decompiled code are published.
 
 ---
-<small>Hand-written article (`docs/site/explain/Verification.md`) &middot; published 2026-10-24.</small>
+<small>Hand-written article (`docs/site/explain/Verification.md`) &middot; published 2026-10-28.</small>

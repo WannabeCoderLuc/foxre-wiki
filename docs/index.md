@@ -79,10 +79,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-10-28: **M4 gate a part 2 (UI popups)**: `UI.PopupClose` from popup state machine 0x140898500 [V static], 12-frame close [V live]; host title flow by itself to `Seq_Demo_LogInKonamiServer` (10 live transitions, own ChangeLanguage calls); m5 test uses it, 58/58; quick suite 61/61.
 - 2026-10-24: **Mod checkpoint rework 2 DLL rebuild PASS**: pilot split (same 78 Lua names, 39 address checks, probes behind `SAHELAN_DEBUG`), V_F-owned hooks explicit, A10 answered (PhaseSneakAi PreUpdate not called in free roam), Luc smoke test = 3.1 behaviour, bench 14/14.
 - 2026-10-24: **Mod checkpoint rework 1 Foundation PASS**: overlay `vsahelan` (deploy/restore round trip MATCH), merged module `InfSahelanPilot.lua` (one gate owner, edge release), build on `Engine\formats` (t2b byte-identical), bench 13/13.
 - 2026-10-24: **Mod checkpoint rework session 1**: Luc's 3.1 run read (pilot works in game; release-key bug; gatling hit no soldier; 0 player damage), mod-baseline + t2b (MATCH 98 files), `vsahelan.ps1 restore` fix; `docs\OPEN_QUESTIONS.md` (13 answered/narrowed, capture `trace_oq_callers`); rework plan `SAHELAN_FEASIBILITY.md` §6.
 - 2026-10-24: **Mod checkpoint 3.1 implemented offline** (`SahelanControl.GetKeys()` / `IsKeyDown` in V_Sahelan r7b keys, IH module `InfVSahelanPilot.lua`, Numpad `*` toggle; bench 7/7; build `B5C2A5A9…`, not deployed).
-- 2026-10-24: **Mod checkpoint 3.1 prep + 3.5 tail** (keyboard → Lua map [V live] `m_pad_20261024_1555`: unbound keys invisible, toggle Numpad `*` via the DLL; V_Sahelan startup `CheckAddresses()` built, 42 checked prologues in the ledger).
 
 [Full session log](status/log.md)

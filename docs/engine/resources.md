@@ -166,4 +166,4 @@ Engine: `Engine\resources\ui.py` (`IDroid`); tests `test_m4_script_host.py` (boo
 | `m4_lua_boot.json` chunks 112–169 vs package entry order | script resource order | [V] |
 
 ---
-<small>Source: `docs/engine/Resources.md` in the project repository &middot; generated 2026-10-24.</small>
+<small>Source: `docs/engine/Resources.md` in the project repository &middot; generated 2026-10-28.</small>

@@ -29,4 +29,4 @@ Another script of the same mission can then call `mymod_main.OnMissionCanStart()
 - Test offline: the project's script host runs the game's own boot and mission load without the game, with a package-scoped file system that hides a script until its package is mounted, so "works by accident" bugs show up.
 
 ---
-<small>Hand-written article (`docs/site/mods/Lua-From-Packages.md`) &middot; published 2026-10-24.</small>
+<small>Hand-written article (`docs/site/mods/Lua-From-Packages.md`) &middot; published 2026-10-28.</small>

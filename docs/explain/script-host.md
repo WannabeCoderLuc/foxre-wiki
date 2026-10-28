@@ -28,4 +28,4 @@ The host must load the same chunks in the same order as the live capture. It doe
 - The M4 gate compares the full native **call log** against a live session; that comparison is not done yet.
 
 ---
-<small>Hand-written article (`docs/site/explain/Script-Host.md`) &middot; published 2026-10-24.</small>
+<small>Hand-written article (`docs/site/explain/Script-Host.md`) &middot; published 2026-10-28.</small>

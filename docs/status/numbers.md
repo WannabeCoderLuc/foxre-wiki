@@ -22,4 +22,4 @@ Counted from the project repository at build time.
 | M11 Playable slice | <span class="status planned">PLANNED</span> |
 
 ---
-<small>Generated 2026-10-24 from the project repository.</small>
+<small>Generated 2026-10-28 from the project repository.</small>

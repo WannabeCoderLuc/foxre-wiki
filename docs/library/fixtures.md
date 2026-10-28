@@ -13,4 +13,4 @@ Ground truth the engine tests (`Engine/tests/`) compare against. Each comes from
 | `m5_save_image.json` | 5 KB | M5: the minimal save values behind TppScriptVars.LoadVarsFromSlot (from a live dump). |
 
 ---
-<small>Generated 2026-10-24 from the project repository.</small>
+<small>Generated 2026-10-28 from the project repository.</small>

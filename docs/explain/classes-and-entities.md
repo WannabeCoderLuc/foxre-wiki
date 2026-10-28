@@ -42,4 +42,4 @@ The project's loader (`Engine/core/entities.py`) resolves all three. For a whole
 In Afghanistan free roam we asked the running game for 17 objects through its own Lua function `DataIdentifier.GetDataWithIdentifier`. For all 17, the name, class and world position match what our loader computed from the files alone. That was the M2 pass condition.
 
 ---
-<small>Hand-written article (`docs/site/explain/Classes-And-Entities.md`) &middot; published 2026-10-24.</small>
+<small>Hand-written article (`docs/site/explain/Classes-And-Entities.md`) &middot; published 2026-10-28.</small>

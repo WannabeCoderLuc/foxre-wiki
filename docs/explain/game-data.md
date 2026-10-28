@@ -39,4 +39,4 @@ Fifteen file extensions (`.fox2`, `.parts`, `.tgt`, `.sim`, `.ph` and others) ar
 For each format we read and re-write **every** file of that type in the game and require the output to be identical byte for byte: 44,994 DataSets, 16,354 packages, 840 navmeshes and 307 route sets. If our understanding of even one field were wrong, at least one file would come out different.
 
 ---
-<small>Hand-written article (`docs/site/explain/Game-Data.md`) &middot; published 2026-10-24.</small>
+<small>Hand-written article (`docs/site/explain/Game-Data.md`) &middot; published 2026-10-28.</small>

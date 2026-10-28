@@ -31,4 +31,4 @@ Calling `TppUiCommand.ChangeLanguage()` yourself is a way to force a reload, for
 - A script error in a table file breaks the iDroid map after every reload; test the file offline.
 
 ---
-<small>Hand-written article (`docs/site/mods/IDroid-Tables.md`) &middot; published 2026-10-24.</small>
+<small>Hand-written article (`docs/site/mods/IDroid-Tables.md`) &middot; published 2026-10-28.</small>

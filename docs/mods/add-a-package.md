@@ -43,4 +43,4 @@ Nothing in the executable changes; the new package is loaded by the same code pa
 - Register the wrapper after `TppMissionList` has run and before the mission load you want to change; the location function (`SetLocationPackagePathFunc`) works the same way.
 
 ---
-<small>Hand-written article (`docs/site/mods/Add-A-Package.md`) &middot; published 2026-10-24.</small>
+<small>Hand-written article (`docs/site/mods/Add-A-Package.md`) &middot; published 2026-10-28.</small>

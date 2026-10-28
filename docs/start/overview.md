@@ -48,4 +48,4 @@ M5 passed on 2026-10-24: from the start-up mission to free roam the engine loads
 - Sources, tools, test fixtures and captures: [Library](../library/sources.md).
 
 ---
-<small>Hand-written article (`docs/site/start/Overview.md`) &middot; published 2026-10-24.</small>
+<small>Hand-written article (`docs/site/start/Overview.md`) &middot; published 2026-10-28.</small>

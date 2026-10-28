@@ -45,4 +45,4 @@ Re-verification (2026-10-21) of [`docs\ENGINE.md`](core-architecture.md) milesto
 Bucket manager + `FUN_140180760` drain order (FoxRe [I]); which raises reach Lua `Msg` handlers and when; full Msg name table per sender; when `0x140BF9A20` fires.
 
 ---
-<small>Source: `docs/engine/Messages.md` in the project repository &middot; generated 2026-10-24.</small>
+<small>Source: `docs/engine/Messages.md` in the project repository &middot; generated 2026-10-28.</small>

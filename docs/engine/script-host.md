@@ -76,6 +76,28 @@ Capture `trace_m4_lua_pcall_20261022_191611` (config `Tools\FoxTrace\configs\m4_
 - **Boot pump** 0x140064030: resumes the `start.lua` coroutine (registry ref at owner+0x388) every frame until it finishes (197 resumes per boot), then drops the ref. `coroutine.resume` (0x141A2EAC0) accounts for 216 more during boot.
 - Load-time: 0x14018BE10 (library chunks, 162 pcalls per boot), 0x140D5B410 (167, boot) and ~240 rare callers (messages, UI, demo).
 
+## Timers and message delivery (M4 gate a)
+**Mission bucket** [V static]: the mission block controller's constructor 0x140A1B760 asks the bucket manager (0x140180C00, slot 0) for the `Mission` bucket, adds its listener sub-object (this+0x40, vtable 0x1422A97A8) to it (slot 0x18), and maps 23 more categories onto the same bucket (slot 0x10): Marker, Sound, GameObject, Trap, Demo, Timer, Terminal, Weather, Player, Radio, Subtitles, Block, Throwing, Placed, MotherBaseManagement, MotherBaseStage, Network, Video, TppSystem, SupportAttack, SupplyCbox and 3 unnamed (0xB913232E, 0xDC05D615, 0x445FE2CA).
+
+**Delivery** (listener slot 0, 0x140A1D7D0) [V static]: when the mission script is active (flag +0x44) and its table has the function (field name is a runtime string at 0x142C1F8D8: `OnMessage` [I], matching the 7-parameter `mission_main.lua` `this.OnMessage = function(subScripts, sender, messageId, arg0, arg1, arg2, arg3)`):
+
+1. push `subScripts`, then `sender` = message +0x2C (StrCode32 of the category, e.g. `Timer`), `messageId` = +0x28, then the 4 arguments: `nil` when the argument's 3-bit tag (+0x20) is 0, else its number;
+2. set the current resend count to message +0x34 for the call (0x140A1FA50); `Mission.GetCurrentMessageResendCount` (0x140A1FB30) returns it, which is why A7 found it called only from Lua;
+3. `lua_pcall(L, 7, 1)`; if the result is the number 1, the message is handed back to the bus (`param_2` vtable +0x10) and delivered again later with its resend count + 1; the count is reset to 0 after the call.
+
+**Timers** (`GkEventTimerManager`, Lua `Start(name, seconds)` / `Stop(name)` / `StopAll()` / `IsTimerActive(name)`; 1,114 vanilla call sites): the manager is behind a protected thunk (0x1404AC3B0), so its behaviour is taken from the live IH `OnMessage` logs [V live]: `Start` raises `Timer.Start(name)` immediately and `Timer.Finish(name)` when the time has run out; the name argument is the timer name's StrCode32 (Timer_WaitStartingGame = 4175515318). Restart of a running name restarts it, `Stop` cancels without a message, host clock 60 frames/s [I].
+
+**Host** (`Engine/runtime/timers.py`, `Engine/runtime/popups.py`, `ScriptHost.run_frames` / `deliver_to_mission`): per frame async loads → timers → popups → bucket drain to the mission listener → loader (OnUpdate). The drain-vs-OnUpdate order inside a frame is [I] (E12). Verifier `Engine/tests/test_m4_messages.py`.
+
+### UI popups and PopupClose (M4 gate a, part 2)
+- **Natives** [V static]: `ErasePopup` 0x1408D0450 only sets the popup manager's (global 0x142BF1940) erase request byte +0x157A (0x140868160); `IsShowPopup([id])` (obfuscated 0x1408D2D50) is true while one of the two popup objects (+0xE80 / +0xE88) is open (0x140867460), with an id only for that popup; `ShowErrorPopup(id[, type])` returns the id [V live 1200].
+- **Popup UI state machine** 0x140898500 (state +0xC4) [V static]: 0 set up (an erase request already pending → straight to 5), 1 open, 2 shown: a button press (0x140897600) or the erase request (+0x157A, read via 0x1408672D0, cleared) leaves it, 4 start the close animation, **5 when the animation is done: send `UI.PopupClose(popupId, selection)` through the manager's sender (+0xEE8 slot 0, message object 0x142BF2720 created from the string "PopupClose" by the static initializer 0x141FFCF00) and clear the popup in the same step**, 6/7 wait for the next popup. `selection` = 0 for no-button popups [V live `PopupClose(1200, 0)`], for button popups the popup object's selected button [V static; value [I]].
+- **Timing** [V live, `trace_m4_luaret_direct_20261023_111747`]: `ShowErrorPopup(LOADING_SAVE_DATA)` f371, `ErasePopup` f374, first `IsShowPopup() == false` + `ChangeLanguage` f386 → the host closes 12 frames after the request (`CLOSE_FRAMES`), the same for a button press [I: same close states, animation length not decoded]; open = shown at once [I].
+- **Autosave popup (`Seq_Demo_ConfirmAutoSave`)**: vanilla PC calls `SetPopupAllPad()` + `ShowErrorPopup(CONFIRM_AUTO_SAVE = 1000, Popup.TYPE_ONE_BUTTON)` and waits for `UI.PopupClose` with sender 1000, i.e. the player's button press. The live captures ran IH's `init_sequence.lua` (IH r267 `init.fpkd`): its OnEnter logs "skip popup" and goes straight to `Seq_Demo_StartSignIn` [V: IH package]. So this one popup has no live timing; the host test presses the button like a player (`PopupManager.press()`).
+- **Natives added for the span** [V static]: `SignIn.IsSignedIn` / `IsStorageSelected` / `IsStartupProcessCompleted` = one function 0x1409AC3E0 that pushes true (PC). `TppScriptVars.GetScriptVersionFromSlot`: the replay was lossy (table argument logged as "a table", 3 answers then the last repeated → version mismatch → `Seq_Error_LoadSaveDataVersionError`); the 3 recorded answers are exactly this build's `TppSave.GetSaveFileVersion` of GAME_GLOBAL 65642 / MISSION 196720 / RETRY 105, so the host answers every slot with its category's current version (save image written by this build) [V live for 3 categories; I for the rest].
+- **Result** (`test_m4_messages.py`, 7 tests): with delivery on, the init mission's title flow runs by itself from `Seq_Demo_Start` through `ConfirmAutoSave → StartSignIn → CreateOrLoadSaveData` to `Seq_Demo_LogInKonamiServer`: the 10 live transitions [V], all three `ChangeLanguage` calls of the boot (TppUiBootInit, SetSavedLanguage, CreateOrLoadSaveData; the last in the frame the loading popup closes, as live), no Lua error. Timer/UI `OnMessage` order = live `Timer.Start, Timer.Finish, UI.RequestPlayRecordClearInfo, UI.PopupClose(1200, 0)` with two known differences: the host adds `UI.PopupClose(1000, 0)` (the popup IH skipped live) and does not raise `UI.RequestPlayRecordClearInfo` (raiser not decoded: its name string is not in the plain exe, StrCode32 0x09234122 has no immediate; [?] E13).
+- **`test_m5_mission_load.py`**: delivery on for the title span (the host's own two language changes replace the hand-driven ones; 58/58 chunk order still holds); the boundary moves to `Seq_Demo_LogInKonamiServer` (Konami login `Network.StartLogin/EndLogin`, DLC popup `UI.EndDlcAnnounce`, title menu `UI.TitleMenu` not modelled), from there delivery is off and the 40010 / f30010 loads stay hand-driven. With delivery on through f30010, its own `Timer_WaitStartingGame` flow reaches TppStory radio conditions that call `Player.GetItemLevel` (0x1409D2660, not recorded → nil → `TppStory.lua:210` compare error), so f30010 stays without delivery until gate b.
+
 ## More registration paths: plain values [V static]
 Two paths store plain values instead of closures, so FoxTrace's binding capture does not see them; `Tools\static_lua_consts.py` reads them from the exe into `Engine\tests\fixtures\m4_lua_consts.json`:
 
@@ -130,7 +152,7 @@ FoxTrace installs hooks on its own thread while the game keeps booting. With 16 
 ## Open [?]
 - Mission load: answered 2026-10-23 in `Resources.md` (location loader, mission block controller, script resources, `OnAllocate`/`OnInitialize` coroutines, pack-scoped VFS).
 - Class behind vtable 0x1422A9710: the mission block controller created by the `TppSimpleMissionBlockControllerData` DataBody (`Resources.md`) [V identity; class name "TppSimpleMissionBlockController" [I]].
-- UI parameter tables: answered 2026-10-24 in `Resources.md` ("UI parameter tables"): the `mb_dvc_top.fpk` package scripts, reloaded by the iDroid on every `TppUiCommand.ChangeLanguage()` (3 per boot); `emblem_list.lua` chunk 114 from the emblem setup 0x1405CF950 [V]. Host: `Engine/resources/ui.py`. Still open for the host: timers + message delivery to the mission `OnMessage` (the init title flow starts on `Timer.Finish`), M4 gate.
+- UI parameter tables: answered 2026-10-24 in `Resources.md` ("UI parameter tables"): the `mb_dvc_top.fpk` package scripts, reloaded by the iDroid on every `TppUiCommand.ChangeLanguage()` (3 per boot); `emblem_list.lua` chunk 114 from the emblem setup 0x1405CF950 [V]. Host: `Engine/resources/ui.py`. Timers, message delivery and popups: "Timers and message delivery" above (2026-10-28).
 - Return values of the stubbed functions the boot touches (the host returns nil): record/replay capture with FoxTrace 3 `luaret` hooks (M4 gate).
 
 ## Evidence
@@ -147,6 +169,9 @@ FoxTrace installs hooks on its own thread while the game keeps booting. With 16 
 | 0x140063C60 | boot driver: init.lua, start.lua as coroutine | [V] |
 | trace_m4_lua_bindings4_20261022_190858 | binding map, 2 identical runs | [V live] |
 | 0x14043AA70 / 0x140A0AA60 | plain-value registrars: `fox` pad constants, enum arrays (`TppCollection`) | [V] |
+| 0x140898500 / 0x140864340 / 0x141FFCF00 | popup UI state machine; message send (id object, popupId, selection); "PopupClose" message object 0x142BF2720 | [V] |
+| 0x1408D0450 / 0x140868160 / 0x1408672D0 / 0x140867460 | ErasePopup request +0x157A (set / read), IsShowPopup check | [V] |
+| 0x1409AC3E0 | SignIn.IsSignedIn / IsStorageSelected / IsStartupProcessCompleted push true | [V] |
 | 0x140AE1C10 / 0x140AE1C70 | DeclareGVars / DeclareSVars build `gvars` / `svars` | [V] |
 | 0x1409AA780 | GetProgramVersionTable constant table | [V] |
 | test_m4_script_host.py | host boot: 108 chunks in live order, no error | [V] |
@@ -154,4 +179,4 @@ FoxTrace installs hooks on its own thread while the game keeps booting. With 16 
 | trace_m4_lua_boot_20261022_182621 | boot chunk order (170), 147 openlib calls, 11 metatables, identical over 2 runs | [V live] |
 
 ---
-<small>Source: `docs/engine/ScriptHost.md` in the project repository &middot; generated 2026-10-24.</small>
+<small>Source: `docs/engine/ScriptHost.md` in the project repository &middot; generated 2026-10-28.</small>

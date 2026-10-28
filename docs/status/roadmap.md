@@ -61,15 +61,8 @@ Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 - [x] UI parameter tables (2026-10-24): the `mbdvc_*` tables are `mb_dvc_top.fpk` scripts, reloaded by the iDroid on every `TppUiCommand.ChangeLanguage()` (3 per boot: TppUiBootInit, init_sequence SetSavedLanguage, CreateOrLoadSaveData), `emblem_list.lua` from the emblem setup 0x1405CF950 [V static + live capture `trace_m5_lang`] → `Engine\resources\ui.py` (`IDroid`). Host boot: 112/112 live chunks (boot UI load asserted as an async group: live order varies between runs); M5 scenario: **58/58 live chunks from 112** (the title flow's language changes and loads at the native boundary).
 - **Gate passed (2026-10-24):** chunk + block event order from live chunk 112 to the end of the boot (`m4_lua_boot.json` chunks 112–169) reproduced by the host.
 
-## Mod checkpoint (after M5) — short Option B sprint
-- Luc's playtests (V_Sahelan / Unbound t2b), gatling soldier damage, cockpit view framing, using the M0–M5 findings. Then on to M6.
-- Opened 2026-10-24 (M5 PASS). Candidates and order: `docs\SAHELAN_FEASIBILITY.md` (address audit, offline test bench, in-game controls, events, package scripts, on-demand script-block loading, ...).
-- 2026-10-24: 3.5 address audit PASS (`docs\SAHELAN.md` §12, 0 contradicted) and 3.6 offline test bench PASS (`test_mod_sahelan_bench.py`); 3.4 decode settled (`ScriptBlock.Load(id, "")` = unload). Open: in-DLL build-time address check, 3.1 in-game controls, 3.2 events.
-- 2026-10-24: 3.5 tail done (V_Sahelan startup `CheckAddresses()`, 39 functions, built, not deployed); 3.1 prep done (`docs\SAHELAN.md` §13 [V live]: unbound keys reach no Lua native; pilot keys + toggle Numpad `*` read in the DLL). Open: 3.1 implementation, 3.2 events.
-- 2026-10-24: 3.1 implemented offline (`SahelanControl.GetKeys()` / `IsKeyDown` in V_Sahelan r7b keys + IH module `InfVSahelanPilot.lua`, Numpad `*` toggle; bench 7/7; build B5C2A5A9, not deployed). Open: 3.1 live run (Luc), 3.2 events.
-- 2026-10-24: 3.1 PASS live (Luc; `docs\SAHELAN.md` §13.1). Rework session 1: open-question audit `docs\OPEN_QUESTIONS.md`, rework plan + R1–R5 order `docs\SAHELAN_FEASIBILITY.md` §6 (stops before 3.9 navmesh = M6).
-- 2026-10-24: Rework 1 Foundation PASS (`docs\SAHELAN.md` §13.2): `vsahelan` game_plugin overlay, merged module `InfSahelanPilot.lua` (one gate owner, edge release), build on `Engine\formats` (byte-identical), bench 13/13.
-- 2026-10-24: Rework 2 DLL rebuild PASS (`docs\SAHELAN.md` §13.3): pilot split into `src\hooks\sahelan\pilot\` (same API, probes behind `SAHELAN_DEBUG`), one phase owner (A10: PhaseSneakAi PreUpdate not called in free roam), V_F-owned hooks explicit, Luc smoke test same as 3.1.
+## Mod checkpoint (after M5) [RETIRED 2026-10-28]
+- Dropped on Luc's request (2026-10-28): the project no longer builds or tests Sahelanthropus mods. History stays in [`docs\LOG.md`](log.md); the verified RE from that work (`docs\SAHELAN.md`, `docs\PROBES.md`, `docs\BATTLEFIELD.md`) is reference evidence for the engine milestones (M6 navigation, M8 damage / soldier AI, M9 Sahelan boss).
 
 ## M6 World [PLANNED] — terrain, collision, navigation, routes
 - `.htre`/`.tre2` terrain, `.geom` collision, nav2 A* over portal graph, route following.
@@ -96,8 +89,8 @@ Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 - One free-roam area streamed in, player controllable (KB+M), one AI type alive.
 - **Gate:** scripted 60 s input replay produces the same state trace as the live game within tolerance.
 
-## Parked track: Option B mod (Sahelanthropus pilot) — parked until the Mod checkpoint after M5 (Luc, 2026-10-22)
-Feature-complete pending Luc's playtests (`STATUS.md`); resumes at the **Mod checkpoint** above. Its RE (`docs\SAHELAN.md`, `docs\PROBES.md`) feeds M8/M9.
+## Retired track: Option B mod (Sahelanthropus pilot)
+Dropped 2026-10-28 (Luc): no mod work, mod deliverables or mod playtests. Only its verified findings are kept, as RE evidence for the engine.
 
 ---
 <small>Source: `docs/ROADMAP.md` in the project repository &middot; generated 2026-10-28.</small>

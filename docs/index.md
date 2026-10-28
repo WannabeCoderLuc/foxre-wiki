@@ -79,10 +79,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-10-28: **M4 gate a part 3 (login, DLC, pre-title)**: Konami login decoded (0x1407D74A0 / 0x1407DEE70 / 0x14091C470 / 0x1407D50A0; live popups = `system_3200_all` ×2, `system_3201_all`), pre-title UI 0x14085C8C0 → Lua `TppVarInit.StartTitle` [V static]; `Engine\runtime\online.py`; host = 24 live transitions, loads title 40010 itself; m5 58/58 hand-driven only from CONTINUE; quick suite 62/62.
 - 2026-10-28: **Tooling (foxagent + static_map)**: foxagent RAG misses fixed (IH package Lua indexed, IH-log copies collapsed, trace = spec section + named modules + E-id open items, `no_source` flag; behaviour suite 7/7, NDCG all 0.581 -> 0.595); `static_map.py` indexes leaf functions outside .pdata (`re_field_access(0x157a)` 0 -> 2). Verifiers 61/61.
 - 2026-10-28: **M4 gate a part 2 (UI popups)**: `UI.PopupClose` from popup state machine 0x140898500 [V static], 12-frame close [V live]; host title flow by itself to `Seq_Demo_LogInKonamiServer` (10 live transitions, own ChangeLanguage calls); m5 test uses it, 58/58; quick suite 61/61.
 - 2026-10-24: **Mod checkpoint rework 2 DLL rebuild PASS**: pilot split (same 78 Lua names, 39 address checks, probes behind `SAHELAN_DEBUG`), V_F-owned hooks explicit, A10 answered (PhaseSneakAi PreUpdate not called in free roam), Luc smoke test = 3.1 behaviour, bench 14/14.
 - 2026-10-24: **Mod checkpoint rework 1 Foundation PASS**: overlay `vsahelan` (deploy/restore round trip MATCH), merged module `InfSahelanPilot.lua` (one gate owner, edge release), build on `Engine\formats` (t2b byte-identical), bench 13/13.
-- 2026-10-24: **Mod checkpoint rework session 1**: Luc's 3.1 run read (pilot works in game; release-key bug; gatling hit no soldier; 0 player damage), mod-baseline + t2b (MATCH 98 files), `vsahelan.ps1 restore` fix; `docs\OPEN_QUESTIONS.md` (13 answered/narrowed, capture `trace_oq_callers`); rework plan `SAHELAN_FEASIBILITY.md` §6.
 
 [Full session log](status/log.md)

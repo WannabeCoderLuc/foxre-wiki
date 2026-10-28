@@ -10,7 +10,7 @@ Ground truth the engine tests (`Engine/tests/`) compare against. Each comes from
 | `m4_lua_boot.json` | 19 KB | M4/M5: the 170 Lua chunks of a cold boot to free roam, in load order, plus library registrations. |
 | `m4_lua_consts.json` | 77 KB | M4: Lua constant tables read statically from the executable. |
 | `m4_lua_returns.json` | 944 KB | M4: recorded native return values (FoxTrace luaret captures) used for record/replay. |
-| `m5_save_image.json` | 5 KB | M5: the minimal save values behind TppScriptVars.LoadVarsFromSlot (from a live dump). |
+| `m5_save_image.json` | 6 KB | M5: the minimal save values behind TppScriptVars.LoadVarsFromSlot (from a live dump). |
 
 ---
 <small>Generated 2026-10-28 from the project repository.</small>

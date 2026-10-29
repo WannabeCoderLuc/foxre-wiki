@@ -58,7 +58,7 @@ SITE = [
         ("How a mission loads", "mission-load", "docs/site/explain/Mission-Load.md", "Requests, package lists, blocks, script resources, the mission script (M5)."),
         ("Script blocks", "script-blocks", "docs/site/explain/Script-Blocks.md", "8 slots for side content: quests, reinforcements, animals (M5)."),
         ("The iDroid and the language reload", "idroid", "docs/site/explain/IDroid.md", "Why the iDroid's tables load three times per start-up (M5)."),
-        ("Routes and navmeshes", "routes-and-navmeshes", "docs/site/explain/Routes-And-Navmeshes.md", "Patrol routes and walkable surfaces (formats M1, runtime M6/M8)."),
+        ("Routes and navmeshes", "routes-and-navmeshes", "docs/site/explain/Routes-And-Navmeshes.md", "Patrol routes and walkable surfaces (formats M1, runtime M8)."),
         ("How we verify", "verification", "docs/site/explain/Verification.md", "Pass/fail gates, FoxTrace captures, record/replay, claims, confidence tags."),
     ]),
     ("Modding guides", "mods", "manual", "What each finding means for a mod, with a worked (hypothetical) example "
@@ -98,7 +98,7 @@ SITE = [
     ]),
     ("Project status", "status", "reference", "Where the project stands: milestones with their pass/fail gates, "
      "the numbers, and the full dated log of every working session. Generated on every sync.", [
-        ("Roadmap", "roadmap", "docs/ROADMAP.md", "Milestones M0-M11 and the gate each one must pass."),
+        ("Roadmap", "roadmap", "docs/ROADMAP.md", "Milestones M0-M14, their order and the gate each one must pass."),
         ("Numbers at a glance", "numbers", "gen:numbers", "Milestones, verified modules and test fixtures, counted at build time."),
         ("Session log", "log", "docs/LOG.md", "Every session, newest first, with addresses and test counts."),
     ]),

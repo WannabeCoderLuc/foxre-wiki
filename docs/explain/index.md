@@ -34,7 +34,7 @@ One topic per page, in plain language: what it is, why it matters, how the origi
 
 -   **[Routes and navmeshes](routes-and-navmeshes.md)**
 
-    Patrol routes and walkable surfaces (formats M1, runtime M6/M8).
+    Patrol routes and walkable surfaces (formats M1, runtime M8).
 
 -   **[How we verify](verification.md)**
 

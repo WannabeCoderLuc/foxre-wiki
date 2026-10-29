@@ -6,7 +6,7 @@
 "Load mission f30010" (Afghanistan free roam) is not one operation. It is a chain: the scripts ask for a location and a mission, the engine asks the scripts which **packages** that means, loads them into memory **blocks**, runs the scripts those packages carry, and then steps the mission's main script into life.
 
 ## Why it matters
-Package lists are decided in Lua, so this chain is where mods add content without touching the executable. For the new engine it is the backbone of everything after M5: the world (M6), characters and gameplay all arrive through packages loaded this way.
+Package lists are decided in Lua, so this chain is where mods add content without touching the executable. For the new engine it is the backbone of everything after M5: the world (M6 to M8), characters and gameplay all arrive through packages loaded this way.
 
 ## How the original does it
 ```mermaid
@@ -39,4 +39,4 @@ The gate scenario is the live boot: cold start, title screen, Continue, free roa
 - The title-screen flow itself runs at a boundary for now (see [The Lua script host](script-host.md)).
 
 ---
-<small>Hand-written article (`docs/site/explain/Mission-Load.md`) &middot; published 2026-10-28.</small>
+<small>Hand-written article (`docs/site/explain/Mission-Load.md`) &middot; published 2026-10-29.</small>

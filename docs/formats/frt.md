@@ -38,4 +38,4 @@ Field semantics per type follow youarebritish's `frt.bt` [W]; the codec keeps ev
 Top: RelaxedIdleAct 135k · RelaxedWalk 107k · RelaxedWalkAct 81k · CautionWalk 66k · Normal 48k · CautionIdleAct 45k · SendMessage 44k · RelaxedStandWalkAct 34k · None 28k · CautionSquatIdleAim 21k · CautionStandIdleAim 15k · CautionStandIdle 14k · VehicleMoveFast 13k · Move 9.8k · VehicleMoveNormal 9.6k … plus Sahelan's StandSearch, StandIdle, PileBunker, BreakSteelTower, SearchMissile, Peep1, JumpWalk, RunOnly, WalkOnly, RunWalk, All (see `docs\SAHELAN.md` §8.3). Unnamed: 35 types (0x0BAB841A 92k, 0xEC2BF82A 77k, 0xAFC35AAB 58k, 0x6366BEFD 22k, 0x921226F1 12k, …) [?].
 
 ---
-<small>Source: `docs/formats/FRT.md` in the project repository &middot; generated 2026-10-28.</small>
+<small>Source: `docs/formats/FRT.md` in the project repository &middot; generated 2026-10-29.</small>

@@ -6,7 +6,7 @@ Where the project stands: milestones with their pass/fail gates, the numbers, an
 
 -   **[Roadmap](roadmap.md)**
 
-    Milestones M0-M11 and the gate each one must pass.
+    Milestones M0-M14, their order and the gate each one must pass.
 
 -   **[Numbers at a glance](numbers.md)**
 

@@ -105,4 +105,4 @@ We imported 3,018 facts from IHHook, Infinite Heaven, V_Framework and the commun
 - Source code (private repository for now): `Engine\formats\` (readers/writers), `Engine\script\` (Lua host), `Engine\resources\` (package and block loading), `Tools\FoxTrace\` (tracer).
 
 ---
-<small>Hand-written article (`docs/site/mods/For-Modders.md`) &middot; published 2026-10-28.</small>
+<small>Hand-written article (`docs/site/mods/For-Modders.md`) &middot; published 2026-10-29.</small>

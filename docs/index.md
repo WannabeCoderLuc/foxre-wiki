@@ -11,7 +11,7 @@ hide:
 
 PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &middot; every claim backed by a pass/fail test
 
-**5 of 12 milestones passed** &middot; current: **M4 Script host**
+**6 of 15 milestones passed** &middot; current: ****
 
 </div>
 
@@ -51,14 +51,17 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 | M1 | Data layer | read every file container and the core data formats | <span class="status pass">PASS</span> |
 | M2 | Entity & reflection core | fox2 → live typed entity graph | <span class="status pass">PASS</span> |
 | M3 | Runtime core | scheduler, messages, GameObjects | <span class="status pass">PASS</span> |
-| M4 | Script host | Lua 5.1 + Fox/Tpp API | <span class="status in-progress">IN PROGRESS</span> |
+| M4 | Script host | Lua 5.1 + Fox/Tpp API | <span class="status pass">PASS</span> |
 | M5 | Resources & mission load | packs, blocks, async resources, mission start | <span class="status pass">PASS</span> |
-| M6 | World | terrain, collision, navigation, routes | <span class="status planned">PLANNED</span> |
-| M7 | Animation | clips, motion graphs, rigs | <span class="status planned">PLANNED</span> |
-| M8 | Gameplay core | Player, Soldier AI, SendCommand handlers, damage (headless) | <span class="status planned">PLANNED</span> |
-| M9 | Gameplay extended | sound, bosses, UI | <span class="status planned">PLANNED</span> |
-| M10 | Assets & rendering | renderer and viewer last | <span class="status planned">PLANNED</span> |
-| M11 | Playable slice | one free-roam area, player + one AI type | <span class="status planned">PLANNED</span> |
+| M6 | World streaming & locators [NEXT] — stage blocks, location loader, locators | stage blocks, location loader, locators | <span class="status planned">PLANNED</span> |
+| M7 | Terrain & collision formats | `.htre`/`.tre2`, `.geom` | <span class="status planned">PLANNED</span> |
+| M8 | Navigation & routes | nav2 runtime, route following | <span class="status planned">PLANNED</span> |
+| M9 | Gameplay core | Soldier AI, CP / notice, damage, SendCommand handlers (headless) | <span class="status planned">PLANNED</span> |
+| M10 | Asset formats | textures, models, rigs, fova, parts, language | <span class="status planned">PLANNED</span> |
+| M11 | Animation | clips, motion graphs, motion events | <span class="status planned">PLANNED</span> |
+| M12 | Gameplay extended | sound, bosses, UI | <span class="status planned">PLANNED</span> |
+| M13 | Rendering & viewer | renderer last | <span class="status planned">PLANNED</span> |
+| M14 | Playable slice | one free-roam area, player + one AI type | <span class="status planned">PLANNED</span> |
 
 ## Verified engine modules
 
@@ -79,9 +82,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-10-29: **M4 Script host PASS** (Luc accepted gates a + b with the documented differences).
+- 2026-10-29: **Roadmap re-cut** (Luc): M6+ ordered by dependency and feasibility (M6 streaming & locators, M7 terrain/collision, M8 navigation, M9 gameplay core, M10 asset formats, M11 animation, M12 gameplay extended, M13 rendering, M14 slice); gap map, open questions, skills, site updated.
+- 2026-10-29: **M4 gate b (call-log comparison)**: FoxTrace table results (Lua Table layout [V static]); capture f30020 (574 hooks); host follows the live save (title 40020 → f30020), free roam with delivery to `Seq_Game_FreePlay`; call log 548 both / 517 same args / order 0.947, one-sided functions all explained; replay fixture 723 natives (4 captures); `test_m4_gate_b.py`; quick suite 65/65.
 - 2026-10-28: **Sahelanthropus mod track retired** (Luc): removed from goals, Next, ROADMAP (Mod checkpoint), CLAUDE.md and the skills; SAHELAN / PROBES / BATTLEFIELD docs kept as RE evidence only.
 - 2026-10-28: **M4 gate a part 3 (login, DLC, pre-title)**: Konami login decoded (0x1407D74A0 / 0x1407DEE70 / 0x14091C470 / 0x1407D50A0; live popups = `system_3200_all` ×2, `system_3201_all`), pre-title UI 0x14085C8C0 → Lua `TppVarInit.StartTitle` [V static]; `Engine\runtime\online.py`; host = 24 live transitions, loads title 40010 itself; m5 58/58 hand-driven only from CONTINUE; quick suite 62/62.
-- 2026-10-28: **Tooling (foxagent + static_map)**: foxagent RAG misses fixed (IH package Lua indexed, IH-log copies collapsed, trace = spec section + named modules + E-id open items, `no_source` flag; behaviour suite 7/7, NDCG all 0.581 -> 0.595); `static_map.py` indexes leaf functions outside .pdata (`re_field_access(0x157a)` 0 -> 2). Verifiers 61/61.
-- 2026-10-28: **M4 gate a part 2 (UI popups)**: `UI.PopupClose` from popup state machine 0x140898500 [V static], 12-frame close [V live]; host title flow by itself to `Seq_Demo_LogInKonamiServer` (10 live transitions, own ChangeLanguage calls); m5 test uses it, 58/58; quick suite 61/61.
 
 [Full session log](status/log.md)

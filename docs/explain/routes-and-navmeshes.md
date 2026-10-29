@@ -1,6 +1,6 @@
 # Routes and navmeshes
 
-*Formats decoded in M1; their runtime use belongs to M6 (World) and M8 (Gameplay core). References: [FRT route sets](../formats/frt.md), [NAV2 navmeshes](../formats/nav2.md).*
+*Formats decoded in M1; their runtime use belongs to M8 (Navigation and routes). References: [FRT route sets](../formats/frt.md), [NAV2 navmeshes](../formats/nav2.md).*
 
 ## What they are
 Two kinds of data tell characters where they can and should go:
@@ -20,7 +20,7 @@ Without navmeshes nothing can path-find; without routes soldiers have nowhere to
 Both formats have byte-identical readers and writers (`Engine/formats/frt.py`, `Engine/formats/nav2.py`): **307 of 307** route files and **840 of 840** navmeshes re-encode unchanged. Values the engine computes at build time (link weights, region-link costs) are fitted, not exact, so edits rescale them instead of recomputing.
 
 ## Still open
-The runtime side: path queries, how a soldier follows a route and fires its events, and 35 event types whose names are unknown. That is M6 / M8 work.
+The runtime side: path queries, how a soldier follows a route and fires its events, and 35 event types whose names are unknown. That is M8 work.
 
 ---
-<small>Hand-written article (`docs/site/explain/Routes-And-Navmeshes.md`) &middot; published 2026-10-28.</small>
+<small>Hand-written article (`docs/site/explain/Routes-And-Navmeshes.md`) &middot; published 2026-10-29.</small>

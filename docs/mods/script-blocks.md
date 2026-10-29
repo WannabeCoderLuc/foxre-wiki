@@ -29,4 +29,4 @@ ScriptBlock.Load(id, nil)        -- unload: OnTerminate runs, then the slot empt
 - `svars.sbl_*` restore the vanilla quest/animal blocks on Continue; your block is not saved unless you save its state yourself.
 
 ---
-<small>Hand-written article (`docs/site/mods/Script-Blocks.md`) &middot; published 2026-10-28.</small>
+<small>Hand-written article (`docs/site/mods/Script-Blocks.md`) &middot; published 2026-10-29.</small>

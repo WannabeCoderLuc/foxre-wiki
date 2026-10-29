@@ -2,9 +2,9 @@
 
 Counted from the project repository at build time.
 
-- Milestones passed: **5 of 12**
+- Milestones passed: **6 of 15**
 - Verified engine modules: **12** (table on the home page)
-- Test files: **18**, ground-truth fixtures: **7**
+- Test files: **19**, ground-truth fixtures: **9**
 
 | Milestone | Status |
 |---|:-:|
@@ -12,14 +12,17 @@ Counted from the project repository at build time.
 | M1 Data layer | <span class="status pass">PASS</span> |
 | M2 Entity & reflection core | <span class="status pass">PASS</span> |
 | M3 Runtime core | <span class="status pass">PASS</span> |
-| M4 Script host | <span class="status in-progress">IN PROGRESS</span> |
+| M4 Script host | <span class="status pass">PASS</span> |
 | M5 Resources & mission load | <span class="status pass">PASS</span> |
-| M6 World | <span class="status planned">PLANNED</span> |
-| M7 Animation | <span class="status planned">PLANNED</span> |
-| M8 Gameplay core | <span class="status planned">PLANNED</span> |
-| M9 Gameplay extended | <span class="status planned">PLANNED</span> |
-| M10 Assets & rendering | <span class="status planned">PLANNED</span> |
-| M11 Playable slice | <span class="status planned">PLANNED</span> |
+| M6 World streaming & locators [NEXT] — stage blocks, location loader, locators | <span class="status planned">PLANNED</span> |
+| M7 Terrain & collision formats | <span class="status planned">PLANNED</span> |
+| M8 Navigation & routes | <span class="status planned">PLANNED</span> |
+| M9 Gameplay core | <span class="status planned">PLANNED</span> |
+| M10 Asset formats | <span class="status planned">PLANNED</span> |
+| M11 Animation | <span class="status planned">PLANNED</span> |
+| M12 Gameplay extended | <span class="status planned">PLANNED</span> |
+| M13 Rendering & viewer | <span class="status planned">PLANNED</span> |
+| M14 Playable slice | <span class="status planned">PLANNED</span> |
 
 ---
-<small>Generated 2026-10-28 from the project repository.</small>
+<small>Generated 2026-10-29 from the project repository.</small>

@@ -44,4 +44,4 @@ PropertyInfo (0x48 B): vtable (slot 1 = arraySize), name +0x10, offset +0x18, ar
 Fx node classes' properties (from data only); dynamic properties (165 entities) — runtime-only, no registry entry.
 
 ---
-<small>Source: `docs/engine/Reflection.md` in the project repository &middot; generated 2026-10-28.</small>
+<small>Source: `docs/engine/Reflection.md` in the project repository &middot; generated 2026-10-29.</small>

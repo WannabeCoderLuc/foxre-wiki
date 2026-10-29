@@ -2,9 +2,9 @@
 
 Goal: an engine in `Engine\` that loads the player's own MGSV:TPP 1.0.15.4 data and reproduces its behaviour, written from specs (`docs\formats\`, `docs\engine\`), never from copied game code or assets. Every milestone ends on a **machine-decidable gate** (lesson from awesome-rea, [`docs\TOOLING.md`](../library/tooling.md)); a milestone is done only when `engine_verify` is green for its gate tests.
 
-Status keys: PASS = gate passed · IN PROGRESS · PLANNED. Update this file when a gate passes.
+Status keys: PASS = gate passed · IN PROGRESS · NEXT (the milestone to start next) · PLANNED. Update this file when a gate passes.
 
-**Principles:** headless first (renderer last); every gate is checked against live traces; formats are decoded when a milestone first needs them. Order re-agreed with Luc 2026-10-22 (new M5 Resources & mission load; old M5 World → M6, M6 Assets & rendering → M10, M8 split into M8/M9, M9 → M11).
+**Principles:** headless first (renderer last); every gate is checked against live traces; formats are decoded when a milestone first needs them. Order re-agreed with Luc 2026-10-22 (new M5 Resources & mission load) and re-cut 2026-10-29 by dependency and feasibility ("Order from M6 on" below).
 
 ## M0 Foundations [PASS] (2026-10-21) — workspace, MCP oracles, hash functions
 - Workspace, docs, git repo, MCP `mgsv-unified` 1.4.0 (30 tools), knowledge DB, skills.
@@ -20,7 +20,7 @@ Status keys: PASS = gate passed · IN PROGRESS · PLANNED. Update this file when
 | PASS: `.fox2` DataSets | `Engine/formats/fox2.py`, [`docs/formats/FOX2.md`](../formats/fox2.md) | **passed 2026-10-21: 44,994/44,994 unique DataSets byte-identical**; name resolution % still to report |
 | PASS: `.frt` routes, `.nav2` | `Engine/formats/frt.py` + [`docs/formats/FRT.md`](../formats/frt.md), `Engine/formats/nav2.py` + [`docs/NAVMESH.md`](../formats/nav2.md) | **passed 2026-10-21: 307/307 route files and 840/840 navmeshes byte-identical**; 69/104 route event types named |
 | PASS: `.lua` in packs | `fpk.decode_entry` | **732/732 decode + compile** (in the FPK gate) |
-| `.sdf`/`.sbp` sound packages (container only) | — | listed + byte-extract — moved to M9 (sound) |
+| `.sdf`/`.sbp` sound packages (container only) | — | listed + byte-extract — moved to M12 (sound) |
 
 Remaining M1 polish: FOX2 name-resolution %, texture name gap (22.8k unnamed `.ftexs`), exe-side parser VAs (all [?]).
 Output: `Engine\formats\` (ported from ATOMIZER/Tools into one package), `docs\formats\{QAR,FPK,FOX2,FRT,NAV2}.md`. Skill: `fox-format`.
@@ -41,7 +41,7 @@ Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 - Open (not gate-blocking): updater identities, who walks the 4 type groups, when the GameObject listener fires, updater removal path, >32-updater sort.
 - **Gate passed:** live fixtures for the tick order (every captured updater-vector change, ties included) and the boot → free-roam message sequence reproduced by the engine's scheduler/bus model.
 
-## M4 Script host [IN PROGRESS] — Lua 5.1 + Fox/Tpp API
+## M4 Script host [PASS] (gate passed 2026-10-29, accepted by Luc) — Lua 5.1 + Fox/Tpp API
 - Spec [`docs\engine\ScriptHost.md`](../engine/script-host.md) (2026-10-22): Lua runtime = stock 5.1 except TString chars behind a pointer [V]; live boot capture (FoxTrace 2): 170-chunk boot order, 147 library registrations, identical over 2 runs → `Engine\tests\fixtures\m4_lua_boot.json`.
 - [x] Native binding map (2026-10-22): 4 registration paths (luaI_openlib, Fox table builder, Fox class tables, direct setfield) [V]; 399 libraries / 5,532 bindings / 2,286 enum values, 2 identical runs + static oracle → `Engine\tests\fixtures\m4_lua_bindings.json`, `test_m4_bindings.py`.
 - [x] C side of chunk loading (Fox dofile, 0x1B/0x1C decode, boot coroutine, Script.LoadLibrary*) and per-frame C → Lua callers (OnUpdate, ScriptUpdater, OnSynchronizeSVars) [V].
@@ -51,7 +51,9 @@ Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 - [x] Timers + message delivery (2026-10-28, gate a): mission bucket listener 0x140A1D7D0 decoded (`OnMessage(subScripts, sender, messageId, arg0..3)`, result 1 = resend, `Mission.GetCurrentMessageResendCount`), `GkEventTimerManager` Start/Stop/StopAll/IsTimerActive (`Engine/runtime/timers.py`); the init mission's title flow runs from its own `Timer.Finish` and matches live for 7 sequence transitions up to the autosave popup (`test_m4_messages.py`).
 - [x] UI popups (2026-10-28, gate a part 2): popup UI state machine 0x140898500 sends `UI.PopupClose(id, selection)` when the close animation ends, `ErasePopup` = request flag [V static], 12-frame close [V live] (`Engine/runtime/popups.py`); `SignIn.Is*` = true, `GetScriptVersionFromSlot` from the save image. Host title flow runs by itself to `Seq_Demo_LogInKonamiServer` (10 live transitions, its own `ChangeLanguage` calls, Timer/UI order = live except IH's skipped autosave popup and the undecoded `UI.RequestPlayRecordClearInfo`); `test_m5_mission_load.py` uses it (58/58 kept), hand-driven from LogInKonamiServer. Open: Konami login / DLC / title-menu messages, `RequestPlayRecordClearInfo` raiser.
 - [x] Login, DLC, pre-title (2026-10-28, gate a part 3): Konami login decoded (StartLogin command 0x1407D74A0, state machine 0x1407DEE70, Network.StartLogin/EndLogin raisers 0x14091C470/0x1407D50A0, live popups = `system_3200_all` ×2 / `system_3201_all`), pre-title UI 0x14085C8C0 state 4 → Lua `TppVarInit.StartTitle` [V static] (`Engine/runtime/online.py`). Host walks the 24 live transitions to `Seq_Demo_ShowKonamiAndFoxLogo` and loads title 40010 itself; m5 test hand-driven only from title CONTINUE (58/58 kept). Open: title-menu messages — blocked by 40010's DataIdentifier locator (M6).
+- [x] Gate b call-log comparison (2026-10-29): FoxTrace logs table results (Lua 5.1 Table layout [V]); capture `trace_m4b_luaret_f30020_20261029_002259` (574 hooks = every binding the host calls); the host follows the live save (title 40020 → f30020), runs free roam with message delivery to `Seq_Game_FreePlay` against recorded natives (only error: M6 locator); call log vs live: 548 functions both sides, 517 same argument lists, first-call order 0.947, every one-sided function explained (`test_m4_gate_b.py`, ScriptHost.md "M4 gate b"). Open: 31 argument-list differences (save / IH quest pick / title boundary), E29 `pairs` insertion order, title menu (M6).
 - **Gate (re-agreed 2026-10-22):** init + f30010 mission scripts run against **recorded** native return values (record/replay fixture from a live capture); chunk order and API call log match the live capture. (Dropped: "no unstubbed API calls"; natives are answered from the replay fixture.)
+- **State (2026-10-29):** met for the init mission and free roam (f30010 and f30020 saves) up to the differences listed in `ScriptHost.md` "M4 gate b". The title menu belongs to M6 (it waits for the locator lookup) and moved into M6's gate. **Gate passed (Luc, 2026-10-29)** with those differences recorded as open items (E14, E29).
 
 ## M5 Resources & mission load [PASS] — packs, blocks, async resources, mission start
 - Pack/block system, async resource requests, the mission load flow (`start2nd.lua` / `TppMission` / block groups), pack-scoped VFS (mission scripts become visible only once their pack is loaded). Spec [`docs\engine\Resources.md`](../engine/resources.md).
@@ -61,36 +63,64 @@ Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 - [x] UI parameter tables (2026-10-24): the `mbdvc_*` tables are `mb_dvc_top.fpk` scripts, reloaded by the iDroid on every `TppUiCommand.ChangeLanguage()` (3 per boot: TppUiBootInit, init_sequence SetSavedLanguage, CreateOrLoadSaveData), `emblem_list.lua` from the emblem setup 0x1405CF950 [V static + live capture `trace_m5_lang`] → `Engine\resources\ui.py` (`IDroid`). Host boot: 112/112 live chunks (boot UI load asserted as an async group: live order varies between runs); M5 scenario: **58/58 live chunks from 112** (the title flow's language changes and loads at the native boundary).
 - **Gate passed (2026-10-24):** chunk + block event order from live chunk 112 to the end of the boot (`m4_lua_boot.json` chunks 112–169) reproduced by the host.
 
-## Mod checkpoint (after M5) [RETIRED 2026-10-28]
-- Dropped on Luc's request (2026-10-28): the project no longer builds or tests Sahelanthropus mods. History stays in [`docs\LOG.md`](log.md); the verified RE from that work (`docs\SAHELAN.md`, `docs\PROBES.md`, `docs\BATTLEFIELD.md`) is reference evidence for the engine milestones (M6 navigation, M8 damage / soldier AI, M9 Sahelan boss).
+## Order from M6 on (re-cut 2026-10-29)
+The old M6 World bundled three different kinds of work (world streaming, two file formats, the navigation runtime) and the old M10 bundled offline asset decoding with the renderer. From M6 on, the milestones are cut so that each one depends only on milestones before it, and the next one is always the most feasible with what exists:
 
-## M6 World [PLANNED] — terrain, collision, navigation, routes
-- `.htre`/`.tre2` terrain, `.geom` collision, nav2 A* over portal graph, route following.
-- **Gate:** path queries equal live `RequestMove` results (fixtures); heightmap samples equal live ground heights.
+| Order | Milestone | Depends on | Why here (feasibility) |
+|---|---|---|---|
+| **M6** | World streaming & locators | M2 entities, M4 host, M5 loader | The host already stops here (the title's `DataIdentifier` locator; title menu and CONTINUE still hand-driven); live signals (`Block.*` messages) are in every capture; open items E20–E22 are narrow. Closes M4's residue. |
+| M7 | Terrain & collision formats | M1 containers, M6 block grids | Pure format work, offline, same proven pattern as M1 (census → spec → byte-identical codec). Gives the ground and collision that navigation and gameplay sample. |
+| M8 | Navigation & routes | M6, M7, M1 `.nav2`/`.frt` codecs | Codecs exist; the runtime has verified RE (`BATTLEFIELD.md` §4, `SAHELAN.md` navigation, probe goal logs). Path queries need the streamed world and the ground. |
+| M9 | Gameplay core (headless) | M3, M4, M6–M8 | Soldier AI, CP / notice, damage and SendCommand handlers act in a world with paths; the richest RE already exists (`BATTLEFIELD.md`, `SAHELAN.md` §9–§10, the knowledge DB's 514 command handlers). |
+| M10 | Asset formats | M1 | Offline decoding (`.ftex/.ftexs`, `.fmdl`, `.frig/.frdv`, `.fv2`/fova, `.parts`, `.lng`): independent, but nothing before M11 needs it, so it sits where animation needs rigs and models. |
+| M11 | Animation | M10 rigs / models, M9 states | `.mtar`/`.gani` clips, the `.mog` motion graph (least understood Fox format: new knowledge), motion events. Needs skeletons from M10 and character states from M9. |
+| M12 | Gameplay extended | M9, M11 | Sound (`.sdf`/`.sbp`, Wwise), bosses (TppSahelan2: `SAHELAN.md` is the deepest spec), UI / iDroid logic. |
+| M13 | Rendering & viewer | M7, M10, M11 | Renderer last, by principle; needs terrain, models, textures and poses. First risk to clear early: a RenderDoc capture of the game (untested with Denuvo). |
+| M14 | Playable slice | all | One free-roam area, player + one AI type. |
 
-## M7 Animation [PLANNED] — clips, motion graphs, rigs
-- `.mtar`/`.gani`, `.mog` motion graph, `.frig`/`.frdv` rigs, motion events.
+Old → new numbers (older docs, the log and test names keep the old ones): M6 World → **M6** streaming & locators + **M7** terrain & collision + **M8** navigation & routes · M7 Animation → **M11** · M8 Gameplay core → **M9** · M9 Gameplay extended → **M12** · M10 Assets & rendering → **M10** asset formats + **M13** rendering · M11 Playable slice → **M14**.
+
+## M6 World streaming & locators [NEXT] — stage blocks, location loader, locators
+- Stage-block controller and the large / small / LOD block grids around the player (`StageBlockControllerData`, `Block.OnChangeLargeBlockState`, `StageBlockCurrentSmallBlockIndexUpdated`), location loader update and frame order (E21), mission controller block state 4 and the two Quark services (E20), FSTB tables beyond the header (E22).
+- Locators: `DataIdentifier` / `GetDataWithIdentifier`, locator lookups by name and by transform (`Tpp.GetLocatorByTransform`), `.lba` locator files (footer pairs already decoded for `Fox.PathFileNameCode32`).
+- Takes over from M4: the title heli space's `OnAllocate` (`heli_common_sequence.OnBuddyBlockLoad` → `HelispaceLocatorIdentifier` / `BuddyDDogLocator`), so the title sequence, the title-menu messages (`UI.TitleMenuReady`, `EndFadeIn`, `TitleMenu(PressStart, Continue)`) and a real CONTINUE run in the host.
+- Spec `docs\engine\World.md` (new), module `Engine\world\`. Skills `fox-system`, `fox-ground-truth`, `fox-engine-module`.
+- **Gate:** for both recorded saves (f30010 afgh, f30020 mafr) the host's stage-block messages match a live fixture for the boot → free-roam span; the title's locator lookups resolve; the title menu runs and `Engine\script\scenario.py` reaches free roam through the game's own CONTINUE (no hand-driven load).
+
+## M7 Terrain & collision formats [PLANNED] — `.htre`/`.tre2`, `.geom`
+- Census → spec → byte-identical reader/writer on every game file (`fox-format`), like M1. `.geom` also closes the `*_PhysicsData` entities left open since M2 (E7). Leads only: 010 templates `htre.bt`, `geom_geoms_gskl.bt`.
+- **Gate:** every terrain and collision file round-trips byte-identical; heightmap samples equal live ground heights at recorded points (fixture from the IH pipe).
+
+## M8 Navigation & routes [PLANNED] — nav2 runtime, route following
+- Portal-graph path search over `.nav2`, `TppNavigationController` snap / plan, nav worlds; `.frt` route following and route events (E6: 35 unnamed event types). Evidence: `BATTLEFIELD.md` §4, `SAHELAN.md` (navigation), probe goal logs.
+- **Gate:** path queries equal live `RequestMove` results (fixtures); a soldier's route-following state sequence matches live.
+
+## M9 Gameplay core [PLANNED] — Soldier AI, CP / notice, damage, SendCommand handlers (headless)
+- GameObject families Soldier2 and Player2 (state, not animation), AI framework (node tables, blackboard), CP phase and notice, damage, SendCommand handlers. Evidence: `BATTLEFIELD.md`, `SAHELAN.md` §9–§10, `structs_soldier\`, the knowledge DB's command handlers.
+- **Gate:** per system, behaviour fixtures (state sequences) reproduced.
+
+## M10 Asset formats [PLANNED] — textures, models, rigs, fova, parts, language
+- `.ftex/.ftexs`, `.fmdl`, `.frig/.frdv`, `.fv2`/fova, `.parts`, `.lng`: decode (and re-encode where the format allows) on every game file; texture path recovery from `.fmdl`/`.mtar` strings (E2, 22.8k unnamed textures).
+- **Gate:** every file of each format decodes; byte-identical round trip where the format allows; decoded textures match an independent decoder.
+
+## M11 Animation [PLANNED] — clips, motion graphs, motion events
+- `.mtar`/`.gani` clips, the `.mog` motion graph, motion events. Note (2026-10-21, community): youarebritish (FoxKit / FoxEngineTemplates author) says **motion graphs (`.mog`) are among the least understood Fox formats**, a realistic target where this project can add new knowledge.
 - **Gate:** sampled poses equal live captured bone transforms for reference clips.
-- Note (2026-10-21, community): youarebritish (FoxKit / FoxEngineTemplates author) says **motion graphs (`.mog`) are among the least understood Fox formats** — a realistic, valuable target where this project can contribute new knowledge. Milestone scope unchanged.
 
-## M8 Gameplay core [PLANNED] — Player, Soldier AI, SendCommand handlers, damage (headless)
-- GameObject families Player2 and Soldier2, AI framework (node tables, blackboard), SendCommand handlers, damage. Headless.
+## M12 Gameplay extended [PLANNED] — sound, bosses, UI
+- Sound (Wwise containers, `.sdf`/`.sbp`), bosses (TppSahelan2: `docs\SAHELAN.md` is the deepest spec), UI / iDroid logic.
 - **Gate:** per system, behaviour fixtures (state sequences) reproduced.
 
-## M9 Gameplay extended [PLANNED] — sound, bosses, UI
-- Sound (Wwise containers, `.sdf`/`.sbp`), bosses (Sahelan2; `docs\SAHELAN.md` is the deepest spec), UI.
-- **Gate:** per system, behaviour fixtures (state sequences) reproduced.
+## M13 Rendering & viewer [PLANNED] — renderer last
+- Materials / shaders, renderer + viewer (D3D11 or Vulkan, ImGui via vcpkg).
+- **Gate:** RenderDoc captures of reference frames vs engine frames (per-pass image diff within tolerance). Early risk check (any time): one RenderDoc capture of the game with plugins removed.
 
-## M10 Assets & rendering [PLANNED] — renderer and viewer last
-- Materials/shaders, renderer + viewer (D3D11 or Vulkan, ImGui via vcpkg). Asset **decoding** (`.ftex/.ftexs`, `.fmdl`, `.fv2`/fova, `.parts`, `.geom`) moves into whichever milestone first needs it (e.g. `.geom` in M6, `.parts` in M8).
-- **Gate:** all textures/models decode; RenderDoc captures of reference frames vs engine frames (per-pass image diff within tolerance).
-
-## M11 Playable slice [PLANNED] — one free-roam area, player + one AI type
+## M14 Playable slice [PLANNED] — one free-roam area, player + one AI type
 - One free-roam area streamed in, player controllable (KB+M), one AI type alive.
 - **Gate:** scripted 60 s input replay produces the same state trace as the live game within tolerance.
 
-## Retired track: Option B mod (Sahelanthropus pilot)
-Dropped 2026-10-28 (Luc): no mod work, mod deliverables or mod playtests. Only its verified findings are kept, as RE evidence for the engine.
+## Retired
+- **Mod checkpoint and Option B mod (Sahelanthropus pilot)**, dropped 2026-10-28 (Luc): no mod work, deliverables or playtests. History in [`docs\LOG.md`](log.md); the verified RE (`docs\SAHELAN.md`, `docs\PROBES.md`, `docs\BATTLEFIELD.md`) is evidence for M8, M9 and M12.
 
 ---
-<small>Source: `docs/ROADMAP.md` in the project repository &middot; generated 2026-10-28.</small>
+<small>Source: `docs/ROADMAP.md` in the project repository &middot; generated 2026-10-29.</small>

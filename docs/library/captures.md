@@ -4,6 +4,8 @@ Every FoxTrace capture: the game booted with log-only hooks, usually twice, then
 
 | Date | Capture | Runs | Hooks | Hooked |
 |---|---|:-:|:-:|---|
+| 2026-10-29 | `m4b_luaret` | 1 | 577 | `cls`, `bld`, `luaL_loadbuffer`, `Fox.StrCode32`, `TppScriptVars.IsSavingOrLoading`, `Time.GetRawElapsedTimeSinceStartUp` and 571 more |
+| 2026-10-29 | `m4b_luaret_f30020` | 2 | 577 | `cls`, `bld`, `luaL_loadbuffer`, `Fox.StrCode32`, `TppScriptVars.IsSavingOrLoading`, `Time.GetRawElapsedTimeSinceStartUp` and 571 more |
 | 2026-10-24 | `oq_callers` | 1 | 7 | `sb_update`, `sb_countdown`, `gom_listener`, `mission_ctl_update`, `timer_start`, `msg_resend_count` and 1 more |
 | 2026-10-24 | `m5_lang` | 2 | 10 | `loadbuf`, `emblem_setup`, `emblem_reload`, `mbdvc_top_load`, `lang_reload_sm`, `lang_pack` and 4 more |
 | 2026-10-23 | `m5_mbdvc` | 2 | 4 | `mbdvc_top_load`, `ui_tables_slot0`, `emblem_setup`, `loadbuf` |
@@ -19,4 +21,4 @@ Every FoxTrace capture: the game booted with log-only hooks, usually twice, then
 | 2026-10-22 | `m4_lua_bindings2` | 2 | 9 | `luaL_loadbuffer`, `luaI_openlib`, `luaL_newmetatable`, `lua_pushcclosure`, `lua_setfield`, `fox_tbl_begin` and 3 more |
 
 ---
-<small>Generated 2026-10-28 from the project repository.</small>
+<small>Generated 2026-10-29 from the project repository.</small>

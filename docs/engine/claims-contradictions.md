@@ -18,4 +18,4 @@ A claim is contradicted when the address it names cannot be a function entry in 
 - Lesson: 3 of the 4 IHHook entries are commented out in IHHook itself (unused, likely from another build); treat commented-out entries as unverified hints.
 
 ---
-<small>Source: `docs/CLAIMS_CONTRADICTIONS.md` in the project repository &middot; generated 2026-10-28.</small>
+<small>Source: `docs/CLAIMS_CONTRADICTIONS.md` in the project repository &middot; generated 2026-10-29.</small>

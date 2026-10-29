@@ -14,7 +14,7 @@ Counted from the project repository at build time.
 | M3 Runtime core | <span class="status pass">PASS</span> |
 | M4 Script host | <span class="status pass">PASS</span> |
 | M5 Resources & mission load | <span class="status pass">PASS</span> |
-| M6 World streaming & locators [NEXT] — stage blocks, location loader, locators | <span class="status planned">PLANNED</span> |
+| M6 World streaming & locators | <span class="status in-progress">IN PROGRESS</span> |
 | M7 Terrain & collision formats | <span class="status planned">PLANNED</span> |
 | M8 Navigation & routes | <span class="status planned">PLANNED</span> |
 | M9 Gameplay core | <span class="status planned">PLANNED</span> |

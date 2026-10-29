@@ -56,7 +56,7 @@ Engine model (`Engine\world\stage_blocks.py`): `PositionSetter`, `StageBlockCont
 
 ## Open
 - Stage blocks: which slot set (A window / B margin) drives `OnChangeLargeBlockState`; FSTB record +0x04 and the LOD package lists; small-block / LOD streaming (`OnChangeSmallBlockState`) not modelled; real load latency of a large block.
-- Title-menu messages (`TitleMenuReady`, `EndFadeIn`, `TitleMenu`) and the game's own CONTINUE (E13).
+- Title menu and CONTINUE: done 2026-10-29 [V static + live order] (ScriptHost.md "Title menu and CONTINUE (M6)", `Engine/runtime/title.py`); the raisers of `UI.TitleMenuReady` / `RequestPlayRecordClearInfo` stay [?] (obfuscated code).
 
 ## Evidence
 | VA | What | Tag |

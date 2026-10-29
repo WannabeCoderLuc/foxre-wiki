@@ -84,7 +84,10 @@ Old → new numbers (older docs, the log and test names keep the old ones): M6 W
 - Stage-block controller and the large / small / LOD block grids around the player (`StageBlockControllerData`, `Block.OnChangeLargeBlockState`, `StageBlockCurrentSmallBlockIndexUpdated`), location loader update and frame order (E21), mission controller block state 4 and the two Quark services (E20), FSTB tables beyond the header (E22).
 - Locators: `DataIdentifier` / `GetDataWithIdentifier`, locator lookups by name and by transform (`Tpp.GetLocatorByTransform`), `.lba` locator files (footer pairs already decoded for `Fox.PathFileNameCode32`).
 - Takes over from M4: the title heli space's `OnAllocate` (`heli_common_sequence.OnBuddyBlockLoad` → `HelispaceLocatorIdentifier` / `BuddyDDogLocator`), so the title sequence, the title-menu messages (`UI.TitleMenuReady`, `EndFadeIn`, `TitleMenu(PressStart, Continue)`) and a real CONTINUE run in the host.
-- Spec `docs\engine\World.md` (new), module `Engine\world\`. Skills `fox-system`, `fox-ground-truth`, `fox-engine-module`.
+- Spec [`docs\engine\World.md`](../engine/world.md) (new), module `Engine\world\`. Skills `fox-system`, `fox-ground-truth`, `fox-engine-module`.
+- [x] Locators (2026-10-29): DataIdentifier registry + lookup decoded (0x14017F170 / 0x14017EDD0, registry 0x142B72A88) and implemented over the mounted DataSets (`Engine/world/identifiers.py`); the title's `HelispaceLocatorIdentifier` lookups match live for both saves, 40010 / 40020 finish OnAllocate + OnInitialize with no Lua error (`test_m6_world.py`). `World.md` first draft.
+- [ ] Stage blocks: live Block.* fixture (`m6_block_messages.json`, 2 saves × 2 runs), FSTB large-block prefix decoded (name = StrCode32 of the pack_large stem, box `x | y<<16`); controller (small-block index, activation rule, raise sites) and host emission open.
+- [ ] Title menu + the game's own CONTINUE.
 - **Gate:** for both recorded saves (f30010 afgh, f30020 mafr) the host's stage-block messages match a live fixture for the boot → free-roam span; the title's locator lookups resolve; the title menu runs and `Engine\script\scenario.py` reaches free roam through the game's own CONTINUE (no hand-driven load).
 
 ## M7 Terrain & collision formats [PLANNED] — `.htre`/`.tre2`, `.geom`

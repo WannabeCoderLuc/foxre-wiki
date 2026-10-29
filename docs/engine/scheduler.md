@@ -53,26 +53,45 @@ Shutdown `FUN_140BF5290` [V static, 2026-10-29]: calls every **updater's vt+0x10
 - **More than 32 updaters**: the introsort partitions such ranges before its final insertion sort, so equal priorities may reorder; live never exceeds 24, so the engine keeps raising on > 32.
 - `0x140BF5770` (was listed as removal) is a **one-time job setup** (flag +0xD0): it builds three job objects (vtables 0x142306450 / 0x142306480 / 0x1423064B0) from two null-terminated object lists and stores them at +0x80 / +0x88 / +0x90. `0x140BF5630` detaches a job handle (+0x28) after spinning on its lock.
 
-## Updater identities (2026-10-29)
-No RTTI in the build (vtable[-1] has no complete-object locator; `Tools\vtable_rtti.py`) and no QueryInterface name on the updater vtables themselves; identities come from what installs or runs them:
+## Updater identities (2026-10-29, E9)
+No RTTI in the build (`Tools
+table_rtti.py --updaters`). Identities come from the owner: most updaters are a sub-object of a Quark system registered by a static initializer `{vtable, StrCode64(name), 0}` → `0x140BFF070` (the name hash is the system's lookup key, e.g. `TppGame` init 0x140991BF0 fetches them by hash with 0x140BF1650); names of hashes not in the dictionary were brute-forced (`Tools\strcode_brute`, recorded in `strcode_bruteforced.tsv`). "Owner vt" = vtable written next to the updater vtable by the owner's destructor (the only code ref of most updater vtables).
 
-| Prio | Updater vtable | Update | Identity | Evidence |
-|---|---|---|---|---|
-| 2 | 0x142289F18 | 0x1409950A0 | Lua callback updater (up to 2 registered Lua functions, `lua_pcall` per frame) | [V static + live] |
-| 4 | 0x1422A9788 | 0x140A1CC20 | mission block controller: `OnSynchronizeSVars`, `OnChangeSVars` per svars change, `OnUpdate` | [V static] Resources.md |
-| 13 | 0x1421ADF38 | shared empty | installed by 0x1405C30C0, which uses the `Marker` category hash: marker system | [I] |
-| 15 | 0x1423A5AA8 | shared empty | owned by `TppNoticeSensor` (installer 0x140FAA7D0) | [V QI name] |
-| 18 | 0x14239D1C8 | shared empty | owned by `TppMotherBaseManagementSystem` (installer 0x140F71BB0) | [V QI name] |
-| 18 | 0x142439490 | shared empty | owned by `TppUiEquipPreviewController` (installer 0x1416815B0) | [V QI name] |
+| Prio | Updater vtable | Update | Owner (vt / registration) | Identity | Tag |
+|---|---|---|---|---|---|
+| 0 | 0x1421AF098 | 0x1405C9A20 | object vt 0x1421AF088 (updater at +0x58), dtor 0x1405C9810 | game-time sampler: copies the frame clock (QuarkSystemTable+0x40: +0x10/+0x18/+0x20) into the owner and scales two stored doubles by it; owner name [?] (no registration hash, ctor inlined / not a direct vtable ref) | [V behaviour] [?] name |
+| 1 | 0x142290710 | shared empty | static global 0x142A65AD8 (vt 0x142290708) | **SignIn** manager: the Lua `SignIn` library (`StartSignIn` 0x1409AC500, `StartSignInWithUserId` 0x1409AC550, `StartSelectGameSaveStorage` 0x1409AC4C0) acts on this global | [V binding] |
+| 2 | 0x142289F18 | 0x1409950A0 | | Lua callback updater (up to 2 registered Lua functions, `lua_pcall` per frame) | [V static + live] |
+| 3 | 0x142313960 | 0x140C3AB80 | Quark system vt 0x142313918, static init 0x14200BFF0, hash 0xB5AF27357F1E | **TppMessageSystem**; update forwards to the object at +0x18, vt+0x28 | [V hash] |
+| 4 | 0x1422A9788 | 0x140A1CC20 | | mission block controller: `OnSynchronizeSVars`, `OnChangeSVars`, `OnUpdate` | [V static] Resources.md |
+| 5 | 0x1423E3C70 | 0x141340280 | Quark system vt 0x1423E3C28, static init 0x1420350D0, hash 0x8C19A2CA498D | network-synchronised state manager: 64 slots of 0x80 bytes over 26 sub-systems (hash table 0x1423E38A0, all with interface QI 0x44B3E3971144, registered by static inits 0x1420210D0…, code beside `TppNoticeSensor`); per frame it applies received packets (type 0 create / type 1 update) and pushes dirty slots; name hash not in any dictionary or brute-force run (Tpp + 1–3 tokens, 6,000-token vocabulary) | [V behaviour] [?] name |
+| 6 | 0x1423A1A70 | shared empty | subclass vt 0x1423A1A40 of Quark system vt 0x1423A19D8/0x1423A1A08, created by its factory slot 5 (0x140FA39B0, heap tag 0x3002E) | notice-module system (same code block as `TppNoticeSensor` and the prio-5 sub-systems); no registration hash, no QI | [?] name |
+| 7 | 0x1423139C8 | shared empty | vt 0x142313980, static init 0x14200C050 | **TppSearchSystem** | [V hash] |
+| 7 | 0x142313A30 | shared empty | vt 0x1423139E8, static init 0x14200C0B0 | **TppSightCheckSystem** | [V hash] |
+| 9 | 0x142346898 | 0x140DA4E10 | vt 0x142346850, static init 0x1420160A0 | **TppDamageDaemon** | [V hash] |
+| 12 | 0x1422B8C08 | 0x140A42C20 | standalone static updater 0x142A71368 (registered 0x140A42D10, removed 0x140A42B60) | flips a 2-entry double buffer in global 0x142C1E900 (clears the next slot of +0x90, index +0x98); owner name [?] | [V behaviour] |
+| 13 | 0x1421ADF38 | shared empty | installer 0x1405C30C0 (`Marker` category hash) | marker system | [I] |
+| 14 | 0x1425574C0 | shared empty | heap object 0x142C93510 made by 0x141E06B30 | **HighSpeedCamera** service: same init registers the Lua `HighSpeedCamera` library (`RequestEvent`, `RequestToCancel`, `RequestToCancelAll`) | [V binding] |
+| 15 | 0x1423A5AA8 | shared empty | installer 0x140FAA7D0 | `TppNoticeSensor` | [V QI name] |
+| 16 | 0x1422A7298 | shared empty | static global 0x142A6E490 (vt 0x1422A7240) | 24-entry table (32-byte slots: id u16 +0x24, valid bit +0x29); name [?] | [V layout] [?] name |
+| 17 | 0x142313AA8 | 0x140C3AA40 | vt 0x142313A60, static init 0x14200BF90, hash 0xAE34F5285017 | **TppBgmDaemon**; update calls +0x10 vt+0x18 unless a pause bit is set | [V hash] |
+| 18 | 0x14239D1C8 | shared empty | installer 0x140F71BB0 | `TppMotherBaseManagementSystem` | [V QI name] |
+| 18 | 0x142433F20 | shared empty | vt 0x142433EA8, static init 0x142046CE0, hash 0x65E6C2717169 | **TppAvatarEditSystem** | [V hash] |
+| 18 | 0x14238ACF0 | shared empty | vt 0x14238AA40, static init 0x14201F9D0, hash 0x62F30D7D66BF | **TppLoadoutManager** | [V hash] |
+| 18 | 0x142439490 | shared empty | installer 0x1416815B0 | `TppUiEquipPreviewController` | [V QI name] |
+| 20 | 0x14229B2E8 | 0x1409E4A00 | heap object 0x142C1D430 (made 0x1409E4AA0, freed 0x1409E4980) | sets bit 0x80 of +0x50 every frame ("a frame passed" flag); name [?] | [V behaviour] |
+| 21 | 0x1421B36F0 | 0x1405CF300 | static global 0x142A1DA30 (vt 0x1421B36C8) | functor list: runs every registered functor's vt[0] per frame; code block of the HighSpeedCamera request/cancel functors (0x1405CF500) and the time-rate parameters (`worldTimeRate`, `localPlayerTimeRate`) | [V behaviour] [I] HighSpeedCamera |
+| 22 | 0x1425570F8 | shared empty | object vt 0x1425570E8 (updater at +0x18), registered in the game-service table (QuarkSystemTable+0x98 → +0x1B8) | name [?]; code block 0x141E04xxx beside HighSpeedCamera | [?] |
+| 25 | 0x1422AAB38 | 0x140A21230 | heap updater 0x142C1FEA8 made by 0x140A20C80 | **Lua `Util` interval timers** (`SetInterval`, `SetIntervalCached`, `ClearInterval`) | [V binding] |
 
-The other 18 updaters (prio 0, 1, 3, 5, 6, 7 ×2, 9, 12, 14, 16, 17, 18 ×2, 20, 21, 22, 25) are installed by anonymous classes (installers listed by `Tools\vtable_rtti.py --updaters` + `fast_xrefs.py xref <vt>`) [?].
+Named: 17 of 24 (15 [V], 2 [I]: prio 13 marker, prio 21 HighSpeedCamera functor list); 7 open by name with behaviour decoded: prio 0, 5, 6, 12, 16, 20, 22. Blocker for all: no registration hash or a hash outside every dictionary; next step would be a live "peek" (FoxTrace) only if a name ever matters for the engine (it does not: the engine needs priority + behaviour).
 
 ## Command and message entry points (details: [`docs\engine\Messages.md`](messages.md))
 - Task-bucket listener `0x140BF9A20` [V]: reads the target id from a variant (`+0x20 & 7`: 1/2 integer, 3 double), `typeIndex = id >> 9` (< 128), calls **TypeManager vt+0x78(message)**.
 - SendCommand `0x140BFA380`, SendMessage `0x140BFA510`, MessageBus raise `0x140BF3A30` — verified, see Messages.md.
 
 ## Open
-- 18 anonymous updaters (table above) and which updater walks the 4 type groups.
+- Updater names still [?]: prio 0, 5, 6, 12, 16, 20, 22 (behaviour known, table above); which updater walks the 4 type groups.
 
 ---
 <small>Source: `docs/engine/Scheduler.md` in the project repository &middot; generated 2026-10-29.</small>

@@ -3,8 +3,8 @@
 Counted from the project repository at build time.
 
 - Milestones passed: **6 of 15**
-- Verified engine modules: **12** (table on the home page)
-- Test files: **19**, ground-truth fixtures: **9**
+- Verified engine modules: **13** (table on the home page)
+- Test files: **20**, ground-truth fixtures: **10**
 
 | Milestone | Status |
 |---|:-:|

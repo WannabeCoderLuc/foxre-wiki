@@ -13,6 +13,7 @@ Ground truth the engine tests (`Engine/tests/`) compare against. Each comes from
 | `m4_lua_returns.json` | 1,943 KB | M4: recorded native return values (FoxTrace luaret captures) used for record/replay. |
 | `m4b_save_image.json` | 154 KB | see the test that loads it |
 | `m5_save_image.json` | 6 KB | M5: the minimal save values behind TppScriptVars.LoadVarsFromSlot (from a live dump). |
+| `m6_block_messages.json` | 5 KB | see the test that loads it |
 
 ---
 <small>Generated 2026-10-29 from the project repository.</small>

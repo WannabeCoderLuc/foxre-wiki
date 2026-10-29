@@ -48,7 +48,7 @@ Global object 0x142C011A0 (class registered by 0x140993ED0 with a `Start` method
 - Common package: the location package's stage DataSet holds a `StageBlockControllerData` whose `stageBlockFile` is a `.fstb`; its header names the common package (afgh: `/Assets/tpp/pack/location/afgh/pack_common/afgh_common.fpk`) [V data]. The rest of `StageBlockControllerData` (small/large/LOD block grids around the player) is world streaming, M6.
 
 ## FSTB (stage block file) — partial
-`FSTB` magic, u32 @0x10 = number of common packages, u32[] @0x14 = file offsets of NUL-terminated package paths. Both extracted files (afgh, mbqf) have one entry [V]. The remaining tables (block grids, LOD and large-block package lists, the path strings for `stagelow` LOD packs) are not decoded [?] (`fox-format` when M6 needs them).
+`FSTB` magic, u32 @0x10 = number of common packages, u32[] @0x14 = file offsets of NUL-terminated package paths. Both extracted files (afgh, mbqf) have one entry [V]. The remaining tables (block grids, LOD and large-block package lists, the path strings for `stagelow` LOD packs) are not decoded [?] (`fox-format` when M6 needs them). Large-block section: see `World.md` "FSTB large-block table".
 
 ## Packages and script resources
 - A package path `X.fpk` means both `X.fpk` and `X.fpkd` (the `.fpkd` holds the DataSets and scripts) [V data].

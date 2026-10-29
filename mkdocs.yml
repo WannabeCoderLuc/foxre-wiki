@@ -117,6 +117,7 @@ nav:
       - "Messages and commands": engine/messages.md
       - "Script host": engine/script-host.md
       - "Resources and mission load": engine/resources.md
+      - "World streaming and locators": engine/world.md
       - "Claims ledger": engine/claims.md
       - "Claims: contradictions": engine/claims-contradictions.md
       - "Core architecture notes (2026-10-19)": engine/core-architecture.md

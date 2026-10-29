@@ -83,6 +83,7 @@ SITE = [
         ("Messages and commands", "messages", "docs/engine/Messages.md", "MessageBus, SendCommand and SendMessage."),
         ("Script host", "script-host", "docs/engine/ScriptHost.md", "The Lua 5.1 runtime, boot script order and native library registration (M4, IN PROGRESS)."),
         ("Resources and mission load", "resources", "docs/engine/Resources.md", "Packages, blocks, script blocks, UI tables and how the game loads a location and a mission (M5, PASS)."),
+        ("World streaming and locators", "world", "docs/engine/World.md", "DataIdentifier locator lookup and stage blocks: what is decoded so far (M6, IN PROGRESS)."),
         ("Claims ledger", "claims", "docs/CLAIMS.md", "Facts from IHHook, Infinite Heaven, V_Framework and the wiki, checked against the executable."),
         ("Claims: contradictions", "claims-contradictions", "docs/CLAIMS_CONTRADICTIONS.md", "Ours vs theirs for every contradicted community address."),
         ("Core architecture notes (2026-10-19)", "core-architecture", "docs/ENGINE.md", "Earlier research notes on boot, Quark systems and the class registry; partly superseded, see banners."),

@@ -32,6 +32,10 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
     Packages, blocks, script blocks, UI tables and how the game loads a location and a mission (M5, PASS).
 
+-   **[World streaming and locators](world.md)**
+
+    DataIdentifier locator lookup and stage blocks: what is decoded so far (M6, IN PROGRESS).
+
 -   **[Claims ledger](claims.md)**
 
     Facts from IHHook, Infinite Heaven, V_Framework and the wiki, checked against the executable.

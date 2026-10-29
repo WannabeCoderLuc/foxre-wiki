@@ -129,6 +129,9 @@ nav:
       - "FOX2 DataSets": formats/fox2.md
       - "FRT route sets": formats/frt.md
       - "NAV2 navmeshes": formats/nav2.md
+      - "FoxData containers": formats/foxdata.md
+      - "HTRE / TRE2 terrain": formats/htre.md
+      - "GEOM collision": formats/geom.md
   - "Project status":
       - status/index.md
       - "Roadmap": status/roadmap.md

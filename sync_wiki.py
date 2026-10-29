@@ -97,6 +97,9 @@ SITE = [
         ("FOX2 DataSets", "fox2", "docs/formats/FOX2.md", "Entities, properties and the string table."),
         ("FRT route sets", "frt", "docs/formats/FRT.md", "Patrol routes, nodes and route events."),
         ("NAV2 navmeshes", "nav2", "docs/NAVMESH.md", "Walkable surfaces used for path finding."),
+        ("FoxData containers", "foxdata", "docs/formats/FOXDATA.md", "Node-tree container shared by terrain and collision files."),
+        ("HTRE / TRE2 terrain", "htre", "docs/formats/HTRE.md", "Height maps, terrain patches and height queries."),
+        ("GEOM collision", "geom", "docs/formats/GEOM.md", "Collision geometry files (.geom, .geoms, .gskl)."),
     ]),
     ("Project status", "status", "reference", "Where the project stands: milestones with their pass/fail gates, "
      "the numbers, and the full dated log of every working session. Generated on every sync.", [

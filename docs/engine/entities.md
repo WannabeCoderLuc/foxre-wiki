@@ -16,7 +16,7 @@ Tags: [V] holds for every reference in the loaded set, [D], [I], [?].
 | EntityHandle | u64 address | same file (7,009); else the unique entity with that address in another loaded DataSet (288 — owner/parent links across files, addresses are globally unique per build); else dangling (230: editor-only `GraphxSpatialGraphData*` nodes/edges and transforms whose owner is outside the loaded set) | |
 | EntityLink | (packagePath, archivePath, nameInArchive, handle), all StrCode64 except handle | archivePath = target DataSet path (string in the string table, or only its StrCode64); **StrCode64("") = 0xB8A0BF169F98 means "this file"**; target = entity at `handle` in that file, else the Data named `nameInArchive`. All-empty + handle 0 = null link | 3,497 ok |
 
-Unresolved link categories (all expected): 130 archives absent from the shipped data (editor `.fox`, `.las`, mis-filled names like `afgh_common_terrainMaterial`), 54 `*_PhysicsData` targets that the engine creates at load from `PhObjectDesc`/`PhxAssociation` [I], 1 stale link (handle 0, target Data removed from the only copy of `afgh_powerPlant_asset.fox2`).
+Unresolved link categories (all expected): 130 archives absent from the shipped data (editor `.fox`, `.las`, mis-filled names like `afgh_common_terrainMaterial`), 54 `*_PhysicsData` targets (resolved since 2026-10-29, see "Physics data links"), 1 stale link (handle 0, target Data removed from the only copy of `afgh_powerPlant_asset.fox2`).
 
 ## Notes
 - Several asset paths exist in multiple packages (e.g. `mbt.ph` ×6); the copies differ in addresses but share names. The loader keys files by inventory path and maps each asset path to the first copy loaded.
@@ -41,6 +41,9 @@ Consequences for the engine: a DataSet is one contiguous allocation; file `addre
 ## Live gate (2026-10-21) [V]
 In Afghanistan free roam (mission 30010) every link of f30010's two `DataIdentifier`s (`CheckPointIdentifier` ×16 checkpoint Locators, `f30010_sovietBase_DataIdentifier` ×1) was queried in the running game over the IH pipe (`DataIdentifier.GetDataWithIdentifier(identifier, key)` → `name`, `IsKindOf(class)`, `worldTransform.translation`). **17/17 match the static graph** (name, class, translation to 1e-3; world = local transform composed up the `parent` chain). Capture: `Tools\capture_identifier_fixture.py` → `Engine\tests\fixtures\f30010_identifiers.json`; verifier `test_live_f30010_identifiers.py`.
 Lua access confirmed: Data properties are readable by name from Lua (`d.name`, `d.worldTransform`), `IsKindOf` works on class names — a cheap channel for future fixtures.
+
+## Physics data links (E7, 2026-10-29)
+`PhxAssociation.physicsData` (`.ph`) and `SimOnPhysics.physicsData` (`.sim`) are EntityLinks named `<owner name>_PhysicsData` [D]. Over all 393 `.ph` + 408 `.sim` DataSets: every file holds exactly one `PhObjectDesc` (bodies, constraints, bodyIndices) and one such link; the archive is the file itself (799) or, in 2 `.sim` copies, the MGO original; the link handle points into a hole in the file's entity address sequence (no entity has it), and `PhObjectDesc` sits in a separate address range [D]. Reading [I]: the editor's `<owner>_PhysicsData` entity is baked into `PhObjectDesc` at export; the plain exe has no `_PhysicsData` string [V], so the runtime creation path is not statically visible [?]. Engine rule (`Engine/core/entities.py`): an unresolved `*_PhysicsData` link resolves to the target file's single `PhObjectDesc` (stat `link.physics_desc`; s10151: 54 / 54). Formats: `.ph` / `.sim` / `.phsd` are FOX2 DataSets ([`docs/formats/FOX2.md`](../formats/fox2.md)), not `.geom`.
 
 ---
 <small>Source: `docs/engine/Entities.md` in the project repository &middot; generated 2026-10-29.</small>

@@ -24,4 +24,16 @@ Byte-level specifications of the game's file formats, generated from the project
 
     Walkable surfaces used for path finding.
 
+-   **[FoxData containers](foxdata.md)**
+
+    Node-tree container shared by terrain and collision files.
+
+-   **[HTRE / TRE2 terrain](htre.md)**
+
+    Height maps, terrain patches and height queries.
+
+-   **[GEOM collision](geom.md)**
+
+    Collision geometry files (.geom, .geoms, .gskl).
+
 </div>

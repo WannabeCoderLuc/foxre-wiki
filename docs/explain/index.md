@@ -36,6 +36,10 @@ One topic per page, in plain language: what it is, why it matters, how the origi
 
     Locators, map blocks around the player, fades and the title menu's Continue (M6).
 
+-   **[Terrain and collision files](terrain-and-collision.md)**
+
+    Height maps, collision shapes and the game's ground-height rule (M7).
+
 -   **[Routes and navmeshes](routes-and-navmeshes.md)**
 
     Patrol routes and walkable surfaces (formats M1, runtime M8).

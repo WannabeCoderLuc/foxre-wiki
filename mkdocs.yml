@@ -96,6 +96,7 @@ nav:
       - "Script blocks": explain/script-blocks.md
       - "The iDroid and the language reload": explain/idroid.md
       - "World streaming and the title screen": explain/world-streaming.md
+      - "Terrain and collision files": explain/terrain-and-collision.md
       - "Routes and navmeshes": explain/routes-and-navmeshes.md
       - "How we verify": explain/verification.md
   - "Modding guides":
@@ -108,6 +109,7 @@ nav:
       - "Patching the iDroid tables": mods/idroid-tables.md
       - "Editing fox2 DataSets": mods/editing-datasets.md
       - "Tracing the game with FoxTrace": mods/foxtrace.md
+      - "Ground height at any point": mods/ground-height.md
       - "Checking community addresses": mods/claims.md
   - "Reference: engine":
       - engine/index.md

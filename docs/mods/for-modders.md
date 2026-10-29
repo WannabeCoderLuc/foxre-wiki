@@ -19,6 +19,7 @@
 | [Patching the iDroid tables](idroid-tables.md) | the iDroid reloads its tables on every language change |
 | [Editing fox2 DataSets](editing-datasets.md) | the engine's type registry, byte-exact DataSet codec |
 | [Tracing the game with FoxTrace](foxtrace.md) | log-only hooks and native return recording |
+| [Ground height at any point](ground-height.md) | terrain block placement, tiling and the game's triangle rule |
 | [Checking community addresses](claims.md) | 3,018 community facts checked against the executable |
 
 ## 1. Files and packages
@@ -95,7 +96,12 @@
 ## 8. Community addresses, checked
 We imported 3,018 facts from IHHook, Infinite Heaven, V_Framework and the community wiki and checked them against the executable: 1,071 confirmed, 5 contradicted, the rest not checkable yet. See [Claims ledger](../engine/claims.md) and [Contradictions](../engine/claims-contradictions.md). In short: four IHHook address-table entries (three of them commented out in IHHook) and one wiki address point into the middle of other functions in 1.0.15.4 EN. Use commented-out IHHook entries as hints only.
 
-## 9. Limits
+## 9. Terrain: ground height without a game function
+**What we found.** No script function returns the ground height, but the `.htre` block files do, exactly: block `<loc>_<bx>_<bz>` starts at ((bx − 133) × 128, (bz − 133) × 128), its heights are stored as 32 × 32 tiles, and the ground between samples is two triangles per 2 m square [V live, within 5 mm]. A player standing on flat ground has `vars.playerPosY` = ground + 0.798 m.
+
+**Use it for.** Placing objects or warps on the ground offline, without probing in game. See [Ground height at any point](ground-height.md).
+
+## 10. Limits
 - Addresses are for **1.0.15.4 EN**; other builds differ.
 - Our engine host runs scripts **without rendering, physics or AI**; it answers engine calls from recordings or simple models. It shows script behaviour and load order, not gameplay.
 - Statements tagged [I] or [?] are not proven; check the reference page before building on them.

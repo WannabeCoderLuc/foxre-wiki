@@ -36,6 +36,10 @@ What each finding means for a mod, with a worked (hypothetical) example of how i
 
     Log-only hooks to see what the game really does.
 
+-   **[Ground height at any point](ground-height.md)**
+
+    Terrain blocks, tiling and the triangle rule: place things on the ground.
+
 -   **[Checking community addresses](claims.md)**
 
     Use the claims ledger before you hook an address.

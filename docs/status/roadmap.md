@@ -96,14 +96,14 @@ Old → new numbers (older docs, the log and test names keep the old ones): M6 W
 - **Gate:** for both recorded saves (f30010 afgh, f30020 mafr) the host's stage-block messages match a live fixture for the boot → free-roam span; the title's locator lookups resolve; the title menu runs and `Engine\script\scenario.py` reaches free roam through the game's own CONTINUE (no hand-driven load).
 - **State (2026-10-29):** all three gate items met for both saves (`test_m6_world.py`, quick suite 81/81); **Gate passed (Luc, 2026-10-29).** Open items stay recorded (E20-E22, TitleMenuReady raiser).
 
-## M7 Terrain & collision formats [IN PROGRESS] — `.htre`/`.tre2`, `.geom`
+## M7 Terrain & collision formats [PASS 2026-10-29] — `.htre`/`.tre2`, `.geom`
 - Census → spec → byte-identical reader/writer on every game file (`fox-format`), like M1. Leads only: 010 templates `htre.bt`, `geom_geoms_gskl.bt`.
 - [x] FoxData container (2026-10-29): all five types are one node-tree format ([`docs/formats/FOXDATA.md`](../formats/foxdata.md), `Engine/formats/foxdata.py`); node / parameter layout [V] from the exe readers (0x1401A5C10, 0x1401A5D00, 0x1401FB4B0); **9,340 / 9,340 unique files byte-identical** (`test_foxdata_all.py`).
 - [x] Terrain typed (2026-10-29): `.htre` v3 / v4 + `.tre2` ([`docs/formats/HTRE.md`](../formats/htre.md), `Engine/formats/terrain.py`); loaders 0x1401F95B0 → HTRE 0x1401FA490 / TRE2 0x1401FADD0, patch reader 0x1401F9A90 [V]; **4,164 / 4,164 byte-identical, every v4 patch offset = its payload** (`test_terrain_all.py`); float32 `HeightField` query (`Engine/world/heightfield.py`).
 - [x] Collision container (2026-10-29): `.geom` 3,078 / `.geoms` 2,033 / `.gskl` 65 byte-identical with zero undecoded bytes outside payloads; payload top layer [D] ([`docs/formats/GEOM.md`](../formats/geom.md)). Typed shape trees = E30.
 - [x] E7 answered (2026-10-29): `*_PhysicsData` links live in `.ph` / `.sim` FOX2 DataSets, not `.geom`; resolved to the file's single `PhObjectDesc` (s10151 54 / 54, Entities.md "Physics data links").
 - [x] Live ground-height fixture (2026-10-29, IH pipe warp-drops in f30010, `Memory/research/m7_ground_20261029_182058`): cluster-tiled heightMap, block origin ((b - 133) * 128), rows = z / columns = x, triangle pair split (x0,z0)-(x1,z1) [V live]; `HeightField.from_blocks` / `from_tre2`; 24 terrain points over 6 blocks = live within 5 mm (`test_m7_ground.py`, E31 answered).
-- **Gate:** every terrain and collision file round-trips byte-identical (**met 2026-10-29**); heightmap samples equal live ground heights at recorded points (fixture from the IH pipe) (**met 2026-10-29**, `m7_ground_heights.json`). Awaiting Luc's acceptance.
+- **Gate:** every terrain and collision file round-trips byte-identical (**met 2026-10-29**); heightmap samples equal live ground heights at recorded points (fixture from the IH pipe) (**met 2026-10-29**, `m7_ground_heights.json`). **Gate passed (Luc, 2026-10-29).** Open items stay recorded (E30, E32).
 
 ## M8 Navigation & routes [PLANNED] — nav2 runtime, route following
 - Portal-graph path search over `.nav2`, `TppNavigationController` snap / plan, nav worlds; `.frt` route following and route events (E6: 35 unnamed event types). Evidence: `BATTLEFIELD.md` §4, `SAHELAN.md` (navigation), probe goal logs.

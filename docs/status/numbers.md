@@ -15,7 +15,7 @@ Counted from the project repository at build time.
 | M4 Script host | <span class="status pass">PASS</span> |
 | M5 Resources & mission load | <span class="status pass">PASS</span> |
 | M6 World streaming & locators | <span class="status pass">PASS</span> |
-| M7 Terrain & collision formats | <span class="status in-progress">IN PROGRESS</span> |
+| M7 Terrain & collision formats [PASS 2026-10-29] — `.htre`/`.tre2`, `.geom` | <span class="status planned">PLANNED</span> |
 | M8 Navigation & routes | <span class="status planned">PLANNED</span> |
 | M9 Gameplay core | <span class="status planned">PLANNED</span> |
 | M10 Asset formats | <span class="status planned">PLANNED</span> |

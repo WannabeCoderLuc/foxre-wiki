@@ -80,7 +80,7 @@ The old M6 World bundled three different kinds of work (world streaming, two fil
 
 Old → new numbers (older docs, the log and test names keep the old ones): M6 World → **M6** streaming & locators + **M7** terrain & collision + **M8** navigation & routes · M7 Animation → **M11** · M8 Gameplay core → **M9** · M9 Gameplay extended → **M12** · M10 Assets & rendering → **M10** asset formats + **M13** rendering · M11 Playable slice → **M14**.
 
-## M6 World streaming & locators [IN PROGRESS] — stage blocks, location loader, locators
+## M6 World streaming & locators [PASS] — stage blocks, location loader, locators
 - Stage-block controller and the large / small / LOD block grids around the player (`StageBlockControllerData`, `Block.OnChangeLargeBlockState`, `StageBlockCurrentSmallBlockIndexUpdated`), location loader update and frame order (E21), mission controller block state 4 and the two Quark services (E20), FSTB tables beyond the header (E22).
 - Locators: `DataIdentifier` / `GetDataWithIdentifier`, locator lookups by name and by transform (`Tpp.GetLocatorByTransform`), `.lba` locator files (footer pairs already decoded for `Fox.PathFileNameCode32`).
 - Takes over from M4: the title heli space's `OnAllocate` (`heli_common_sequence.OnBuddyBlockLoad` → `HelispaceLocatorIdentifier` / `BuddyDDogLocator`), so the title sequence, the title-menu messages (`UI.TitleMenuReady`, `EndFadeIn`, `TitleMenu(PressStart, Continue)`) and a real CONTINUE run in the host.
@@ -89,9 +89,9 @@ Old → new numbers (older docs, the log and test names keep the old ones): M6 W
 - [x] Stage blocks (2026-10-29): controller decoded (update 0x1401611F0 / 0x140161500, raisers 0x140161816 / 0x140177870, position provider `StageBlockCurrentPositionSetter` fed from `vars.initialPlayerPos*`, window centre = centerIndex + floor(p / 128), sentinels ±1,000,000 = 7945 / 57857, large blocks from the FSTB small-block lists in the 5×5 window ± largeBlockLoadingMargin) and implemented (`Engine/world/stage_blocks.py`); host stage-block messages = live for f30010 and f30020 (`test_m6_world.py`).
 - [x] Title menu + the game's own CONTINUE (2026-10-29): raisers decoded (pre-title / title-menu sequence 0x14085C8C0 states 6-14 raise `UI.TitleMenu`, fade-end raiser 0x14092CC60 raises `EndFadeIn` / `EndFadeOut` after FoxFadeIo's timed fade, splash screens 0x14090E690 ff., loading-tips end 0x14089A700) and implemented (`Engine/runtime/title.py`); `scenario.py` reaches free roam for f30010 and f30020 through the title script's own `OnEndFadeOutSelectContinue`; title-menu messages = live order (`test_m6_world.py`). Open: TitleMenuReady / RequestPlayRecordClearInfo raisers (obfuscated code) [?].
 - **Gate:** for both recorded saves (f30010 afgh, f30020 mafr) the host's stage-block messages match a live fixture for the boot → free-roam span; the title's locator lookups resolve; the title menu runs and `Engine\script\scenario.py` reaches free roam through the game's own CONTINUE (no hand-driven load).
-- **State (2026-10-29):** all three gate items met for both saves (`test_m6_world.py`, quick suite 81/81); awaiting Luc's acceptance. Open items stay recorded (E20-E22, TitleMenuReady raiser).
+- **State (2026-10-29):** all three gate items met for both saves (`test_m6_world.py`, quick suite 81/81); **Gate passed (Luc, 2026-10-29).** Open items stay recorded (E20-E22, TitleMenuReady raiser).
 
-## M7 Terrain & collision formats [PLANNED] — `.htre`/`.tre2`, `.geom`
+## M7 Terrain & collision formats [NEXT] — `.htre`/`.tre2`, `.geom`
 - Census → spec → byte-identical reader/writer on every game file (`fox-format`), like M1. `.geom` also closes the `*_PhysicsData` entities left open since M2 (E7). Leads only: 010 templates `htre.bt`, `geom_geoms_gskl.bt`.
 - **Gate:** every terrain and collision file round-trips byte-identical; heightmap samples equal live ground heights at recorded points (fixture from the IH pipe).
 

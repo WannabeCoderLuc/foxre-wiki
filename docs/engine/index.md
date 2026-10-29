@@ -26,7 +26,7 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
 -   **[Script host](script-host.md)**
 
-    The Lua 5.1 runtime, boot script order and native library registration (M4, IN PROGRESS).
+    The Lua 5.1 runtime, boot script order, native library registration, title menu (M4, M6; PASS).
 
 -   **[Resources and mission load](resources.md)**
 
@@ -34,7 +34,7 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
 -   **[World streaming and locators](world.md)**
 
-    DataIdentifier locator lookup and stage blocks: what is decoded so far (M6, IN PROGRESS).
+    DataIdentifier locator lookup, stage blocks and the title menu (M6, PASS).
 
 -   **[Claims ledger](claims.md)**
 

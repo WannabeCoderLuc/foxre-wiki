@@ -37,8 +37,8 @@ Every milestone ends on a test a computer decides: pass or fail. A file reader o
 | M3 Runtime core | how a frame runs: object manager, updates, messages | <span class="status pass">PASS</span> |
 | M4 Script host | run the game's own Lua scripts against recorded engine answers | <span class="status pass">PASS</span> |
 | M5 Resources and mission load | packs, blocks and how a mission gets loaded | <span class="status pass">PASS</span> |
-| M6 World streaming and locators | the blocks of the map that load around the player, and how scripts find named places | PLANNED (next) |
-| M7 Terrain and collision | read the ground height maps and collision shapes | <span class="status planned">PLANNED</span> |
+| M6 World streaming and locators | the blocks of the map that load around the player, how scripts find named places, the title screen | <span class="status pass">PASS</span> |
+| M7 Terrain and collision | read the ground height maps and collision shapes | PLANNED (next) |
 | M8 Navigation and routes | path finding on the navmesh and soldiers walking their routes | <span class="status planned">PLANNED</span> |
 | M9 Gameplay core | soldiers, alert phases, noticing, damage, commands (no graphics) | <span class="status planned">PLANNED</span> |
 | M10 Asset formats | textures, models, skeletons, outfit and language files | <span class="status planned">PLANNED</span> |
@@ -47,9 +47,9 @@ Every milestone ends on a test a computer decides: pass or fail. A file reader o
 | M13 Rendering | drawing the world | <span class="status planned">PLANNED</span> |
 | M14 Playable slice | one free-roam area with the player and one kind of enemy | <span class="status planned">PLANNED</span> |
 
-M5 passed on 2026-10-24: from the start-up mission to free roam the engine loads all 58 script chunks in the same order as the real game, including the iDroid's UI tables (see [The iDroid and the language reload](../explain/idroid.md)). M4 passed on 2026-10-29: the engine follows a real save from the start-up screens to free roam, running the game's own scripts with timers, popups and messages, and the engine functions they call match a recording of the real game except for a short, explained list (see [How we verify](../explain/verification.md)).
+M6 passed on 2026-10-29: the engine finds the level's named places, loads the map blocks around the player with the same messages as the real game, and gets from the start-up screens through the title menu's own Continue to free roam, for a save in Afghanistan and one in Africa (see [World streaming and the title screen](../explain/world-streaming.md)). M5 passed on 2026-10-24: from the start-up mission to free roam the engine loads all 58 script chunks in the same order as the real game, including the iDroid's UI tables (see [The iDroid and the language reload](../explain/idroid.md)). M4 passed on 2026-10-29: the engine follows a real save from the start-up screens to free roam, running the game's own scripts with timers, popups and messages, and the engine functions they call match a recording of the real game except for a short, explained list (see [How we verify](../explain/verification.md)).
 
-The milestones from M6 on were re-ordered on 2026-10-29 so that each one only needs what came before it, and the next one is always the most doable. Next is M6: the engine currently stops where the title screen asks the map for a named place, which is world-streaming work. Terrain and collision files (M7) and navigation (M8) follow, then gameplay, assets, animation, and drawing the world last.
+The milestones from M6 on were re-ordered on 2026-10-29 so that each one only needs what came before it, and the next one is always the most doable. Next is M7: reading the ground height maps and collision shapes, file-format work like M1. Navigation (M8) follows, then gameplay, assets, animation, and drawing the world last.
 
 ## Where to go next
 - New here: [How to use this site](how-to-read.md), then the [Explanations](../explain/game-data.md) in order.

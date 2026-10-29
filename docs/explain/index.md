@@ -32,6 +32,10 @@ One topic per page, in plain language: what it is, why it matters, how the origi
 
     Why the iDroid's tables load three times per start-up (M5).
 
+-   **[World streaming and the title screen](world-streaming.md)**
+
+    Locators, map blocks around the player, fades and the title menu's Continue (M6).
+
 -   **[Routes and navmeshes](routes-and-navmeshes.md)**
 
     Patrol routes and walkable surfaces (formats M1, runtime M8).

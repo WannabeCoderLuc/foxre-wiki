@@ -24,11 +24,11 @@ If a new engine runs the game's own Lua and answers its native calls the way the
 ## How we know it is right
 - **Chunk order:** 112 of 112 boot chunks and 58 of 58 from there to free roam, in the live order (one UI package runs on a worker thread and is checked as a group).
 - **Start-up screens:** the host walks the same 24 steps as a recorded game session, with the same messages in the same order.
-- **Free roam with messages on:** for a save that continues in Africa, the host loads the same title screen and free-roam mission as the real game and reaches free play; the only script error left is a map lookup that belongs to the next milestone.
-- **Call log:** the host's list of native calls is compared with a recording of the real game. 548 functions are called on both sides, 517 of them with the same arguments, in nearly the same first-call order (95 %). Every function called on one side only is explained (mostly Infinite Heaven, which was active in the recording, and the title menu, which waits for M6).
+- **Free roam with messages on:** for a save that continues in Africa, the host loads the same title screen and free-roam mission as the real game and reaches free play with no script error (the map lookup was solved in M6).
+- **Call log:** the host's list of native calls is compared with a recording of the real game. At the M4 gate 548 functions were called on both sides, 517 with the same arguments; since M6 runs the real title menu it is 558 and 540, in nearly the same first-call order (95 %). Every function called on one side only is explained (mostly Infinite Heaven, which was active in the recording).
 
 ## Still open
-- **The title menu** needs a map lookup by name (world data), so it moves to M6; until then the tests press "Continue" themselves.
+- **The title menu** was solved in M6: the title's own script now runs Continue (see [World streaming and the title screen](world-streaming.md)).
 - A short list of argument differences, mostly from save data and Infinite Heaven's quest choice in the recording.
 - When a script adds keys to a table while looping over it, the real game does not visit the new keys but the host's Lua does; harmless today, tracked as E29.
 - Class-instance calls for graphics and UI (`UiDaemon:`, `PhDaemon:` ...) are still answered by empty stubs.

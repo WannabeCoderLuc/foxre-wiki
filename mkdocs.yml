@@ -95,6 +95,7 @@ nav:
       - "How a mission loads": explain/mission-load.md
       - "Script blocks": explain/script-blocks.md
       - "The iDroid and the language reload": explain/idroid.md
+      - "World streaming and the title screen": explain/world-streaming.md
       - "Routes and navmeshes": explain/routes-and-navmeshes.md
       - "How we verify": explain/verification.md
   - "Modding guides":

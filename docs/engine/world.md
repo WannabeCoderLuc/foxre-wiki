@@ -8,8 +8,8 @@ Started 2026-10-29. Static reading of `GameBackup\MGS_TPP\mgsvtpp.exe`; live ref
 |---|---|
 | DataIdentifier registry + `GetDataWithIdentifier` / `GetDataBodyWithIdentifier` | decoded [V static], implemented (`Engine\world\identifiers.py`), matches live lookups for both saves |
 | Locator world transform (`Tpp.GetLocatorByTransform`) | implemented; formula [V live] from the M2 gate (17/17 f30010 checkpoint locators) |
-| FSTB large-block table | prefix decoded (`Engine\world\stage_blocks.py`); small-block lists, LOD tables, load-region bitmask [?] |
-| Stage-block controller (small-block index, large-block state, messages) | live messages captured; controller not decoded or implemented [?] |
+| FSTB large-block table | records decoded incl. small-block lists (`Engine\world\stage_blocks.py`); LOD package lists [?] |
+| Stage-block controller (small-block index, large-block state, messages) | decoded [V static], implemented (`StageBlocks`); the host raises the same 4 stage-block messages as live for both saves |
 | Title menu → CONTINUE through the game's own flow | open: the title now reaches `active`; the CONTINUE hand-drive in `scenario.py` stays until the title-menu UI messages are delivered |
 
 ## DataIdentifier lookup [V static]
@@ -34,16 +34,28 @@ Both runs of each capture log the same 8 Block messages:
 | 5–8 | `OnScriptBlockStateTransition(name, state)` | quest_block 0, reinforce_block 0, animal_block 0, animal_block 1 | quest_block 0, quest_block 1, animal_block 0, animal_block 1 |
 
 - Large-block `name` = StrCode32 of the large package's file stem (`pack_large/<name>.fpk`) [V].
-- Messages 1–2 come before the free-roam location is loaded; 7945 = 0x1F09 and 57857 = 0xE201 look like sentinel / uninitialised indices [?].
-- mafr: block (140, 144) lies in `mafr_pfCamp`'s box (x 138–143, y 139–144) [V]. afgh: `afgh_powerPlant` turns ACTIVE with the player at (128, 125), two rows outside its box (x 126–129, y 118–123): activation uses a load range or the load-region bitmask, not the box [?].
+- Messages 1–2 are the controller's two sentinel positions ("Stage-block controller" below): 7945 = +1,000,000 (constructor), 57857 = −1,000,000 (`DisablePosition` in the title heli space) [V].
+- mafr: block (140, 144) lies in `mafr_pfCamp`'s box [V]. afgh: (128, 125) is two rows outside `afgh_powerPlant`'s box, but the 5×5 window widened by `largeBlockLoadingMargin` reaches its small-block list (activation rule below) [V].
 
 ## FSTB large-block table [D]
 Header beyond the common-package part (Resources.md "FSTB"): +0x08 u32 2 (sections), +0x0C u32 0x18 (section table), +0x18 u32 offset of the large-block section, +0x1C u32 its end; section: u32 n (afgh 15, mafr 11), u32[n] record offsets.
-Record prefix: +0x00 StrCode32(name), +0x04 u32 1 [?], +0x08 kind (0: inline small-block list; 2: LOD packages + load-region bitmask) [D], +0x0C string offset of the superlow LOD model (afgh) or "" (mafr), +0x1C number of small blocks, +0x20 / +0x24 box min / max as `x | y << 16` (inclusive) [V live for x/y order], +0x28 string offset of the large package path. Remaining fields (LOD package lists, bitmask origin/size, block lists) [?].
+Record: +0x00 StrCode32(name) [V live], +0x04 u32 1 in every record [?], +0x08 kind (0: no LOD packages, 2: LOD packages) [D], +0x0C string offset of the superlow LOD model (afgh) or "" (mafr), +0x10 number of LOD packages (2 / 0 with the kind) and +0x14 offset of their list [D; list layout ?], **+0x18 offset of the small-block list, +0x1C its length: u32 entries `x | y << 16`** [V: the controller reads them as u16 (x, y) pairs; every entry lies in the box; the list ends at the next record], +0x20 / +0x24 box min / max `x | y << 16` (inclusive) [V live], +0x28 string offset of the large package path. At runtime: groups of 0x38-byte entries, name at +0x28 (0x14015F4F0) [V static]; group assignment [?] (host: one group; live `GetLoadedLargeBlocks(0)` returns pfCamp).
+
+## Stage-block controller [V static unless tagged]
+Per-frame update 0x1401611F0 → 0x140161500; parameters copied from `StageBlockControllerData` (0x140165BD0). afgh and mafr: blockSize 128, count 5×5, centerIndex 133, blockMargin 3, largeBlockLoadingMargin 1 [D].
+
+- **Position:** one global provider `StageBlockCurrentPositionSetter` (0x142B729A8: enable +0x14, x / y / z ints +0x18..+0x20). `SetPosition(x, z)` or `(x, y, z)` (0x1401779F0, `lua_tointeger`), `SetEnable` (0x1401779C0), `DisablePosition` (0x14015F110: all axes −1,000,000). The controller reads the first enabled provider's (x, z) (0x14015F370); none enabled → the last position stays. Constructor position +1,000,000 (0x14015CEAB).
+- **Who sets it:** `TppMain.StageBlockCurrentPosition`: `SetPosition(vars.initialPlayerPosX, vars.initialPlayerPosZ)` when `vars.initialPlayerFlag == PlayerFlag.USE_VARS_FOR_INITIAL_POS` (1); heli spaces: `DisablePosition`, then wait for `LargeAndSmallBlocksAreEmpty`; `OnTextureLoadingWaitStart` disables the provider outside heli spaces [D Lua]. On CONTINUE the vars come from the CHECK_POINT slot (saved from `vars.playerPos*` by `TppPlayer.SetInitialPositionToCurrentPosition`), not from `gvars.ply_missionStartPos` [V live: f30020 vars = slot = (1006.16, 1418.84); f30010 SetPosition args (−629.90, −913.37), trace_m5_luaret].
+- **Minimum small-block index** per axis: `trunc((center·size + size/2 + p − count·size/2 − origin) / size)` (C division, 16-bit); the window centre cell is `center + floor(p / size)`; origin (controller +0x7C) = 0 [V: fits both sentinels and both saves]. Kept while p stays within the old centre cell widened by blockMargin (controller +0x158 [I: param copy offset]). `StageBlock.GetCurrentMinimumSmallBlockIndex` returns it (+0x324, 0x140177F10).
+- **Index message:** `Block.StageBlockCurrentSmallBlockIndexUpdated(min + count/2)` (tags 9: two ints) when the index differs from the last reported one (+0x334); only the location's global controller (0x142B70F40) raises it (0x140161816).
+- **Large blocks:** when the index changes with a valid position (x ≠ +1e6), for each FSTB large block: list A = one of its small blocks lies in the count × count window from the minimum index; list B = the same window widened by `largeBlockLoadingMargin` (controller +0x168 = param +0x70 ← data 0x108) on each side (0x140161500). Each list fills its own slot set (A: `largeBlockCount*` slots, B: +0x2B0 slots); slots of blocks no longer wanted unload. Engine model: a block is loaded while it is in B (A ⊂ B) [I: which slot set drives the message]; afgh `powerPlant` is only in B, mafr `pfCamp` in both, one message each [V live].
+- **Large-block message:** listener vtable 0x1420E7C00 slot 5 (0x140177870): `Block.OnChangeLargeBlockState(name, state)`, ACTIVE (1) for slot state 3, INACTIVE (0) for 2, only for names registered with `StageBlock.AddLargeBlockNameForMessage` (0x140177BD0, ≤ 18 names; `afgh_base` / `mafr_base.baseList`), tags 10. `OnChangeSmallBlockState` (0x140177AC0, slot 4) is the small-block counterpart (`AddSmallBlockIndexForMessage`) [V static; not modelled].
+- **Order:** the controller exists with the location; its first update (ctor position → message 1) runs before the title's `DisablePosition` (message 2); free roam: SetPosition → index message → large block loaded → ACTIVE after the base list is registered [V live order]. Host: first update from the location package hook, large-block load = one update (`LOAD_FRAMES`) [I].
+
+Engine model (`Engine\world\stage_blocks.py`): `PositionSetter`, `StageBlockController` (index, hysteresis, list-B large blocks, messages), `StageBlocks` (host: controller per location `StageBlockControllerData`, `StageBlock` / `StageBlockCurrentPositionSetter` Lua libraries). Save images carry `vars.initialPlayerFlag / PosX / PosZ`. Verifier: `test_m6_world.py` (`test_small_block_index_formula`, `test_host_stage_block_messages_match_live`: host = live for f30010 and f30020).
 
 ## Open
-- Stage-block controller: who computes the small-block index from the player position (block size, origin), the large-block activation rule (load range / bitmask), the message raise sites and their order against the location loader (E20, E21). Start: `StageBlockControllerData` (fox_edb), `StageBlock` Lua library (0x140177BD0–0x140178060), `Block` message raisers.
-- Messages 1–2 (sentinel indices) [?].
+- Stage blocks: which slot set (A window / B margin) drives `OnChangeLargeBlockState`; FSTB record +0x04 and the LOD package lists; small-block / LOD streaming (`OnChangeSmallBlockState`) not modelled; real load latency of a large block.
 - Title-menu messages (`TitleMenuReady`, `EndFadeIn`, `TitleMenu`) and the game's own CONTINUE (E13).
 
 ## Evidence
@@ -54,7 +66,14 @@ Record prefix: +0x00 StrCode32(name), +0x04 u32 1 [?], +0x08 kind (0: inline sma
 | 0x14017EDD0 | registry lookup: equal range + links hash table | V static |
 | 0x14017E9E0 / 0x14017EB20 / 0x14017F2F0 | DataIdentifier ctor (register), dtor (unregister), `identifier` setter (re-key) | V static |
 | 0x14017ECC0 / 0x14017F600 | registry insert / remove (multimap 0x142B72A88) | V static |
+| 0x1401611F0 / 0x140161500 | controller update: position → minimum index, hysteresis, large-block lists A / B, index message (raise 0x140161816) | V static |
+| 0x140177870 / 0x140177AC0 | listener vt 0x1420E7C00 slots 5 / 4: OnChangeLargeBlockState / OnChangeSmallBlockState raisers, name filter | V static |
+| 0x14015F370 / 0x14015F110 / 0x1401779F0 | position provider read / DisablePosition (−1e6) / Lua SetPosition | V static |
+| 0x14015CEAB, 0x1429E4858 / 0x1429E485C | ctor position +1,000,000; sentinels ±1,000,000 | V static |
+| 0x140165BD0 | StageBlockControllerData → controller parameters (blockMargin, loadingDistance, largeBlockLoadingMargin …) | V static |
+| 0x14015F4F0, 0x14015B900 / 0x14015B940 | large-block name by (group, index); entry / group counts (0x38-byte entries) | V static |
 | m6_block_messages.json | live Block.* messages + lookups, 2 saves × 2 runs | V live |
+| Memory/research/m6_initialpos_20261029_132101 | f30020 vars.initialPlayerPos = CHECK_POINT slot, minimum index (138, 142) | V live |
 
 ---
 <small>Source: `docs/engine/World.md` in the project repository &middot; generated 2026-10-29.</small>

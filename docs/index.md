@@ -83,10 +83,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-10-29: **M6 stage-block controller**: index / large-block rule / raisers decoded, `StageBlocks` in the host, stage-block messages = live for both saves; E20-E22 narrowed; one game run (f30020 initialPlayerPos), baseline MATCH; quick suite 79/79.
 - 2026-10-29: **E9 + M6 start**: 17/24 updaters named (4 brute-forced system names); DataIdentifier registry/lookup decoded and implemented (`Engine\world\`), title 40010/40020 finish OnAllocate, host boot to free roam with no Lua error; live Block.* fixture + FSTB large-block prefix; `World.md` draft; quick suite 76/76.
 - 2026-10-29: **Open-question cleanups**: A2 = `DebugUi`; E12 bus drain decoded (engine bus now drains until empty, direct resend, 128 cap); E29 closed (stock Lua, difference = IH's `TppDefine.lua`); E11 updater removal/shutdown; E9 6/24 updaters named; E24 svars network-sync path; E1 FOX2 names 100 %. Quick suite 67/67.
 - 2026-10-29: **M4 Script host PASS** (Luc accepted gates a + b with the documented differences).
 - 2026-10-29: **Roadmap re-cut** (Luc): M6+ ordered by dependency and feasibility (M6 streaming & locators, M7 terrain/collision, M8 navigation, M9 gameplay core, M10 asset formats, M11 animation, M12 gameplay extended, M13 rendering, M14 slice); gap map, open questions, skills, site updated.
-- 2026-10-29: **M4 gate b (call-log comparison)**: FoxTrace table results (Lua Table layout [V static]); capture f30020 (574 hooks); host follows the live save (title 40020 → f30020), free roam with delivery to `Seq_Game_FreePlay`; call log 548 both / 517 same args / order 0.947, one-sided functions all explained; replay fixture 723 natives (4 captures); `test_m4_gate_b.py`; quick suite 65/65.
 
 [Full session log](status/log.md)

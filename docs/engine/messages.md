@@ -41,8 +41,16 @@ Re-verification (2026-10-21) of [`docs\ENGINE.md`](core-architecture.md) milesto
 - `send_command(target, table)` → `TypeManager.command(instance, StrCode32(id), lua_args)` (synchronous).
 - `send_message(target, value)` → per-type FIFO, consumed by the type's update.
 
+## Bucket manager: queue, subscriptions, drain (2026-10-29) [V static]
+- Object with vtable **0x1420E9B90** (ctor 0x14017FEA0): slot 1 0x140180640 unsubscribe a listener record, slot 2 0x140180FA0 subscribe a record to a category (at most 64 subscriptions; byte-linked chains), slots 3/4 0x140180EB0 / 0x140180F50 raise, **slot 5 0x140180760 drain**.
+- **Queue:** raise → 0x140180320 appends a 0x38-byte message (payload 0x28 B + sender/name/flags/resend byte) to a **128-entry FIFO ring** at +0x30 (lock +0x1C30, head +0x1C38, count +0x1C3C); a raise into a full ring fails (returns an error, message dropped).
+- **Drain** (slot 5): pop one message under the lock, release the lock, dispatch, repeat **until the ring is empty** — messages raised during dispatch are delivered in the same drain, after the ones already queued. Dispatch by flag bit 8: set → every listener subscribed to the message's category (hash table +0x2350, chain through +0x2145, listener record at +0x1C40 + i·0x28, call record object vt+0); clear → the one listener registered under the message key (hash table +0x2340).
+- **Hand-back** (Lua `OnMessage` returned 1, mission listener 0x140A1D7D0): the listener record's vtable 0x1420E9B60 slot 2 0x140180E70 → 0x140180D90 re-raises the message **directly to that same record** with resend count + 1 (`Mission.GetCurrentMessageResendCount`), so it is handled again in the same drain.
+- **Third mission category** 0xDC05D615 = StrCode32 `"DebugUi"` (dictionary + two-word search over ~19 M candidates, single match) [V hash]; the release build never raises it.
+- Engine (`Engine/runtime/messages.py`): drain until empty, resend to the handing-back listener only, 128-message cap (`QUEUE_CAP`), `test_m4_messages.py::test_bus_ring_cap_and_direct_resend`.
+
 ## Open
-Bucket manager + `FUN_140180760` drain order (FoxRe [I]); which raises reach Lua `Msg` handlers and when; full Msg name table per sender; when `0x140BF9A20` fires.
+Where the frame calls this bucket's drain relative to the mission `OnUpdate` (called through the vtable; no static caller) [?]; full Msg name table per sender; when `0x140BF9A20` fires.
 
 ---
 <small>Source: `docs/engine/Messages.md` in the project repository &middot; generated 2026-10-29.</small>

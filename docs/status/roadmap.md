@@ -22,7 +22,7 @@ Status keys: PASS = gate passed · IN PROGRESS · NEXT (the milestone to start n
 | PASS: `.lua` in packs | `fpk.decode_entry` | **732/732 decode + compile** (in the FPK gate) |
 | `.sdf`/`.sbp` sound packages (container only) | — | listed + byte-extract — moved to M12 (sound) |
 
-Remaining M1 polish: FOX2 name-resolution %, texture name gap (22.8k unnamed `.ftexs`), exe-side parser VAs (all [?]).
+Remaining M1 polish: texture name gap (FOX2 name resolution reported 2026-10-29: 100 % of classes and properties, 293,035/293,036 values from the files' own string tables) (22.8k unnamed `.ftexs`), exe-side parser VAs (all [?]).
 Output: `Engine\formats\` (ported from ATOMIZER/Tools into one package), `docs\formats\{QAR,FPK,FOX2,FRT,NAV2}.md`. Skill: `fox-format`.
 
 ## M2 Entity & reflection core [PASS] (gates passed 2026-10-21) — fox2 → live typed entity graph

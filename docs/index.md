@@ -82,10 +82,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-10-29: **Open-question cleanups**: A2 = `DebugUi`; E12 bus drain decoded (engine bus now drains until empty, direct resend, 128 cap); E29 closed (stock Lua, difference = IH's `TppDefine.lua`); E11 updater removal/shutdown; E9 6/24 updaters named; E24 svars network-sync path; E1 FOX2 names 100 %. Quick suite 67/67.
 - 2026-10-29: **M4 Script host PASS** (Luc accepted gates a + b with the documented differences).
 - 2026-10-29: **Roadmap re-cut** (Luc): M6+ ordered by dependency and feasibility (M6 streaming & locators, M7 terrain/collision, M8 navigation, M9 gameplay core, M10 asset formats, M11 animation, M12 gameplay extended, M13 rendering, M14 slice); gap map, open questions, skills, site updated.
 - 2026-10-29: **M4 gate b (call-log comparison)**: FoxTrace table results (Lua Table layout [V static]); capture f30020 (574 hooks); host follows the live save (title 40020 → f30020), free roam with delivery to `Seq_Game_FreePlay`; call log 548 both / 517 same args / order 0.947, one-sided functions all explained; replay fixture 723 natives (4 captures); `test_m4_gate_b.py`; quick suite 65/65.
 - 2026-10-28: **Sahelanthropus mod track retired** (Luc): removed from goals, Next, ROADMAP (Mod checkpoint), CLAUDE.md and the skills; SAHELAN / PROBES / BATTLEFIELD docs kept as RE evidence only.
-- 2026-10-28: **M4 gate a part 3 (login, DLC, pre-title)**: Konami login decoded (0x1407D74A0 / 0x1407DEE70 / 0x14091C470 / 0x1407D50A0; live popups = `system_3200_all` ×2, `system_3201_all`), pre-title UI 0x14085C8C0 → Lua `TppVarInit.StartTitle` [V static]; `Engine\runtime\online.py`; host = 24 live transitions, loads title 40010 itself; m5 58/58 hand-driven only from CONTINUE; quick suite 62/62.
 
 [Full session log](status/log.md)

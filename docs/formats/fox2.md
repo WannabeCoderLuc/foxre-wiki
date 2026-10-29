@@ -81,6 +81,7 @@ Usage (property instances over all files) [D]: EntityHandle 3.57 M, EntityPtr 2.
 ## Codec notes
 - Floats are kept as raw 32-bit patterns (exact round trip incl. NaN payloads); `to_json()` shows them as floats.
 - Hashed values (String/Path/FilePtr/EntityLink) are raw integers; `Names` resolves them for display from the file's string table, dictionaries and `strcode64`.
+- **Name resolution (2026-10-29, all 44,994 DataSets, `Tools\fox2_name_report.py`)** [D]: every distinct class name (403), property name (1,651) and hashed value (293,035 of 293,036: String / Path / FilePtr / EntityLink values and StringMap keys) resolves from the DataSet's **own string table**; one value hash resolves nowhere (no dictionary has it). Dictionaries are not needed for names that a file carries.
 - The writer emits the canonical layout above; since every game file is canonical, `write(read(b)) == b` holds for all of them.
 
 ## Exe side

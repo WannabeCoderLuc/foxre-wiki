@@ -51,11 +51,21 @@ Bytes from 0x52 to the next 16-byte boundary are uninitialised memory [D] (kept 
 
 Sizes [D]: min/maxHeight = 4 bytes per cluster; lodParameter = 5 × clusters × 4 (htre), `param` = 4 × clusters × 4 (tre2). The loader endian-swaps (lodCount − 1) × clusters floats of it [V]; the meaning of the extra LOD slot is [?].
 
-## Heights [D]
-f32 absolute world heights in metres (afgh ~190–820, cypr ~−50–200). A 64 × 64 `.htre` grid with pitch 2 m covers 128 m = one stage small block (`World.md`: window centre = 133 + floor(p / 128)). The declared ranges (patch min/max, heightRangeMin/Max) **are not bounds**: 418 afgh blocks hold samples above their range. **[I] until the live fixture:** block `<loc>_<x>_<z>` origin = ((x − 133) × 128, (z − 133) × 128), columns along x.
+## Heights
+f32 absolute world heights in metres (afgh ~190–820, cypr ~−50–200) [D]. The declared ranges (patch min/max, heightRangeMin/Max) **are not bounds**: 418 afgh blocks hold samples above their range [D].
+
+- **Storage order [D every kind]:** the heightMap payload is a grid of 32 × 32 clusters (clusterGridSize), clusters row-major, each cluster row-major (a 64 × 64 `.htre` = 4 clusters of 1,024 floats). Read as one plain row-major grid it jumps at rows 16 / 32 / 48 and column 32; untiled, neighbouring blocks continue with the in-block step (seam median 0.29 m = in-block 0.28 m) across all 4,096 afgh blocks. Same tiling in v3 `.htre` and both `.tre2`. `terrain.Terrain.heights()` returns the untiled grid.
+- **World placement [V live]:** rows run along world z, columns along world x; small block `<loc>_<bx>_<bz>` covers x ∈ [(bx − 133) · 128, (bx − 132) · 128), z likewise (133 = the stage-block centre index, `World.md`); sample k lies at +2 k m, so the 64 samples tile the 128 m block with no shared edge (the cell between two blocks uses the neighbour's first sample). afgh blocks 101–164 span −4096…4096. Static cross-check: the 70 rat route points of `afgh_base.lua` lie within centimetres of the field.
+- **`.tre2` [D]:** the low grid is exactly every 16th sample of the block mosaic (afgh 256 × 256 vs 4,096 × 4,096: median and max difference 0), spacing gridDistance × 2^lowShift = 32 m, origin −gridWidth · gridDistance / 2 = −4096. Every afgh small block has its `.htre`, so no walkable point is covered by the `.tre2` alone.
 
 ## Height queries (`Engine\world\heightfield.py`)
-`HeightField(grid, spacing, origin_x, origin_z).sample(x, z)`: bilinear float32 over a contiguous row-major buffer (ROADMAP native boundary). Open gate item: live ground heights at recorded points (IH pipe fixture) to confirm the origin / axis mapping and the interpolation the game uses.
+`HeightField(grid, spacing, origin_x, origin_z).sample(x, z)`, float32 over a contiguous row-major buffer (ROADMAP native boundary); `HeightField.from_blocks({(bx, bz): grid})` builds one field from small blocks, `HeightField.from_tre2(...)` the low field.
+
+- **Interpolation [V live]:** each 2 m cell is two triangles split along the diagonal (x0, z0) → (x0 + 2, z0 + 2): with fx, fz the fractions in the cell and a, b, c, d = h[r,c], h[r,c+1], h[r+1,c], h[r+1,c+1]: fx ≥ fz → a + (b − a)·fx + (d − b)·fz, else a + (d − c)·fx + (c − a)·fz.
+- **Live fixture** (`Engine\tests\fixtures\m7_ground_heights.json`, `Tools\m7_ground_fixture.py`, run `Memory
+esearch\m7_ground_20261029_182058`): f30010, IH pipe `TppPlayer.Warp` to (x, ground + drop, z), rest position from `vars.playerPos*` (no vanilla Lua or binding returns a ground height or raycast). 36 drops over 6 blocks (146–148 × 129–130): 24 on terrain of slope ≤ 12° rest at ground + 0.798 m within ±5 mm (drop 1 m or 4 m gives the identical Y); 4 steeper points rest 1–2 cm higher (controller contact, grows with sec slope); 8 rest on rocks / props. Bilinear (σ 6 cm) and the other diagonal (σ 12 cm) miss the live heights (`test_m7_ground.py`).
+
+- Open (E32) [?]: the 0.798 m player offset and the ±5 mm scatter (likely the physics heightfield's quantisation), patch +0x3C, the extra LOD slot.
 
 ---
 <small>Source: `docs/formats/HTRE.md` in the project repository &middot; generated 2026-10-29.</small>

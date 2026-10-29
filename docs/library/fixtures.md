@@ -14,6 +14,7 @@ Ground truth the engine tests (`Engine/tests/`) compare against. Each comes from
 | `m4b_save_image.json` | 173 KB | see the test that loads it |
 | `m5_save_image.json` | 7 KB | M5: the minimal save values behind TppScriptVars.LoadVarsFromSlot (from a live dump). |
 | `m6_block_messages.json` | 5 KB | see the test that loads it |
+| `m7_ground_heights.json` | 13 KB | see the test that loads it |
 
 ---
 <small>Generated 2026-10-29 from the project repository.</small>

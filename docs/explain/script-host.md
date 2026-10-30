@@ -34,4 +34,4 @@ If a new engine runs the game's own Lua and answers its native calls the way the
 - Class-instance calls for graphics and UI (`UiDaemon:`, `PhDaemon:` ...) are still answered by empty stubs.
 
 ---
-<small>Hand-written article (`docs/site/explain/Script-Host.md`) &middot; published 2026-10-29.</small>
+<small>Hand-written article (`docs/site/explain/Script-Host.md`) &middot; published 2026-10-30.</small>

@@ -53,4 +53,4 @@ Re-verification (2026-10-21) of [`docs\ENGINE.md`](core-architecture.md) milesto
 Where the frame calls this bucket's drain relative to the mission `OnUpdate` (called through the vtable; no static caller) [?]; full Msg name table per sender; when `0x140BF9A20` fires.
 
 ---
-<small>Source: `docs/engine/Messages.md` in the project repository &middot; generated 2026-10-29.</small>
+<small>Source: `docs/engine/Messages.md` in the project repository &middot; generated 2026-10-30.</small>

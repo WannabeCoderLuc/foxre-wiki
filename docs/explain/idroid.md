@@ -32,4 +32,4 @@ A live capture (two runs) hooked the Lua functions, the state machine, the langu
 What the language service reports as the "current" language (it never matched the requested one in the boot), and which code calls the emblem setup (it is called from protected code).
 
 ---
-<small>Hand-written article (`docs/site/explain/IDroid.md`) &middot; published 2026-10-29.</small>
+<small>Hand-written article (`docs/site/explain/IDroid.md`) &middot; published 2026-10-30.</small>

@@ -58,4 +58,4 @@ The milestones from M6 on were re-ordered on 2026-10-29 so that each one only ne
 - Sources, tools, test fixtures and captures: [Library](../library/sources.md).
 
 ---
-<small>Hand-written article (`docs/site/start/Overview.md`) &middot; published 2026-10-29.</small>
+<small>Hand-written article (`docs/site/start/Overview.md`) &middot; published 2026-10-30.</small>

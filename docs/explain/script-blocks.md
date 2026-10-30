@@ -27,4 +27,4 @@ The gate test checks the slot order, the three `ScriptBlock.Load` calls and thei
 Who calls the slot update each frame relative to the mission controller, and how the transition message is delivered (the engine logs it; there is no message delivery to scripts yet).
 
 ---
-<small>Hand-written article (`docs/site/explain/Script-Blocks.md`) &middot; published 2026-10-29.</small>
+<small>Hand-written article (`docs/site/explain/Script-Blocks.md`) &middot; published 2026-10-30.</small>

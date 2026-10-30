@@ -16,4 +16,4 @@ A function address counts as verified only if it is a real function start **and*
 - Every check is for 1.0.15.4 EN; a verified address in this build says nothing about another.
 
 ---
-<small>Hand-written article (`docs/site/mods/Claims.md`) &middot; published 2026-10-29.</small>
+<small>Hand-written article (`docs/site/mods/Claims.md`) &middot; published 2026-10-30.</small>

@@ -27,4 +27,4 @@ The same check works for any native: look it up in the binding map, read the Ref
 - Addresses are for 1.0.15.4 EN only; names are stable, addresses are not.
 
 ---
-<small>Hand-written article (`docs/site/mods/Lua-Natives.md`) &middot; published 2026-10-29.</small>
+<small>Hand-written article (`docs/site/mods/Lua-Natives.md`) &middot; published 2026-10-30.</small>

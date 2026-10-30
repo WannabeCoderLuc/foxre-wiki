@@ -92,4 +92,4 @@ Then `mgsv_update_knowledge_db(mode="sync")` (source `claims`, plus `symbols` / 
 Query: `mgsv_query_knowledge(category="claims", query="status:x")`, `"kind:struct_offset source:vframework"`, a hex VA, or any name; empty query = counts.
 
 ---
-<small>Source: `docs/CLAIMS.md` in the project repository &middot; generated 2026-10-29.</small>
+<small>Source: `docs/CLAIMS.md` in the project repository &middot; generated 2026-10-30.</small>

@@ -25,4 +25,4 @@ Argument letters choose how each argument is logged (integer, float, string, Lua
 - FoxTrace is part of the project's private tooling for now; the technique works with any IHHook plugin.
 
 ---
-<small>Hand-written article (`docs/site/mods/FoxTrace.md`) &middot; published 2026-10-29.</small>
+<small>Hand-written article (`docs/site/mods/FoxTrace.md`) &middot; published 2026-10-30.</small>

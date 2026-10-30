@@ -34,4 +34,4 @@ Adding 0.8 m to a player warp puts the player exactly where the game would rest 
 - Only Afghanistan (`afgh`, 4,096 blocks) and the Cyprus prologue (`cypr`, 113) have named `.htre` files in our data list; Africa's terrain files are among the archive entries whose names are still unknown.
 
 ---
-<small>Hand-written article (`docs/site/mods/Ground-Height.md`) &middot; published 2026-10-29.</small>
+<small>Hand-written article (`docs/site/mods/Ground-Height.md`) &middot; published 2026-10-30.</small>

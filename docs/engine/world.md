@@ -76,4 +76,4 @@ Engine model (`Engine\world\stage_blocks.py`): `PositionSetter`, `StageBlockCont
 | Memory/research/m6_initialpos_20261029_132101 | f30020 vars.initialPlayerPos = CHECK_POINT slot, minimum index (138, 142) | V live |
 
 ---
-<small>Source: `docs/engine/World.md` in the project repository &middot; generated 2026-10-29.</small>
+<small>Source: `docs/engine/World.md` in the project repository &middot; generated 2026-10-30.</small>

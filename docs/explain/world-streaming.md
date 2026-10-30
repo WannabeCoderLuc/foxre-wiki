@@ -46,4 +46,4 @@ flowchart LR
 - How the button press reaches the title machine (input is not modelled yet; the scenario presses for the player).
 
 ---
-<small>Hand-written article (`docs/site/explain/World-Streaming.md`) &middot; published 2026-10-29.</small>
+<small>Hand-written article (`docs/site/explain/World-Streaming.md`) &middot; published 2026-10-30.</small>

@@ -58,12 +58,17 @@
   - Order: kind 0 for every type, then kind 1, then kind 4, then kind 3.
   - Kind 4 is not in the section table.
 - Then come the tail block (first u16 = its size; opaque [?], holds a 48-bit hash), the grid, and the extra block.
-- **Mesh types** = agent classes: 0, 1, 2, 4, 5 and 0x8004 occur.
+- **Mesh types** = agent classes: 0-5 occur, optionally with flag 0x8000 [?]; afgh / mafr tiles: type 4 on 658, 5 on 49, 0-3 on ~500 each. Soldier paths lie on types 4 and 5 only [D live, docs\engine\Navigation.md].
   - afgh tiles carry 3–5 types (type 4 is the largest mesh).
   - The arena has only type 4.
 
+## Tile placement = the M7 terrain block grid (2026-10-29) [D]
+- Tile `<loc>_<bx>_<bz>_nav*.nav2` has header origin x = (bx - 133) * 128, z = (bz - 133) * 128 exactly, the same block origin as the terrain ([`docs\formats\HTRE.md`](htre.md), `Engine\world\heightfield.py`): **779 / 779 unique afgh / mafr tiles**; first name number = x, second = z (as M7). Origin y = the tile's height base (e.g. 292.8 for afgh_147_129).
+- Grid extent 13 x 13 cells of 10 m = 130 m (2 m overlap into the next block) on 708 tiles; the other 71 have no grid and no mesh (empty files).
+- A tile is split over two files: `NavxNavBlock` has `isSplit`, `filePtr` (small block `_nav.nav2`) and `remainingFilePtr` (large block `_nav.1.nav2`) [D].
+
 ## Quantisation [V]
-- `world = origin + q × (dimX·cell/65536, 1/512, dimZ·cell/65536)`.
+- `world = origin + q × (dimX·cell/65536, 1/yq, dimZ·cell/65536)`, yq = u16 at header +0x46 [D 2026-10-30: ground fit on 8 sample afgh tiles, live soldiers within ~0.3 m of the mesh]. The fixed 1/512 before this was wrong for afgh tiles (yq varies per tile).
 - Arena: 1 m = 102.4 q. afgh tile: 1 m = 504 q.
 
 ## kind 1: walkable triangle mesh [V]
@@ -122,4 +127,4 @@
 - **Render:** `navmesh_tool.py tris <tile> --out f.png [--mesh N|all]`. Outputs: `navmesh/sahelan_arena_tris.png`, `navmesh/afgh_113_120_tris.png`.
 
 ---
-<small>Source: `docs/NAVMESH.md` in the project repository &middot; generated 2026-10-29.</small>
+<small>Source: `docs/NAVMESH.md` in the project repository &middot; generated 2026-10-30.</small>

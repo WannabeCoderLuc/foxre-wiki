@@ -19,4 +19,4 @@
 Ghidra 12.1.4 (with pyghidra), unicorn (single-function emulation), capstone, lief, keystone, Kaitai Struct, lupa (Lua 5.1 in Python), pytest, MinHook, MSVC 2022, ImHex, RenderDoc, Blender. Lessons on test-gated AI-assisted reverse engineering: [Installed tools](tooling.md).
 
 ---
-<small>Hand-written article (`docs/site/library/Tools.md`) &middot; published 2026-10-29.</small>
+<small>Hand-written article (`docs/site/library/Tools.md`) &middot; published 2026-10-30.</small>

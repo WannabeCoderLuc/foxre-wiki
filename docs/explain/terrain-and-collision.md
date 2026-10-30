@@ -43,4 +43,4 @@ flowchart LR
 - Two small terrain fields (a 0/1 flag in the patch header, one extra level-of-detail slot).
 
 ---
-<small>Hand-written article (`docs/site/explain/Terrain-And-Collision.md`) &middot; published 2026-10-29.</small>
+<small>Hand-written article (`docs/site/explain/Terrain-And-Collision.md`) &middot; published 2026-10-30.</small>

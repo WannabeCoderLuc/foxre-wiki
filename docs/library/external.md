@@ -13,4 +13,4 @@
 | Infinite Heaven, IHHook, V_Framework, GzsTool, FoxTool | see [Sources](sources.md) |
 
 ---
-<small>Hand-written article (`docs/site/library/External.md`) &middot; published 2026-10-29.</small>
+<small>Hand-written article (`docs/site/library/External.md`) &middot; published 2026-10-30.</small>

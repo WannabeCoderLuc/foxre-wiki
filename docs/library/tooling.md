@@ -65,4 +65,4 @@ Manifest `Tools\game_baseline.json` (switch with `game_plugin`; `game_status` sh
 See the links in the 2026-10-21 report ([`docs\LOG.md`](../status/log.md)); skipped: paid tools (IDA Pro, 010 Editor), FMDL Studio v2 (Unity plugin, needs a Unity account; our own fmdl codec + Blender instead); rejected: Sogen for the game exe (running Denuvo under an emulator is off-limits), REA (repo gone, closed zip), decomp.wtf (archived; console-only).
 
 ---
-<small>Source: `docs/TOOLING.md` in the project repository &middot; generated 2026-10-29.</small>
+<small>Source: `docs/TOOLING.md` in the project repository &middot; generated 2026-10-30.</small>

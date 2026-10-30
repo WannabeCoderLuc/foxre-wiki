@@ -913,4 +913,4 @@ In addition to the TaskBucket bus, Fox Engine provides a high-throughput per-typ
 - **Drain (`MessageBus::vtable[9]`, `FUN_140bf39c0`)**: Dequeues pending messages for `typeIndex`, popping `actorId` and `messageId` for batch delivery.
 
 ---
-<small>Source: `docs/ENGINE.md` in the project repository &middot; generated 2026-10-29.</small>
+<small>Source: `docs/ENGINE.md` in the project repository &middot; generated 2026-10-30.</small>

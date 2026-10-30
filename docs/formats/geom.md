@@ -26,4 +26,4 @@ Shape headers (AABB / POLY prims, child / next offsets in 16-byte units), vertex
 The 54 unresolved `*_PhysicsData` links of the s10151 graph live in `.ph` (`PhxAssociation.physicsData`) and `.sim` (`SimOnPhysics.physicsData`) files, which are FOX2 DataSets (magic `\xF2box`, M1 codec). See [`docs/engine/Entities.md`](../engine/entities.md) "Physics data links".
 
 ---
-<small>Source: `docs/formats/GEOM.md` in the project repository &middot; generated 2026-10-29.</small>
+<small>Source: `docs/formats/GEOM.md` in the project repository &middot; generated 2026-10-30.</small>

@@ -18,4 +18,4 @@ A `.fox2` DataSet is a list of entities: a class plus typed property values [V].
 - Only 8 slots exist; f30010 already uses 4.
 
 ---
-<small>Hand-written article (`docs/site/mods/Editing-DataSets.md`) &middot; published 2026-10-29.</small>
+<small>Hand-written article (`docs/site/mods/Editing-DataSets.md`) &middot; published 2026-10-30.</small>

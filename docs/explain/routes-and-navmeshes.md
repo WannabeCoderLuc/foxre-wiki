@@ -23,4 +23,4 @@ Both formats have byte-identical readers and writers (`Engine/formats/frt.py`, `
 The runtime side: path queries, how a soldier follows a route and fires its events, and 35 event types whose names are unknown. That is M8 work.
 
 ---
-<small>Hand-written article (`docs/site/explain/Routes-And-Navmeshes.md`) &middot; published 2026-10-29.</small>
+<small>Hand-written article (`docs/site/explain/Routes-And-Navmeshes.md`) &middot; published 2026-10-30.</small>

@@ -27,4 +27,4 @@ Run all gates: MCP `engine_verify` (or `python -m pytest Engine\tests -q` from t
 Tests: `tests\` (pytest; `verifiers.lock.json` = sha256 of each verifier, enforced by `engine_verify`). Census tools that produce the spec statistics: `Tools\{fox2,fpk,qar}_census.py`, `Tools\qar_harvest_paths.py`.
 
 ---
-<small>Source: `Engine/README.md` in the project repository &middot; generated 2026-10-29.</small>
+<small>Source: `Engine/README.md` in the project repository &middot; generated 2026-10-30.</small>

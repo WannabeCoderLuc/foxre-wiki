@@ -94,4 +94,4 @@ Named: 17 of 24 (15 [V], 2 [I]: prio 13 marker, prio 21 HighSpeedCamera functor 
 - Updater names still [?]: prio 0, 5, 6, 12, 16, 20, 22 (behaviour known, table above); which updater walks the 4 type groups.
 
 ---
-<small>Source: `docs/engine/Scheduler.md` in the project repository &middot; generated 2026-10-29.</small>
+<small>Source: `docs/engine/Scheduler.md` in the project repository &middot; generated 2026-10-30.</small>

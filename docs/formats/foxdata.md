@@ -41,4 +41,4 @@ Exe readers [V static]: node lookup by name (depth-first through child, then nex
 Layout-preserving: header, nodes, parameters, strings and payloads go back to their offsets; bytes that no structure covers stay in `File.gaps` (non-zero runs only). After the typed terrain layer the only gaps left are uninitialised alignment padding (`HTRE.md`); geom-family files have no gap bytes at all [D].
 
 ---
-<small>Source: `docs/formats/FOXDATA.md` in the project repository &middot; generated 2026-10-29.</small>
+<small>Source: `docs/formats/FOXDATA.md` in the project repository &middot; generated 2026-10-30.</small>

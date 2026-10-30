@@ -39,4 +39,4 @@ The gate scenario is the live boot: cold start, title screen, Continue, free roa
 - The title-screen flow itself runs at a boundary for now (see [The Lua script host](script-host.md)).
 
 ---
-<small>Hand-written article (`docs/site/explain/Mission-Load.md`) &middot; published 2026-10-29.</small>
+<small>Hand-written article (`docs/site/explain/Mission-Load.md`) &middot; published 2026-10-30.</small>

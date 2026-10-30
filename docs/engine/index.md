@@ -32,6 +32,10 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
     Packages, blocks, script blocks, UI tables and how the game loads a location and a mission (M5, PASS).
 
+-   **[Navigation and routes](navigation.md)**
+
+    RequestMove, path layout, route following (M8, IN PROGRESS).
+
 -   **[World streaming and locators](world.md)**
 
     DataIdentifier locator lookup, stage blocks and the title menu (M6, PASS).

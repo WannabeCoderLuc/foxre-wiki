@@ -11,7 +11,7 @@ hide:
 
 PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &middot; every claim backed by a pass/fail test
 
-**7 of 15 milestones passed** &middot; current: ****
+**7 of 15 milestones passed** &middot; current: **M8 Navigation & routes**
 
 </div>
 
@@ -55,7 +55,7 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 | M5 | Resources & mission load | packs, blocks, async resources, mission start | <span class="status pass">PASS</span> |
 | M6 | World streaming & locators | stage blocks, location loader, locators | <span class="status pass">PASS</span> |
 | M7 | Terrain & collision formats [PASS 2026-10-29] — `.htre`/`.tre2`, `.geom` | `.htre`/`.tre2`, `.geom` | <span class="status planned">PLANNED</span> |
-| M8 | Navigation & routes | nav2 runtime, route following | <span class="status planned">PLANNED</span> |
+| M8 | Navigation & routes | nav2 runtime, route following | <span class="status in-progress">IN PROGRESS</span> |
 | M9 | Gameplay core | Soldier AI, CP / notice, damage, SendCommand handlers (headless) | <span class="status planned">PLANNED</span> |
 | M10 | Asset formats | textures, models, rigs, fova, parts, language | <span class="status planned">PLANNED</span> |
 | M11 | Animation | clips, motion graphs, motion events | <span class="status planned">PLANNED</span> |
@@ -86,6 +86,7 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-10-30: **M8 first step, gate open**: real `RequestMove` fixture via FoxTrace `navreq`, `Navigation.md` draft, `navigation.py` approximate (87 % within 1 m, worst 11.8 m), E6 narrowed; two game runs, baseline MATCH.
 - 2026-10-29: **M7 gate live part**: cluster-tiled heightMap, block origin, axes and triangle interpolation [V live]; `HeightField.from_blocks` / `from_tre2`; ground = live within 5 mm at 24 points / 6 blocks; E31 answered (E32 leftovers); one game run, baseline MATCH; quick suite 94/94. **M7 PASS** (Luc); site: Terrain explainer + ground-height guide.
 - 2026-10-29: **M7 formats**: FoxData container + typed terrain, 9,340/9,340 and 4,164/4,164 byte-identical, geom family zero gaps; E7 answered (`.ph`/`.sim` -> PhObjectDesc); ROADMAP native-boundary section; quick suite 88/88. No game run.
 - 2026-10-29: **M6 title menu + real CONTINUE**: TitleMenu / EndFadeIn / EndFadeOut / splash / loading-tips raisers decoded, `Engine/runtime/title.py`; host reaches free roam for f30010 + f30020 through the title script's own CONTINUE, title-menu messages = live; **M6 PASS** (Luc); site: World-streaming explainer; quick suite 81/81.

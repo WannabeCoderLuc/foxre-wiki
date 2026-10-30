@@ -105,9 +105,15 @@ Old → new numbers (older docs, the log and test names keep the old ones): M6 W
 - [x] Live ground-height fixture (2026-10-29, IH pipe warp-drops in f30010, `Memory/research/m7_ground_20261029_182058`): cluster-tiled heightMap, block origin ((b - 133) * 128), rows = z / columns = x, triangle pair split (x0,z0)-(x1,z1) [V live]; `HeightField.from_blocks` / `from_tre2`; 24 terrain points over 6 blocks = live within 5 mm (`test_m7_ground.py`, E31 answered).
 - **Gate:** every terrain and collision file round-trips byte-identical (**met 2026-10-29**); heightmap samples equal live ground heights at recorded points (fixture from the IH pipe) (**met 2026-10-29**, `m7_ground_heights.json`). **Gate passed (Luc, 2026-10-29).** Open items stay recorded (E30, E32).
 
-## M8 Navigation & routes [PLANNED] — nav2 runtime, route following
+## M8 Navigation & routes [IN PROGRESS] — nav2 runtime, route following
 - Portal-graph path search over `.nav2`, `TppNavigationController` snap / plan, nav worlds; `.frt` route following and route events (E6: 35 unnamed event types). Evidence: `BATTLEFIELD.md` §4, `SAHELAN.md` (navigation), probe goal logs.
-- **Gate:** path queries equal live `RequestMove` results (fixtures); a soldier's route-following state sequence matches live.
+- [x] E6 narrowed (2026-10-30): `.frt` reader view 0x142187500, +0x2C unread by it, +16 event names, 19 types (1.33 %) left (`FRT.md`).
+- [x] `.nav2` tiles use the M7 block origin, 779 / 779 (`NAVMESH.md`).
+- [x] `Navigation.md` draft; request / path layout decoded; live fixture of real `RequestMove` paths (`m8_nav_paths.json`, FoxTrace `navreq`).
+- [x] `Engine/world/navigation.py` + `test_m8_nav.py`: approximate only: 60 % of 410 requests within 0.1 m, 87 % within 1 m, worst 11.8 m.
+- [ ] Paths equal live: decode the Navx path job and tile links (E33); compare two-waypoint / extending requests.
+- [ ] Route following: state sequence near the player, edge events → speed (far soldiers: 97 of 170 fit one route, in node order).
+- **Gate (not met):** path queries equal live `RequestMove` results (fixtures); a soldier's route-following state sequence matches live.
 
 ## M9 Gameplay core [PLANNED] — Soldier AI, CP / notice, damage, SendCommand handlers (headless)
 - GameObject families Soldier2 and Player2 (state, not animation), AI framework (node tables, blackboard), CP phase and notice, damage, SendCommand handlers. Evidence: `BATTLEFIELD.md`, `SAHELAN.md` §9–§10, `structs_soldier\`, the knowledge DB's command handlers.
@@ -137,4 +143,4 @@ Old → new numbers (older docs, the log and test names keep the old ones): M6 W
 - **Mod checkpoint and Option B mod (Sahelanthropus pilot)**, dropped 2026-10-28 (Luc): no mod work, deliverables or playtests. History in [`docs\LOG.md`](log.md); the verified RE (`docs\SAHELAN.md`, `docs\PROBES.md`, `docs\BATTLEFIELD.md`) is evidence for M8, M9 and M12.
 
 ---
-<small>Source: `docs/ROADMAP.md` in the project repository &middot; generated 2026-10-29.</small>
+<small>Source: `docs/ROADMAP.md` in the project repository &middot; generated 2026-10-30.</small>

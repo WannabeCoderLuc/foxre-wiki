@@ -120,6 +120,7 @@ nav:
       - "Messages and commands": engine/messages.md
       - "Script host": engine/script-host.md
       - "Resources and mission load": engine/resources.md
+      - "Navigation and routes": engine/navigation.md
       - "World streaming and locators": engine/world.md
       - "Claims ledger": engine/claims.md
       - "Claims: contradictions": engine/claims-contradictions.md

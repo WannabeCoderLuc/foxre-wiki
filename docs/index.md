@@ -11,7 +11,7 @@ hide:
 
 PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &middot; every claim backed by a pass/fail test
 
-**8 of 15 milestones passed** &middot; current: ****
+**8 of 15 milestones passed** &middot; current: **M9 Gameplay core**
 
 </div>
 
@@ -56,7 +56,7 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 | M6 | World streaming & locators | stage blocks, location loader, locators | <span class="status pass">PASS</span> |
 | M7 | Terrain & collision formats [PASS 2026-10-29] — `.htre`/`.tre2`, `.geom` | `.htre`/`.tre2`, `.geom` | <span class="status planned">PLANNED</span> |
 | M8 | Navigation & routes | nav2 runtime, path queries (Luc, 2026-11-01) | <span class="status pass">PASS</span> |
-| M9 | Gameplay core | Soldier AI, CP / notice, damage, SendCommand handlers (headless) | <span class="status planned">PLANNED</span> |
+| M9 | Gameplay core | Soldier AI, CP / notice, damage, SendCommand handlers (headless) | <span class="status in-progress">IN PROGRESS</span> |
 | M10 | Asset formats | textures, models, rigs, fova, parts, language | <span class="status planned">PLANNED</span> |
 | M11 | Animation | clips, motion graphs, motion events | <span class="status planned">PLANNED</span> |
 | M12 | Gameplay extended | sound, bosses, UI | <span class="status planned">PLANNED</span> |
@@ -67,6 +67,7 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 | Module | Language | Specification | State | Gate (on all game files) |
 |---|---|---|---|---|
+| `world/realize.py` | Python | [`docs/engine/SoldierAI.md`](engine/soldier-ai.md) | <span class="status in-progress">IN PROGRESS</span> | Soldier realize selection (far mode): budget inside the stage window, 32 / 28 m inset. 159 of 181 live lists equal, the rest within sample age (`test_m9_soldier.py`). |
 | `core/strcode.py` | Python | docstring | <span class="status pass">PASS</span> | StrCode64 = exe 0x141A09AC0 (`re_emulate`, incl. > 64-byte strings) |
 | `core/typedb.py` | Python | [`docs/engine/Reflection.md`](engine/reflection.md) | <span class="status pass">PASS</span> | game registry dump == all DataSets (3,372/3,372 props) |
 | `core/entities.py` | Python | [`docs/engine/Entities.md`](engine/entities.md) | <span class="status pass">PASS</span> | s10151: 8,669 entities typed, all refs resolved/categorised; live: 17/17 f30010 identifier targets match the game |
@@ -86,10 +87,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-11-01: **M9 first step**: capture protocol proven, far mode = realize budget 18 in the stage window, run and dash speeds, route state, first behaviour fixtures; spawn under the map fixed; quick suite 114/114, baseline MATCH.
 - 2026-11-01: **M8 PASS (Luc)**: 948 of 948 live jobs equal, xfail removed; logger bug found (paths read before post-process end), blocked bits, obstacle rings, off-mesh links, end state, extender push ported; six game runs, baseline MATCH. Route following near the player moved to M9 with a safety protocol.
 - 2026-11-01: **M8 second step, gate open**: path job decoded and ported, 863 of 883 live jobs within 0.1 m; 20 coarse jobs left, blocked region link pairs and off-mesh links decoded but not captured; capture 9 boot failed with no data; quick suite 101/101, baseline MATCH.
 - 2026-10-30: **M8 first step, gate open**: real `RequestMove` fixture via FoxTrace `navreq`, `Navigation.md` draft, `navigation.py` approximate (87 % within 1 m, worst 11.8 m), E6 narrowed; two game runs, baseline MATCH.
 - 2026-10-29: **M7 gate live part**: cluster-tiled heightMap, block origin, axes and triangle interpolation [V live]; `HeightField.from_blocks` / `from_tre2`; ground = live within 5 mm at 24 points / 6 blocks; E31 answered (E32 leftovers); one game run, baseline MATCH; quick suite 94/94. **M7 PASS** (Luc); site: Terrain explainer + ground-height guide.
-- 2026-10-29: **M7 formats**: FoxData container + typed terrain, 9,340/9,340 and 4,164/4,164 byte-identical, geom family zero gaps; E7 answered (`.ph`/`.sim` -> PhObjectDesc); ROADMAP native-boundary section; quick suite 88/88. No game run.
 
 [Full session log](status/log.md)

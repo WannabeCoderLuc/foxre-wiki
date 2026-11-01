@@ -1,5 +1,10 @@
 # Engine modules
 
+Tests: `tests\` (pytest; `verifiers.lock.json` = sha256 of each verifier, enforced by `engine_verify`). Census tools that produce the spec statistics: `Tools\{fox2,fpk,qar}_census.py`, `Tools\qar_harvest_paths.py`.
+| `world/realize.py` | Python | [`docs/engine/SoldierAI.md`](soldier-ai.md) | <span class="status in-progress">IN PROGRESS</span> | Soldier realize selection (far mode): budget inside the stage window, 32 / 28 m inset. 159 of 181 live lists equal, the rest within sample age (`test_m9_soldier.py`). |
+
+# Engine
+
 Clean-room MGSV:TPP 1.0.15.4-compatible engine. Specs: `..\docs\formats\`, `..\docs\engine\`. Roadmap: [`..\docs\ROADMAP.md`](../status/roadmap.md).
 No game bytes in this folder; game data is read at runtime from the user's install / `GameBackup` / `EXTRACTED_DATA`.
 Run all gates: MCP `engine_verify` (or `python -m pytest Engine\tests -q` from the repo root; ~6 min with a cold cache).

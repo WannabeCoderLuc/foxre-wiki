@@ -3,8 +3,8 @@
 Counted from the project repository at build time.
 
 - Milestones passed: **8 of 15**
-- Verified engine modules: **16** (table on the home page)
-- Test files: **25**, ground-truth fixtures: **13**
+- Verified engine modules: **17** (table on the home page)
+- Test files: **26**, ground-truth fixtures: **15**
 
 | Milestone | Status |
 |---|:-:|
@@ -17,7 +17,7 @@ Counted from the project repository at build time.
 | M6 World streaming & locators | <span class="status pass">PASS</span> |
 | M7 Terrain & collision formats [PASS 2026-10-29] — `.htre`/`.tre2`, `.geom` | <span class="status planned">PLANNED</span> |
 | M8 Navigation & routes | <span class="status pass">PASS</span> |
-| M9 Gameplay core | <span class="status planned">PLANNED</span> |
+| M9 Gameplay core | <span class="status in-progress">IN PROGRESS</span> |
 | M10 Asset formats | <span class="status planned">PLANNED</span> |
 | M11 Animation | <span class="status planned">PLANNED</span> |
 | M12 Gameplay extended | <span class="status planned">PLANNED</span> |

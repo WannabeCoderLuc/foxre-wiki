@@ -118,11 +118,16 @@ Old → new numbers (older docs, the log and test names keep the old ones): M6 W
 - Moved to M9 (Luc, 2026-11-01): state sequence near the player, far-mode switch, run and dash speeds. Getting close needs protection and belongs with the AI behaviour captures.
 - **Gate (not met):** path queries equal live `RequestMove` results (fixtures); a soldier's route-following state sequence matches live.
 
-## M9 Gameplay core [PLANNED] — Soldier AI, CP / notice, damage, SendCommand handlers (headless)
+## M9 Gameplay core [IN PROGRESS] — Soldier AI, CP / notice, damage, SendCommand handlers (headless)
 - GameObject families Soldier2 and Player2 (state, not animation), AI framework (node tables, blackboard), CP phase and notice, damage, SendCommand handlers. Evidence: `BATTLEFIELD.md`, `SAHELAN.md` §9–§10, `structs_soldier\`, the knowledge DB's command handlers.
 - **Live capture protocol first (Luc, 2026-11-01):** near soldiers the player must not die and runs must stay readable: unlimited health, recorded phase control, other measures confirmed to work, driver without combat input, unplanned events logged and the run marked. Clamped and free runs are never mixed in a fixture.
-- [ ] Route following near the player (from M8): state sequence, far-mode switch (0.80 m/s far, about 1.0 near), run and dash speeds (E33).
-- [ ] Soldier behaviour by phase: sneak, caution, evasion, alert as state sequences.
+- [x] Capture protocol written and proven (2026-11-01, `engine\SoldierAI.md`): 45 hits under alert with life unchanged, driver stops on hand input, phase rise, damage in free runs. Sight and hearing scale not confirmed, so not used.
+- [x] Far-mode switch decoded (2026-11-01): realize budget 18 inside the stage window, 32 m in / 28 m out, 0x141551820; `Engine\world\realize.py`, 159 of 181 live lists equal, the rest within sample age.
+- [x] Run and dash speeds measured (2026-11-01): realized 2.50, 4.01, 6.43; unrealized 2.00, 2.75, 4.00.
+- [x] Route state decoded (2026-11-01): impl +0xE8 route + state; 3 -> 2 <-> 1, 3 -> 0 -> 1 pinned.
+- [ ] Route following near the player: what starts a path request, node events and waits by event type (E33).
+- [x] First behaviour fixture (2026-11-01): caution route switch, evasion fallback after about 26 s (`m9_soldier_forced.json`, two runs).
+- [ ] Soldier behaviour by phase: evasion, alert with a known target as state sequences; a second base.
 - **Gate:** per system, behaviour fixtures (state sequences) reproduced.
 
 ## M10 Asset formats [PLANNED] — textures, models, rigs, fova, parts, language

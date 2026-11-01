@@ -36,6 +36,10 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
     Path job, runtime blocks, dynamic links, route following (M8, PASS).
 
+-   **[Soldier AI](soldier-ai.md)**
+
+    Capture protocol, far mode, move speeds, route state, phases (M9, IN PROGRESS).
+
 -   **[World streaming and locators](world.md)**
 
     DataIdentifier locator lookup, stage blocks and the title menu (M6, PASS).

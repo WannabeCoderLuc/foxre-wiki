@@ -105,7 +105,7 @@ Old → new numbers (older docs, the log and test names keep the old ones): M6 W
 - [x] Live ground-height fixture (2026-10-29, IH pipe warp-drops in f30010, `Memory/research/m7_ground_20261029_182058`): cluster-tiled heightMap, block origin ((b - 133) * 128), rows = z / columns = x, triangle pair split (x0,z0)-(x1,z1) [V live]; `HeightField.from_blocks` / `from_tre2`; 24 terrain points over 6 blocks = live within 5 mm (`test_m7_ground.py`, E31 answered).
 - **Gate:** every terrain and collision file round-trips byte-identical (**met 2026-10-29**); heightmap samples equal live ground heights at recorded points (fixture from the IH pipe) (**met 2026-10-29**, `m7_ground_heights.json`). **Gate passed (Luc, 2026-10-29).** Open items stay recorded (E30, E32).
 
-## M8 Navigation & routes [IN PROGRESS] — nav2 runtime, route following
+## M8 Navigation & routes [PASS] — nav2 runtime, path queries (Luc, 2026-11-01)
 - Portal-graph path search over `.nav2`, `TppNavigationController` snap / plan, nav worlds; `.frt` route following and route events (E6: 35 unnamed event types). Evidence: `BATTLEFIELD.md` §4, `SAHELAN.md` (navigation), probe goal logs.
 - [x] E6 narrowed (2026-10-30): `.frt` reader view 0x142187500, +0x2C unread by it, +16 event names, 19 types (1.33 %) left (`FRT.md`).
 - [x] `.nav2` tiles use the M7 block origin, 779 / 779 (`NAVMESH.md`).
@@ -114,11 +114,15 @@ Old → new numbers (older docs, the log and test names keep the old ones): M6 W
 - [x] Path job decoded and ported, six stages (`Navigation.md`); clean job fixture `m8_nav_jobs.json`: 863 of 883 within 0.1 m (2026-11-01).
 - [x] Paths equal live (2026-11-01): 948 of 948 jobs within 0.1 m, xfail removed; runtime blocks, obstacle rings and dynamic links ported, fed from the recorded state; runs `m8_nav14`, `m8_nav15` (afgh free roam, sneak).
 - [x] Edge events → speed class decoded and ported (2026-11-01, 0x140ED4C10); far soldiers 0.80 m/s on all walk events.
-- [ ] Route following: state sequence near the player, far-mode switch, run and dash speeds (far soldiers: 97 of 170 fit one route, in node order).
+- [x] Far route following: far soldiers stay on route edges in node order (97 of 170 fit one route) at 0.80 m/s.
+- Moved to M9 (Luc, 2026-11-01): state sequence near the player, far-mode switch, run and dash speeds. Getting close needs protection and belongs with the AI behaviour captures.
 - **Gate (not met):** path queries equal live `RequestMove` results (fixtures); a soldier's route-following state sequence matches live.
 
 ## M9 Gameplay core [PLANNED] — Soldier AI, CP / notice, damage, SendCommand handlers (headless)
 - GameObject families Soldier2 and Player2 (state, not animation), AI framework (node tables, blackboard), CP phase and notice, damage, SendCommand handlers. Evidence: `BATTLEFIELD.md`, `SAHELAN.md` §9–§10, `structs_soldier\`, the knowledge DB's command handlers.
+- **Live capture protocol first (Luc, 2026-11-01):** near soldiers the player must not die and runs must stay readable: unlimited health, recorded phase control, other measures confirmed to work, driver without combat input, unplanned events logged and the run marked. Clamped and free runs are never mixed in a fixture.
+- [ ] Route following near the player (from M8): state sequence, far-mode switch (0.80 m/s far, about 1.0 near), run and dash speeds (E33).
+- [ ] Soldier behaviour by phase: sneak, caution, evasion, alert as state sequences.
 - **Gate:** per system, behaviour fixtures (state sequences) reproduced.
 
 ## M10 Asset formats [PLANNED] — textures, models, rigs, fova, parts, language

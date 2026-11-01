@@ -34,7 +34,7 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
 -   **[Navigation and routes](navigation.md)**
 
-    RequestMove, path layout, route following (M8, IN PROGRESS).
+    Path job, runtime blocks, dynamic links, route following (M8, PASS).
 
 -   **[World streaming and locators](world.md)**
 

@@ -1,6 +1,6 @@
 # Routes and navmeshes
 
-*Formats decoded in M1; their runtime use belongs to M8 (Navigation and routes). References: [FRT route sets](../formats/frt.md), [NAV2 navmeshes](../formats/nav2.md).*
+*Formats decoded in M1, path finding in M8 (PASS 2026-11-01). References: [FRT route sets](../formats/frt.md), [NAV2 navmeshes](../formats/nav2.md), Navigation and routes.*
 
 ## What they are
 Two kinds of data tell characters where they can and should go:
@@ -19,8 +19,17 @@ Without navmeshes nothing can path-find; without routes soldiers have nowhere to
 ## How the new engine does it
 Both formats have byte-identical readers and writers (`Engine/formats/frt.py`, `Engine/formats/nav2.py`): **307 of 307** route files and **840 of 840** navmeshes re-encode unchanged. Values the engine computes at build time (link weights, region-link costs) are fitted, not exact, so edits rescale them instead of recomputing.
 
+- **Planning a path.** A far-away goal is searched in steps: first coarse clusters of the map, then regions inside them, then the small nodes inside those regions. The result is then smoothed: corners slide along triangle edges, straight shortcuts are tried, and short zigzags are stretched so a soldier does not twitch.
+- **What is loaded matters.** Only the map blocks loaded around the player can be searched. A soldier starting outside them just gets a straight line, which is how most far soldiers move.
+- **The map changes while you play.** A parked truck blocks the triangles under it and adds a ring of four temporary points to walk around. Ladders and climbs are also temporary points, added as links between two places on the mesh. The search treats these like the rest of the graph.
+
+## How we know
+FoxTrace logs every path job in the real game, with its inputs and the state of the map at that moment. The engine then gets the same inputs and must produce the same path: **948 of 948 jobs match within 10 cm** (Afghanistan free roam, patrol phase, player away from soldiers). Getting there exposed a mistake in our own logging: long jobs had been recorded before the game finished smoothing them, so those older recordings were replaced.
+
 ## Still open
-The runtime side: path queries, how a soldier follows a route and fires its events, and 35 event types whose names are unknown. That is M8 work.
+- What creates the temporary state. The engine replays recorded obstacles and links; it cannot make them yet.
+- How soldiers follow routes close to the player. Far away they slide exactly along the route at 0.80 m/s; close up they walk at about 1.0 m/s and stray from it. This moved to M9 together with soldier behaviour.
+- Other missions, Africa, Mother Base and alert phases are not tested yet.
 
 ---
 <small>Hand-written article (`docs/site/explain/Routes-And-Navmeshes.md`) &middot; published 2026-11-01.</small>

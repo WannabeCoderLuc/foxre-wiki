@@ -39,17 +39,17 @@ Every milestone ends on a test a computer decides: pass or fail. A file reader o
 | M5 Resources and mission load | packs, blocks and how a mission gets loaded | <span class="status pass">PASS</span> |
 | M6 World streaming and locators | the blocks of the map that load around the player, how scripts find named places, the title screen | <span class="status pass">PASS</span> |
 | M7 Terrain and collision | read the ground height maps and collision shapes, answer the ground height anywhere | <span class="status pass">PASS</span> |
-| M8 Navigation and routes | path finding on the navmesh and soldiers walking their routes | PLANNED (next) |
-| M9 Gameplay core | soldiers, alert phases, noticing, damage, commands (no graphics) | <span class="status planned">PLANNED</span> |
+| M8 Navigation and routes | path finding on the navmesh, far soldiers walking their routes | <span class="status pass">PASS</span> |
+| M9 Gameplay core | soldiers, alert phases, noticing, damage, commands (no graphics), soldiers following routes near the player | PLANNED (next) |
 | M10 Asset formats | textures, models, skeletons, outfit and language files | <span class="status planned">PLANNED</span> |
 | M11 Animation | animation clips and motion graphs | <span class="status planned">PLANNED</span> |
 | M12 Gameplay extended | sound, bosses, menus and the iDroid | <span class="status planned">PLANNED</span> |
 | M13 Rendering | drawing the world | <span class="status planned">PLANNED</span> |
 | M14 Playable slice | one free-roam area with the player and one kind of enemy | <span class="status planned">PLANNED</span> |
 
-M7 passed on 2026-10-29: all 9,340 terrain and collision files are read and written back byte for byte, and the engine's ground height matches the real game within 5 mm wherever we dropped the player (see [Terrain and collision files](../explain/terrain-and-collision.md)). M6 passed on 2026-10-29: the engine finds the level's named places, loads the map blocks around the player with the same messages as the real game, and gets from the start-up screens through the title menu's own Continue to free roam, for a save in Afghanistan and one in Africa (see [World streaming and the title screen](../explain/world-streaming.md)). M5 passed on 2026-10-24: from the start-up mission to free roam the engine loads all 58 script chunks in the same order as the real game, including the iDroid's UI tables (see [The iDroid and the language reload](../explain/idroid.md)). M4 passed on 2026-10-29: the engine follows a real save from the start-up screens to free roam, running the game's own scripts with timers, popups and messages, and the engine functions they call match a recording of the real game except for a short, explained list (see [How we verify](../explain/verification.md)).
+M8 passed on 2026-11-01: the engine plans the same paths as the real game on 948 of 948 recorded path jobs, within 10 cm, in Afghanistan free roam (see [Routes and navmeshes](../explain/routes-and-navmeshes.md)). Obstacles and ladders are replayed from recordings for now, because what creates them in the game is not decoded yet.
 
-The milestones from M6 on were re-ordered on 2026-10-29 so that each one only needs what came before it, and the next one is always the most doable. Next is M8: path finding on the navmesh and soldiers walking their routes over the M7 ground. Gameplay, assets, animation and drawing the world follow, drawing last.
+The milestones from M6 on were re-ordered on 2026-10-29 so that each one only needs what came before it, and the next one is always the most doable. Next is M9: soldiers, alert phases and noticing, starting with how soldiers behave and follow routes near the player. Gameplay beyond that, assets, animation, sound and rendering follow after.
 
 ## Where to go next
 - New here: [How to use this site](how-to-read.md), then the [Explanations](../explain/game-data.md) in order.

@@ -1,6 +1,6 @@
 # Soldier AI
 
-Far mode, move speeds, route state and CP phase sequences of `TppSoldier2`, f30010. Engine: `Engine/world/realize.py`. Tests: `Engine/tests/test_m9_soldier.py`. Fixtures: `m9_soldier_free.json`, `m9_soldier_forced.json` (`Tools/m9_fixture.py`). Tags: [V] static or exact, [D] measured live, [I] inferred, [?] open.
+Far mode, move speeds, route state and CP phase sequences of `TppSoldier2`, f30010. Engine: `Engine/world/realize.py`, `Engine/world/route_follow.py`. Tests: `Engine/tests/test_m9_soldier.py`, `test_m9_route.py`. Fixtures: `m9_soldier_free.json`, `m9_soldier_forced.json` (`Tools/m9_fixture.py`), `m9_route.json`, `m9_known.json` (`Tools/m9_route_fixture.py`). Tags: [V] static or exact, [D] measured live, [I] inferred, [?] open.
 
 ## Capture protocol
 Near soldiers the run must stay readable and the player must not die. `Tools/m9_run.py <name> <plan>` runs one capture end to end (deploy, boot, drive, stop, restore); the driver is `Tools/m9_drive.py`, plans in `Tools/m9_plans/`. Runs live in `Memory/research/m9_*`, apart from `m8_nav14`, `m8_nav15`.
@@ -12,19 +12,20 @@ Near soldiers the run must stay readable and the player must not die. `Tools/m9_
 | Phase clamp, global | IH `phaseUpdate` 1, `minPhase`, `maxPhase`, `phaseUpdateRate` | **Proven**: max sneak pulled a commanded caution back in 3 s (`m9_opt2`). Not used in fixtures |
 | Clock | `TppClock.SetTime("12:00:00")`, `TppClock.Stop()` | Accepted; read back as set |
 | Weather | `TppWeather.ForceRequestWeather(0, 1)` (sunny) | Accepted; the one reading came too soon to show a change, so not confirmed [?] |
-| Sight, hearing scale | IH `soldierParamsProfile` 1, `soldierSightDistScale`, `soldierHearingDistScale`, `InfSoldierParams.SoldierParametersMod()` | **Not confirmed, not used**: at 13 m neither scale 0 nor the 100 control noticed (`m9_opt2`), so the test does not separate them. Needs a soldier facing the player |
+| Sight, hearing scale | IH `soldierParamsProfile` 1, `soldierSightDistScale`, `soldierHearingDistScale`, `InfSoldierParams.SoldierParametersMod()` | **Does not stop notice, not used**: soldier walking up at 15 m reached alert 19.9 s after the warp at scale 0, 6.1 s at 100 (`m9_sight0`, `m9_sight100`, one run each). Later at 0 [D], but who noticed was not logged, so the cause is not shown [?]. Hearing was not tested: the driver makes no noise |
 | Reinforcements | none set: `forceReinforceRequest`, `enableHeliReinforce`, `enableSoldiersWithVehicleReinforce` read 0 | No reinforcement message in the Central Base Camp runs [D]. `SetReinforceEnable` exists, untested |
 | Heli and support | IH `disableHeliAttack` exists; no call is ever made | Not tested, nothing to switch off so far |
 | Vehicles | The player stands on foot; riders stay in the logs at 8 to 12.5 m/s, without a move bit | Excluded from the speed tables by that rule |
 | Warps | 2 m above the terrain from the M7 `HeightField`. A 30 m drop gave fall damage (`m9_free2_falldamage`) | **Proven** |
 
-The driver takes no input and never fires. It stops and marks the run contaminated on: life at 0 or under 10 %, a player move over 3 m after a warp has settled, target dead or neutralized, a checkpoint save during the run, in a free run any phase change or damage, in a forced run the CP rising above the commanded phase. Falling back by itself is the behaviour under test, not a stop.
+The driver takes no input and never fires. It stops and marks the run contaminated on: life at 0 or under 10 %, a player move over 3 m after a warp has settled (unless `Player.PlayerDamaged` came within 6 s and the move is at most 15 m: logged as a push), target dead or neutralized, a checkpoint save during the run, in a free run any phase change or damage, in a forced run the CP rising above the commanded phase. Clamp `noticed` lets the CP rise and fall by itself. Falling back by itself is the behaviour under test, not a stop. **The push path has not run yet:** 282 hits in `m9_known1`, `m9_known2` moved the player under 3 m.
 
 Rules that came from mistakes:
 
 - **Nobody touches the game during a run.** `m9_humanplay1_contaminated` was played by hand. The 60 m move limit it passed under is now 3 m.
 - The game keeps 60 fps without window focus [D], so focus is logged, not a stop; other use of the PC does not spoil a run unless it reaches the game.
 - Hits push the player: `m9_sb_forced1` stopped on a 4 m push at the end of the fire test, as it should. Its fixture part ends before that test.
+- Patrol trucks notice the player too: `m9_route2` stopped at 228 s when one drove past (Luc saw it); its fixture part ends there.
 - **Never save during a run.** Life, clock and weather live in `vars` and would go into the checkpoint. The driver watches the save file. A checkpoint written out of bounds put the player at y = -79.2 on every boot; repaired on 2026-11-01 with `TppMission.UpdateCheckPointAtCurrentPosition()` from solid ground with vanilla state (old save: `Backups\saves\20261101_before_spawnfix`). The likely source is the M7 warp drops of 2026-10-29: the save's date matches [I].
 
 ## Far mode is the unrealized state [V 0x141551820, D live]
@@ -51,23 +52,57 @@ Flag word +0x110, stride 0x28: bits 16 to 23. Bit 0x10 walk, 0x20 run, 0x40 dash
 | 0x30 | | | 2.00 free, 2.75 forced [?] |
 | 0x40, 0x44 | dash | 6.43 | 4.00 |
 
-Realized speed comes from animation; unrealized values look like constants [I]. Their table is not decoded (`TppSoldier2UnrealStepAction`, built in 0x1415A35D0) [?].
+Realized speed comes from animation; unrealized values look like constants [I]. Their table is not decoded [?]. It is not `TppSoldier2UnrealStepAction` (0x1415940C0): that is a one-off 2 s relocation (state 0x141595B70), holding none of these speeds [V].
 
-## Route state [V fields, D meaning]
-Route table at impl +0xE8: +8 u32 current route (StrCode32), +0x10 u32, +0x18 u16, +0x20 u8 state. `IsOnRoute` tests state not 0 and not 3 [V 0x141356170]. `GetUsingRoute` and `GetDoingRouteEventIndex` have only the heli handler [V], which is why they return nil for soldiers.
+## Route step machine [V, D 2 free runs]
+Route action plugin (vtables 0x142418930 and siblings; +0x1B0 soldier impl, +0x1C0 move records stride 0x70, +0x1B8 route set). Per-frame update 0x141570FA0 runs the step in the table 0x142C62A30 by record +0x26 with op 3 (update); a changed step, or a restart asked by the step, gets op 1 (leave) on the old one and op 0 (enter) on the new one; 0x14157AF10 then copies the record to the route table.
 
-| State | Meaning [D] |
+| Action record | Field |
 |---|---|
-| 3 | starting a route |
-| 0 | on the way to the route |
-| 1 | on an edge |
-| 2 | at a node, waiting |
+| +0x00 | step timer |
+| +0x14 | route (StrCode32) |
+| +0x20 u16 | node index |
+| +0x24 u16 | flags; bit 2 ends the route (step 0x10) |
+| +0x26, +0x27 u8 | step, previous step |
+| +0x2A u8 | event index: 0 on the leg, i during node event i |
+| +0x2B u8 | laps |
 
-Transitions in the free runs: 2>1 468, 1>2 463, 3>2 338, 3>0 173, 0>1 123, 0>2 21, all others 16. +0x10 and +0x18 change with the route [?]; meaning not decoded.
+**Route table at impl +0xE8 [V 0x14157AF10]:** +8 u32 route, +0x10 **u16** node, +0x18 **u8** event index, +0x20 u8 state = move record +0x62. FoxTrace read +0x10 and +0x18 at the wrong widths before 2026-11-02, so those columns of older runs mean nothing.
+
+| Step | State | Function | Meaning |
+|---|---|---|---|
+| 1 | 0 | 0x14157A130 | first leg to the route: as step 2, with record +0x66 bit 0x20 set |
+| 2 | 1 | 0x141578E30 | leg to the node |
+| 3 | 2 | 0x141574B90 | node event |
+| 4, 5, 0x10 | 1 | | seen rarely, meaning not decoded [?] |
+
+State 3 never appears in these rows: the update does not run then. It holds from boot and through alert and evasion (see Known target), so it means the route action is not active [I], not "starting a route" as written before. `IsOnRoute` = state not 0 and not 3 [V 0x141356170].
+
+**What starts a path request [V, D]:** op 0 (or 4) of steps 1, 2 builds the leg goal (0x14157BC20), then 0x1415713C0 sends **one `RequestMove`, slot = the soldier index**, owner 0xDF31BA77279E. So one request per leg start, realized or not: that is why they come in state 1 and from far soldiers. All 898 soldier requests of both runs return into it (0x14157150C); 12 others have owner 0xA5A1FB6041C7 (0x141344090). 673 of 673 legs of kind 0 sent one in the same frame; 450 of 450 legs of kind 1 (record +0x66 & 3, the vehicle riders 170 to 173) sent none. Request fields:
+
+- +0x78 waypoints 2 when the target node has no node event (the next leg is included, +0x66 bit 0x10), else 1: 673 of 673.
+- +0x80 mask 8, +0x84 multiplier 2.0 only with +0x66 bit 0x20 (first legs). The same 94 first-leg requests came at boot in both runs.
+- +0x88 5.0 if action +0x3E is -1, else 0; +0x8C 10.0.
+
+A leg ends by the kind's arrival test (0x14156CBD0, 0x14156CF30, 0x14156D1E0); kind 0 reads remaining path length under 5 m [I, the decompile loses the return]. Not ported.
+
+**Order [D]:** `route_follow.step_after` equals every change between steps 2 and 3 of every soldier: 962 and 700 of 700 in the two runs. Leg to a node; its node events in order, except `SwitchRoute` and 0x8706030D, which run without a stop [V 0x14156FDC0]; then the next node, wrapping, laps + 1. A next node at the same spot runs its events with no leg (136 cases at 0 m, legs from 1.64 m; the exact test is not decoded [?]). Record +0x66 bit 0x40 reverses the direction [V 0x141571270], no reversed route was seen live.
+
+**Waits [D]:** node event `time` = frames at 60 per second, whole seconds minus one frame (the community `FRT` page says the same). Live / (time + 1) / 60: median 1.07, under 0.99 in 5 of 594, minimum 0.92. Nearly all node events here are `RelaxedIdleAct` 0xEF94DD47. Why some last much longer (1198 frames: minimum 20 s, median 24.7 s) is not decoded [?].
 
 Distance from the route edge while walking in state 1: unrealized p50 0.00, p99 0.21 m; realized p50 0.25, p99 1.98, max 6.5 m. The 18 m of `m8_nav_20261029_185330` did not come back with the player standing and no phase change. It was uncontrolled, so it is not confirmed as route following [?].
 
-`RequestMove` by the state at the next sample (free, slot = soldier index [I]): unrealized state 1 338, state 3 85, state 0 13, state 2 4; realized state 1 60, state 2 1. So requests also come while on an edge, and from far soldiers [?]. **What triggers a request is not decoded.**
+## Known target [D, 2 runs `m9_known1`, `m9_known2`, target soldier 81, afgh_sovietBase_cp]
+The driver warps the player 20 m ahead of a walking soldier; no SetPhase. 61 s later it warps 500 m away. Pinned:
+
+- Sneak to alert 6.2 and 6.8 s after the warp. Hits at once (130, 152; life unchanged), none after the player left.
+- Then alert, evasion, caution, in that order, by itself. Caution held to the end of the run (214, 110 s): no return to sneak seen.
+- 8 other CPs go to caution together 21 and 22 s after this CP enters evasion.
+- The target: route state 3 from the alert until caution, route 7DA571CF still stored. At caution a new route E99EB6C3, state 0, then 2 and 1 in turn.
+
+**Not pinned, differs between runs:** alert lasted 58 and 180 s past the player's leaving; evasion 59 and 42 s (commanded evasion: about 26 s); the move bits during the fight.
+
+**CP phase timer [V 0x140D6E960, the address the retired V_Framework calls DecrementPhaseCounter]:** timer at CP +0x30, stride 0x60, +0x50; each update it falls by rate (CP +0x28, stride 0x14, +4) x frame time (CP +0x158). What sets the phase lengths is not decoded [?].
 
 ## Phases [D, forced, soldier 78, afgh_sovietBase_cp, player 120 m away]
 - Sneak: route 1E072FB4, state 2 at the node.
@@ -81,11 +116,11 @@ Forced2 ended at 244 s (reply lost on the pipe, driver now retries and always wr
 Seen in hand play only, not pinned: other CPs went to caution when this CP fell back (`m9_humanplay1_contaminated`) [?].
 
 ## Open
-- The move table of unrealized soldiers; what +0x10 and +0x18 of the route table hold.
-- What starts a path request on a route; node events and waits by event type.
-- Sight and hearing scale test with a facing soldier.
-- Behaviour with a known target (fire, search), which needs a clean design: the driver stands still and hits push it.
-- A second base and Africa; the +0x1A0 byte, the view test and the slot swaps in the port.
+- The move table of unrealized soldiers; bits 0x30.
+- Phase lengths: alert and evasion vary. Read the CP timer live; who noticed; `SetKeepCaution`.
+- Node waits longer than `time`; steps 4, 5, 0x10; the same-spot test; arrival tests in the port.
+- Sight scale at 0 with who noticed logged; hearing, which needs a noise source; the hit-push path of the driver.
+- A second base and Africa; the +0x1A0 byte (0 on all soldiers in the last 20 samples of `m9_route1`), the view test and the slot swaps in the port.
 
 ---
 <small>Source: `docs/engine/SoldierAI.md` in the project repository &middot; generated 2026-11-01.</small>

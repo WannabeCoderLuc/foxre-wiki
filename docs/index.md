@@ -87,10 +87,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-11-01: **M9 second step**: route step machine, one request per leg, order equal live on 1,662 changes; known target alert, evasion, caution over two runs; six game runs, one stopped by a truck; quick suite 128/128, baseline MATCH.
 - 2026-11-01: **M9 first step**: capture protocol proven, far mode = realize budget 18 in the stage window, run and dash speeds, route state, first behaviour fixtures; spawn under the map fixed; quick suite 114/114, baseline MATCH.
 - 2026-11-01: **M8 PASS (Luc)**: 948 of 948 live jobs equal, xfail removed; logger bug found (paths read before post-process end), blocked bits, obstacle rings, off-mesh links, end state, extender push ported; six game runs, baseline MATCH. Route following near the player moved to M9 with a safety protocol.
 - 2026-11-01: **M8 second step, gate open**: path job decoded and ported, 863 of 883 live jobs within 0.1 m; 20 coarse jobs left, blocked region link pairs and off-mesh links decoded but not captured; capture 9 boot failed with no data; quick suite 101/101, baseline MATCH.
 - 2026-10-30: **M8 first step, gate open**: real `RequestMove` fixture via FoxTrace `navreq`, `Navigation.md` draft, `navigation.py` approximate (87 % within 1 m, worst 11.8 m), E6 narrowed; two game runs, baseline MATCH.
-- 2026-10-29: **M7 gate live part**: cluster-tiled heightMap, block origin, axes and triangle interpolation [V live]; `HeightField.from_blocks` / `from_tre2`; ground = live within 5 mm at 24 points / 6 blocks; E31 answered (E32 leftovers); one game run, baseline MATCH; quick suite 94/94. **M7 PASS** (Luc); site: Terrain explainer + ground-height guide.
 
 [Full session log](status/log.md)

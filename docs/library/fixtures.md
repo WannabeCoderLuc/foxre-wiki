@@ -17,6 +17,8 @@ Ground truth the engine tests (`Engine/tests/`) compare against. Each comes from
 | `m7_ground_heights.json` | 13 KB | see the test that loads it |
 | `m8_nav_jobs.json` | 3,936 KB | see the test that loads it |
 | `m8_nav_paths.json` | 421 KB | see the test that loads it |
+| `m9_known.json` | 7 KB | see the test that loads it |
+| `m9_route.json` | 142 KB | see the test that loads it |
 | `m9_soldier_forced.json` | 3 KB | see the test that loads it |
 | `m9_soldier_free.json` | 451 KB | see the test that loads it |
 

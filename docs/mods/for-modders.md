@@ -20,6 +20,8 @@
 | [Editing fox2 DataSets](editing-datasets.md) | the engine's type registry, byte-exact DataSet codec |
 | [Tracing the game with FoxTrace](foxtrace.md) | log-only hooks and native return recording |
 | [Ground height at any point](ground-height.md) | terrain block placement, tiling and the game's triangle rule |
+| [Navmeshes and routes in a mod](navigation-and-routes.md) | path jobs, loaded blocks, route legs, node waits, edge speeds |
+| [Soldiers and alert phases in a mod](soldier-ai.md) | CP phases and timers, realize budget, safe test setup |
 | [Checking community addresses](claims.md) | 3,018 community facts checked against the executable |
 
 ## 1. Files and packages
@@ -101,7 +103,17 @@ We imported 3,018 facts from IHHook, Infinite Heaven, V_Framework and the commun
 
 **Use it for.** Placing objects or warps on the ground offline, without probing in game. See [Ground height at any point](ground-height.md).
 
-## 10. Limits
+## 10. Navigation and routes
+**What we found.** Each route leg sends one path request. Outside loaded map blocks a path is one straight line: 93 % of jobs in our capture [V, D]. Inside them a six-stage search runs, then smoothing, and the result depends on runtime state such as parked vehicles [V]. Our port matches 948 of 948 live jobs within 10 cm. See [How soldiers find their way](../explain/path-finding.md).
+
+**Use it for.** Writing patrols that behave, and understanding why far soldiers ignore walls. See [Navmeshes and routes in a mod](navigation-and-routes.md).
+
+## 11. Soldiers and alert phases (work in progress)
+**What we found.** Only 18 soldiers are fully simulated at once. A CP's phase falls by itself, one step at a time, on a 0-to-1 timer with rates of 36 minutes for caution, 2 minutes for evasion and 30 seconds for alert, before multipliers [V from code, not yet read live]. See [How soldiers think](../explain/soldier-ai.md).
+
+**Use it for.** Controlling phases from Lua, and setting up tests near soldiers that survive and can be repeated. See [Soldiers and alert phases in a mod](soldier-ai.md).
+
+## 12. Limits
 - Addresses are for **1.0.15.4 EN**; other builds differ.
 - Our engine host runs scripts **without rendering, physics or AI**; it answers engine calls from recordings or simple models. It shows script behaviour and load order, not gameplay.
 - Statements tagged [I] or [?] are not proven; check the reference page before building on them.

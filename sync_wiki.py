@@ -61,6 +61,8 @@ SITE = [
         ("World streaming and the title screen", "world-streaming", "docs/site/explain/World-Streaming.md", "Locators, map blocks around the player, fades and the title menu's Continue (M6)."),
         ("Terrain and collision files", "terrain-and-collision", "docs/site/explain/Terrain-And-Collision.md", "Height maps, collision shapes and the game's ground-height rule (M7)."),
         ("Routes and navmeshes", "routes-and-navmeshes", "docs/site/explain/Routes-And-Navmeshes.md", "Patrol routes and walkable surfaces (formats M1, runtime M8)."),
+        ("How soldiers find their way", "path-finding", "docs/site/explain/Path-Finding.md", "One path job from request to result: loaded blocks, six stages, smoothing, runtime state (M8)."),
+        ("How soldiers think", "soldier-ai", "docs/site/explain/Soldier-AI.md", "Realized soldiers, route steps, phases and their timers (M9, IN PROGRESS)."),
         ("How we verify", "verification", "docs/site/explain/Verification.md", "Pass/fail gates, FoxTrace captures, record/replay, claims, confidence tags."),
     ]),
     ("Modding guides", "mods", "manual", "What each finding means for a mod, with a worked (hypothetical) example "
@@ -74,6 +76,8 @@ SITE = [
         ("Editing fox2 DataSets", "editing-datasets", "docs/site/mods/Editing-DataSets.md", "Typed entities, loader entities, byte-exact writing."),
         ("Tracing the game with FoxTrace", "foxtrace", "docs/site/mods/FoxTrace.md", "Log-only hooks to see what the game really does."),
         ("Ground height at any point", "ground-height", "docs/site/mods/Ground-Height.md", "Terrain blocks, tiling and the triangle rule: place things on the ground."),
+        ("Navmeshes and routes in a mod", "navigation-and-routes", "docs/site/mods/Navigation-And-Routes.md", "Route commands, writing patrols, why far soldiers ignore walls, tracing paths."),
+        ("Soldiers and alert phases in a mod", "soldier-ai", "docs/site/mods/Soldier-AI.md", "Phase commands, timers, the realize budget, safe tests near soldiers (IN PROGRESS)."),
         ("Checking community addresses", "claims", "docs/site/mods/Claims.md", "Use the claims ledger before you hook an address."),
     ]),
     ("Reference: engine", "engine", "reference", "Clean-room specifications of Fox Engine subsystems, and the state "

@@ -102,7 +102,51 @@ The driver warps the player 20 m ahead of a walking soldier; no SetPhase. 61 s l
 
 **Not pinned, differs between runs:** alert lasted 58 and 180 s past the player's leaving; evasion 59 and 42 s (commanded evasion: about 26 s); the move bits during the fight.
 
-**CP phase timer [V 0x140D6E960, the address the retired V_Framework calls DecrementPhaseCounter]:** timer at CP +0x30, stride 0x60, +0x50; each update it falls by rate (CP +0x28, stride 0x14, +4) x frame time (CP +0x158). What sets the phase lengths is not decoded [?].
+## CP phase timers (static decode 2026-11-01, not yet logged live)
+Each CP has one **normalized timer, 1.0 down to 0**, not seconds. Offsets are from the CP impl (`*(state object +0x70)`). Nothing here has been read from a running game: the rule below predicts, the runs still have to confirm.
+
+| Impl field | Meaning [V unless tagged] |
+|---|---|
+| +0x28, stride 0x14 | Rates per second: +4 caution, +8 evasion, +0xC alert; +0x10 u16, +0x12 u8 (reinforce count inputs, 0x140D6BCB0) |
+| +0x30, stride 0x60 | CP phase record: +0x00 last known position per player (stride 0x10, 4 players), +0x40 known-player mask, +0x44 currently seen mask, +0x48 phase, +0x4C requested phase, +0x50 **timer**, +0x54 and +0x58 flags |
+| +0x158 | frame time |
+| +0x176 bit 0 | CP-wide mode flag; picks other multipliers. Meaning not decoded [?] |
+
+**Base rates** [V 0x140D5CC81, template at setup object +0x2B0; per-CP copy loop 0x140D5D02C, the copy target is read from the loop only [I]]:
+
+| Phase | Rate | Base length | Drain | Ends by |
+|---|---|---|---|---|
+| Caution (1) | 0x39F2B9D6 = 1/2160 | **2160 s (36 min)** | 0x140D6E960 | 0x140D6EAA0 writes +0x4C = 0 |
+| Evasion (2) | 0x3C088889 = 1/120 | **120 s** | 0x140D6FD90 | 0x140D6FFD0 writes +0x4C = 1 |
+| Alert (3) | 0x3D088889 = 1/30 | **30 s** | 0x140D6B7E0 | 0x140D6BBA0 writes +0x4C = 2 |
+
+Caution's 36 minutes fits "caution held 214 s or more" [I: the timer's start value was not logged]. No script timer is involved. The retired V_Framework's `SetCautionPhaseDuration` hooks this same drain and replaces its amount.
+
+**Alert drain 0x140D6B7E0** (runs only while +0x44 = 0; otherwise the state update holds the timer at 1.0, 0x140D6CA20). Rate x frame time, then:
+
+- **Slow band: timer in (0.4, 0.5)** when `vt+0x98` is false and either the player is within 10 m (d² < 100, height under 2 m) of the point at `vt+0x138` +0x254, or state record +4 bit 7 is set: x 0.1 if impl +0x176 bit 0; else x 0.025 if `(impl+0x18)->vt+0xA8(idx, 0)` returned 0; else x 0.01. Crossing that 0.1 of the timer then takes 30, 120 or 300 s instead of 3 s.
+- Impl +0x54 bit 18 puts the rate back to base.
+- Player state test (0x140D5DEE0 kinds 0x47, 0x6E, 0x80, or 0x140D69F60 with +0xC8 bit 6 clear): x 1.2 if +0x176 bit 0, else x 2.
+- `vt+0x98` true: x 1.5.
+- State record +4 bit 0x20000 clear: timer goes straight to 0.
+
+**Why alert varies [I, not measured]:** alert past the player's leaving was 58 and 180 s. The band gives 27 + 30 = 57 s or 27 + 120 = 147 s plus the time +0x44 takes to clear. The first is close, the second needs a further 33 s. The run must log which multiplier applied.
+
+**Evasion drain 0x140D6FD90:** state record bit 6 clear: timer 0 at once. Otherwise base rate; x 20 or x 10 by the member byte (impl +0x80, stride 0x1C, +0x16) and record bit 2; the same player state test x 3 (x 1.2 with +0x176 bit 0); +0x54 bit 18 back to base. So 6, 12 or 120 s from the table, none of which equals the measured 26, 42, 59 s. **Evasion is not explained** [?]: the evasion state's own writes (timer capped to 0.07, 0x140D709A6, with +0x54 bit 18) and its start value need the live log.
+
+**Caution drain 0x140D6E960:** runs only if state record +4 bit 31 is set, else timer 0 at once. Skipped while `vt+0xE8` answers true. A true answer from system `Quark +0x98 +0xF8` (query 8) makes it skip one update and set record bit 0x20.
+
+**States:** each phase has a table of state functions `(self, cp, op, record, out)`: op 0 enter, 1 leave, 2 update, 3 check next (out = state, changed). Alert 0x142C3E150: 0x140D6CA20, 0x140D6D240, 0x140D6D4D0. Other tables: 0x142C3E118, 0x142C3E188 (caution), 0x142C3E1B8 (evasion), 0x142C3E1F0. In alert: timer at 0 goes to state 1; there a seen player or timer > 0.1 sets timer 1.0 and returns to state 0.
+
+**Raising the timer:** 0x140D6DA69 adds 0.5 (cap 1.0) when the record's +8 countdown has run out and `vt+0xF0` is true; it then sets the countdowns to 5 s and 60 s. Its gates: timer at least 0.1 and at most 0.5 [V 0x140D6D9FB].
+
+**Other alert source:** 0x140D67C46: a CP in alert with its timer at 0.7 or more can alert another: if active members of the two come within 70 m (d² 4900; another limit if flag bit 24), the other CP gets +0x40, +0x44 bits and +0x4C = 3. This may hold a fight open after the player has left [I].
+
+**`SetKeepCaution` true (0x140D63510):** sets bit 0 of record +0x79 (table impl +0x1E0, stride 0x80), and if that record's phase is under 2, requests caution and sets the timer to 1.0. Whether `vt+0xE8` reads this bit is not checked [?].
+
+**0x140D6DCF0 (180 s and 20 s)** is not the phase timer. It runs a separate countdown at state object +0x78, stride 0x30, +0x20, tied to reinforcement: 180 s, or 20 s if the +0x2A count is nonzero; 5 s and 30 s on its other paths.
+
+**Live logging plan:** hook the state functions above for the impl pointer and state changes, poll the phase record each frame in `h_FrameJob`, hook `AddNoticeInfo` 0x1414DBA80 for who noticed.
 
 ## Phases [D, forced, soldier 78, afgh_sovietBase_cp, player 120 m away]
 - Sneak: route 1E072FB4, state 2 at the node.
@@ -117,7 +161,7 @@ Seen in hand play only, not pinned: other CPs went to caution when this CP fell 
 
 ## Open
 - The move table of unrealized soldiers; bits 0x30.
-- Phase lengths: alert and evasion vary. Read the CP timer live; who noticed; `SetKeepCaution`.
+- Phase lengths: base rates and alert multipliers decoded statically; not read live, not ported. Evasion's measured lengths do not fit the table. Who noticed; whether `SetKeepCaution` feeds `vt+0xE8`.
 - Node waits longer than `time`; steps 4, 5, 0x10; the same-spot test; arrival tests in the port.
 - Sight scale at 0 with who noticed logged; hearing, which needs a noise source; the hit-push path of the driver.
 - A second base and Africa; the +0x1A0 byte (0 on all soldiers in the last 20 samples of `m9_route1`), the view test and the slot swaps in the port.

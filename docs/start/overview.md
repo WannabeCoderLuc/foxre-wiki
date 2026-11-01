@@ -40,7 +40,7 @@ Every milestone ends on a test a computer decides: pass or fail. A file reader o
 | M6 World streaming and locators | the blocks of the map that load around the player, how scripts find named places, the title screen | <span class="status pass">PASS</span> |
 | M7 Terrain and collision | read the ground height maps and collision shapes, answer the ground height anywhere | <span class="status pass">PASS</span> |
 | M8 Navigation and routes | path finding on the navmesh, far soldiers walking their routes | <span class="status pass">PASS</span> |
-| M9 Gameplay core | soldiers, alert phases, noticing, damage, commands (no graphics), soldiers following routes near the player | PLANNED (next) |
+| M9 Gameplay core | soldiers, alert phases, noticing, damage, commands (no graphics), soldiers following routes near the player | <span class="status in-progress">IN PROGRESS</span> |
 | M10 Asset formats | textures, models, skeletons, outfit and language files | <span class="status planned">PLANNED</span> |
 | M11 Animation | animation clips and motion graphs | <span class="status planned">PLANNED</span> |
 | M12 Gameplay extended | sound, bosses, menus and the iDroid | <span class="status planned">PLANNED</span> |

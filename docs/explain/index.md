@@ -44,6 +44,14 @@ One topic per page, in plain language: what it is, why it matters, how the origi
 
     Patrol routes and walkable surfaces (formats M1, runtime M8).
 
+-   **[How soldiers find their way](path-finding.md)**
+
+    One path job from request to result: loaded blocks, six stages, smoothing, runtime state (M8).
+
+-   **[How soldiers think](soldier-ai.md)**
+
+    Realized soldiers, route steps, phases and their timers (M9, IN PROGRESS).
+
 -   **[How we verify](verification.md)**
 
     Pass/fail gates, FoxTrace captures, record/replay, claims, confidence tags.

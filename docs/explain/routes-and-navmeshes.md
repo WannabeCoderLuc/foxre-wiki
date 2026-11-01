@@ -1,6 +1,6 @@
 # Routes and navmeshes
 
-*Formats decoded in M1, path finding in M8 (PASS 2026-11-01). References: [FRT route sets](../formats/frt.md), [NAV2 navmeshes](../formats/nav2.md), Navigation and routes.*
+*Formats decoded in M1, path finding in M8 (PASS 2026-11-01). In depth: [How soldiers find their way](path-finding.md), [How soldiers think](soldier-ai.md). References: [FRT route sets](../formats/frt.md), [NAV2 navmeshes](../formats/nav2.md), Navigation and routes.*
 
 ## What they are
 Two kinds of data tell characters where they can and should go:

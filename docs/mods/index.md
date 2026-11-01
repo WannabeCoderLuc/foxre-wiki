@@ -40,6 +40,14 @@ What each finding means for a mod, with a worked (hypothetical) example of how i
 
     Terrain blocks, tiling and the triangle rule: place things on the ground.
 
+-   **[Navmeshes and routes in a mod](navigation-and-routes.md)**
+
+    Route commands, writing patrols, why far soldiers ignore walls, tracing paths.
+
+-   **[Soldiers and alert phases in a mod](soldier-ai.md)**
+
+    Phase commands, timers, the realize budget, safe tests near soldiers (IN PROGRESS).
+
 -   **[Checking community addresses](claims.md)**
 
     Use the claims ledger before you hook an address.

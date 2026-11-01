@@ -124,7 +124,8 @@ Old → new numbers (older docs, the log and test names keep the old ones): M6 W
 - [x] Capture protocol written and proven (2026-11-01, `engine\SoldierAI.md`): 45 hits under alert with life unchanged, driver stops on hand input, phase rise, damage in free runs. Sight and hearing scale not confirmed, so not used.
 - [x] Route step machine (2026-11-01, `route_follow.py`, `test_m9_route.py`, runs `m9_route1`, `m9_route2`): one `RequestMove` per leg start (0x1415713C0), slot = soldier index [V]; leg and node event order equals live on all 1,662 changes of both runs; waits = event time in frames.
 - [x] Known target over two runs (2026-11-01, `m9_known1`, `m9_known2`): notice, alert, evasion, caution order, other CPs, target leaves its route. Phase lengths vary between runs, so only the order is pinned.
-- [ ] Not done: unrealized speed table, phase lengths, +0x1A0 byte, view test, slot swaps in the realize port, hearing.
+- [x] CP phase timers decoded statically (2026-11-01, `engine\SoldierAI.md`): normalized timer, base rates caution 1/2160, evasion 1/120, alert 1/30, alert multipliers. Not read live, evasion not explained, not ported.
+- [ ] Not done: unrealized speed table, phase lengths live and pinned, who noticed, +0x1A0 byte, view test, slot swaps in the realize port, hearing.
 - [x] Far-mode switch decoded (2026-11-01): realize budget 18 inside the stage window, 32 m in / 28 m out, 0x141551820; `Engine\world\realize.py`, 159 of 181 live lists equal, the rest within sample age.
 - [x] Run and dash speeds measured (2026-11-01): realized 2.50, 4.01, 6.43; unrealized 2.00, 2.75, 4.00.
 - [x] Route state decoded (2026-11-01): impl +0xE8 route + state; 3 -> 2 <-> 1, 3 -> 0 -> 1 pinned.

@@ -111,7 +111,8 @@ Old → new numbers (older docs, the log and test names keep the old ones): M6 W
 - [x] `.nav2` tiles use the M7 block origin, 779 / 779 (`NAVMESH.md`).
 - [x] `Navigation.md` draft; request / path layout decoded; live fixture of real `RequestMove` paths (`m8_nav_paths.json`, FoxTrace `navreq`).
 - [x] `Engine/world/navigation.py` + `test_m8_nav.py`: approximate only: 60 % of 410 requests within 0.1 m, 87 % within 1 m, worst 11.8 m.
-- [ ] Paths equal live: decode the Navx path job and tile links (E33); compare two-waypoint / extending requests.
+- [x] Path job decoded and ported, six stages (`Navigation.md`); clean job fixture `m8_nav_jobs.json`: 863 of 883 within 0.1 m (2026-11-01).
+- [ ] Paths equal live: remaining 20 coarse jobs; blocked region link pairs, region bits and off-mesh links are decoded statically but not captured or ported (E33).
 - [ ] Route following: state sequence near the player, edge events → speed (far soldiers: 97 of 170 fit one route, in node order).
 - **Gate (not met):** path queries equal live `RequestMove` results (fixtures); a soldier's route-following state sequence matches live.
 
@@ -143,4 +144,4 @@ Old → new numbers (older docs, the log and test names keep the old ones): M6 W
 - **Mod checkpoint and Option B mod (Sahelanthropus pilot)**, dropped 2026-10-28 (Luc): no mod work, deliverables or playtests. History in [`docs\LOG.md`](log.md); the verified RE (`docs\SAHELAN.md`, `docs\PROBES.md`, `docs\BATTLEFIELD.md`) is evidence for M8, M9 and M12.
 
 ---
-<small>Source: `docs/ROADMAP.md` in the project repository &middot; generated 2026-10-30.</small>
+<small>Source: `docs/ROADMAP.md` in the project repository &middot; generated 2026-11-01.</small>

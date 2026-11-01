@@ -2,6 +2,8 @@
 
 One line per session. STATUS.md keeps only the last few; this file keeps everything.
 
+- 2026-11-01: **M8 second step, gate open**: path job decoded and ported (stages 0x141CB7AD0, 0x141CBFF50, 0x141CB7DE0, 0x141CBEE20, 0x141CBFB00, 0x141CC0470; A* 0x141CB83E0; ray 0x141C9FC90); nav2 x/y/z scale = header +0x44; tail block = cluster graphs; 883-job fixture from `m8_nav6`, `m8_nav7`: 863 within 0.1 m (ok 530/530, unloaded 324/324, coarse 9/29), gate xfail. New in 0x141CB9780: blocked region link pair list, off-mesh region links, not ported. `m8_nav8` bits truncated, `m8_nav9` boot failed with no data. Quick suite 101/101; `test_m8_nav.py` 9 passed, 1 xfailed; lock updated (new job tests, old pinned values unchanged). Baseline MATCH, r5c C79032C0.
+
 - 2026-10-30: **M8 first step, gate open**: E6 narrowed (view 0x142187500, +16 names, `brute.c` BRUTE_MASK32); nav2 origin = M7 779/779, y scale = header +0x46; FoxTrace `navreq` (hook 0x140FA2430, reads only) logs 1,895 real requests / paths, `Memory/research/m8_nav_20261029_185330`; `Navigation.md` draft; `navigation.py` approximate (410 requests: median 0.08 m, 87 % within 1 m, worst 11.8 m; strict xfail on equality); 97 of 170 far soldiers fit one route in node order. Two game runs, baseline MATCH.
 
 - 2026-10-29: **M7 Terrain & collision PASS** (Luc). Site: explainer `explain/Terrain-And-Collision.md`, guide `mods/Ground-Height.md`, Overview + For-Modders updated.
@@ -115,4 +117,4 @@ One line per session. STATUS.md keeps only the last few; this file keeps everyth
 - 2026-10-14: Option A t1d/t1e working (free-roam boss).
 
 ---
-<small>Source: `docs/LOG.md` in the project repository &middot; generated 2026-10-30.</small>
+<small>Source: `docs/LOG.md` in the project repository &middot; generated 2026-11-01.</small>

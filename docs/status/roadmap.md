@@ -112,8 +112,9 @@ Old → new numbers (older docs, the log and test names keep the old ones): M6 W
 - [x] `Navigation.md` draft; request / path layout decoded; live fixture of real `RequestMove` paths (`m8_nav_paths.json`, FoxTrace `navreq`).
 - [x] `Engine/world/navigation.py` + `test_m8_nav.py`: approximate only: 60 % of 410 requests within 0.1 m, 87 % within 1 m, worst 11.8 m.
 - [x] Path job decoded and ported, six stages (`Navigation.md`); clean job fixture `m8_nav_jobs.json`: 863 of 883 within 0.1 m (2026-11-01).
-- [ ] Paths equal live: remaining 20 coarse jobs; blocked region link pairs, region bits and off-mesh links are decoded statically but not captured or ported (E33).
-- [ ] Route following: state sequence near the player, edge events → speed (far soldiers: 97 of 170 fit one route, in node order).
+- [x] Paths equal live (2026-11-01): 948 of 948 jobs within 0.1 m, xfail removed; runtime blocks, obstacle rings and dynamic links ported, fed from the recorded state; runs `m8_nav14`, `m8_nav15` (afgh free roam, sneak).
+- [x] Edge events → speed class decoded and ported (2026-11-01, 0x140ED4C10); far soldiers 0.80 m/s on all walk events.
+- [ ] Route following: state sequence near the player, far-mode switch, run and dash speeds (far soldiers: 97 of 170 fit one route, in node order).
 - **Gate (not met):** path queries equal live `RequestMove` results (fixtures); a soldier's route-following state sequence matches live.
 
 ## M9 Gameplay core [PLANNED] — Soldier AI, CP / notice, damage, SendCommand handlers (headless)

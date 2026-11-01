@@ -1,6 +1,6 @@
 # Navigation and routes
 
-Status: **IN PROGRESS, gate open.** `Engine\world\navigation.py` equals the game on 863 of 883 live jobs; the 20 misses are all coarse-search jobs. Format: [`docs\NAVMESH.md`](../formats/nav2.md), [`docs\formats\FRT.md`](../formats/frt.md). Verifier: `Engine\tests\test_m8_nav.py`, fixtures `m8_nav_jobs.json` (`Tools\m8_nav_jobs_fixture.py`) and, as a regression floor, `m8_nav_paths.json` (`Tools\m8_nav_fixture.py`, run `Memory\research\m8_nav_20261029_185330`).
+Status: **path gate passes.** `Engine\world\navigation.py` equals the game on 948 of 948 live jobs (x/z within 0.1 m, afgh free roam, sneak phase, player far from soldiers). Route following is partly done: edge event -> speed class is decoded, the state sequence near the player is not. Format: [`docs\NAVMESH.md`](../formats/nav2.md), [`docs\formats\FRT.md`](../formats/frt.md). Verifier: `Engine\tests\test_m8_nav.py`, fixtures `m8_nav_jobs.json` (`Tools\m8_nav_jobs_fixture.py`) and, as a regression floor, `m8_nav_paths.json` (`Tools\m8_nav_fixture.py`, run `Memory\research\m8_nav_20261029_185330`).
 
 ## Pipeline [V static]
 Goal → `TppNavigationController_RequestMove` 0x140FA2430 (vtable 0x1423A1610 slot 0; `self, slot, req`) → snap (slot +0x48, 0x140FA1E30 → Navx system at Quark table +0xA0, vt +0x20) → `PathPlanner_StartPath` 0x141CC7500 (planner vtable 0x142516090) → start not on the navmesh: `PathPlanner_DirectPath` 0x141CC79A0 (one straight waypoint); on it: `PathPlanner_QueueNavmeshPath` 0x141CC75E0 (async job, lock 0x142C85048). The job is decoded below ("Path job").
@@ -25,9 +25,15 @@ Goal → `TppNavigationController_RequestMove` 0x140FA2430 (vtable 0x1423A1610 s
 - B 0x141CC4230: up to 10 Gauss-Seidel passes; each point moves to where the line previous -> next crosses its node's triangle edge, the edge shortened 2 cm at each end (0x141CC3D70), clamped. Nodes of kind != 0 stay fixed. So corners sit partway along edges.
 - C 0x141CC1590: first tries a ray start -> goal. Otherwise walks the points from an anchor; when the ray to point i fails it emits point i - 1 as a corner and the next test goes to i + 1.
 
-- Extender 0x141CC2560: pass 1 replaces a run of segments under 4 m by the crossing of the extended incoming and outgoing lines (each extended 4 m); pass 2 stretches a segment under 4 m into a point to exactly 4 m along its direction, if the new point is not past the next. Both need rays to and from the new point to pass. This is the "first corner exactly 4 m from the start".
+- Extender 0x141CC2560: pass 1 replaces a run of segments under 4 m by the crossing of the extended incoming and outgoing lines (each extended 4 m, crossing test 0x141CC9710 with 1e-4 slack), pushed out 0.05 m along both directions (0x1421C0120); triangles of new points are looked up at point + world +0x20 (0.1 live) with filter 0xFFFF; pass 2 stretches a segment under 4 m into a point to exactly 4 m along its direction, if the new point is not past the next. Both need rays to and from the new point to pass. This is the "first corner exactly 4 m from the start".
 
-**Ray** 0x141C9FC90 walks triangles in x/z, leaving through the edge the line crosses, following link words ([`docs\NAVMESH.md`](../formats/nav2.md)); a wall ends it unless the end point lies on that triangle; start-triangle-less rays fail. It also counts triangles flagged in a per-tile bit table (+0x38 +8) and then checks 0x141CB2A40.
+**End state** 0x141C854A0: Q +0xB8 (kept) comes from stage 3 ((result == 1), or result 1 / 3 with an unloaded goal); from stage 4 only if no cluster graph applies. Q +0x11B (reached) from stage 5. The goal is a path point only if both are set. A stopped search whose region chain holds at most 512 nodes (0x141C7CD50) counts as reached without the goal; then the last point relaxes towards its own node, so it stays there (0x141C86C80). This was the 0.11 m miss.
+
+**Stage 3 limits** 0x141CB7DE0: clusters from the start side, at most 8 tiles and 32 clusters. The cluster where that runs out becomes the h target and its representative node (tail block +8, u64 per cluster, 0x141CA9740) a further goal (0x141CB8210); +0x410 then keeps stages 4, 5 from using the boundary rule and from reaching.
+
+**Region links:** a reverse link's back index counts inside its own list, same mesh or other piece (0x141CB9780). Reading it as one index over all lists gave wrong costs and the wrong long routes.
+
+**Ray** 0x141C9FC90 walks triangles in x/z, leaving through the edge the line crosses, following link words ([`docs\NAVMESH.md`](../formats/nav2.md)); a wall ends it unless the end point lies on that triangle. A missing start or end triangle is looked up by position (0x141C9FAE0), so runtime nodes get one. It counts flagged triangles (per-tile bits +0x38 +8); only if it met any does it test the segment against the active obstacle boxes (0x141CB2A40, 0x141CB30D0: unit box after position, rotation, size).
 
 **Query values [D live]:** radius self +0x5C = 2.0 on all jobs; filter from req +0x80, else per-slot default (*(self+0x60) + slot*2): 0x201 usual, 0x211, 0x1; cost mult req +0x84, cost mask req +0x82 (mult 2, mask 8 on 190 of 4,195 jobs). Snap considers only regions whose box contains the point lifted 0.5 m (x, z inside; ymin <= y; y - radius <= ymax in quanta, 0x141C9F780).
 
@@ -36,48 +42,46 @@ Goal → `TppNavigationController_RequestMove` 0x140FA2430 (vtable 0x1423A1610 s
 ## Streaming decides paths [V static + D live]
 `PathPlanner_StartPath` tests the point against **loaded** nav blocks only (0x141C85400; world +0x290 / +0x298, block +0x4C = T << 15 | part, part 1 = `.1` file). Outside them: `DirectPath`, one straight line. 16-26 blocks were loaded at a time, changing with the player. Live: 3,865 of 4,162 finished jobs (93 %) in the clean capture were direct. So far-away soldiers walk straight lines, and a path query needs the loaded-block set as input.
 
+## Runtime state a job depends on [V static + D live]
+A path depends on the moment, not only on the map. The fixture records all of this per job, like the loaded blocks; nothing in the engine creates it yet.
+
+- **Block bits**, set bit = blocked: triangles [7] +8, nodes [8] +0x28, links [8] +0x30, regions [9] +0x50 (none set in any capture). They appear where vehicles stand and toggle during a run: 0x141CB83E0 skips blocked links, 0x141CA4EF0 skips blocked nodes.
+- **Obstacles** ("bounders"), world +0x350 / +0x358: +0x10 size, +0x20 rotation, +0x30 position, +0x7C bit 1 active, +0xA4 first ring node, +0xAA ring node count.
+- **Runtime meshes:** two pools made by 0x141C888B0 with the file meshes' layout but float vec4 nodes. Id 0x40000000 (T 0x8000): obstacle rings, 4 nodes kind 2 per region, placed around the box when active. Id 0x40008000 (T 0x8001): off-mesh links, 2 nodes kind 1 per region, e.g. (530.0, 320.2, 1151.7) -> (529.5, 324.0, 1150.2). Unused nodes have their block bit set.
+- **Dynamic link lists:** world +0x90 (node level, 12-byte entries: u32 id, u16 record, u16 region, u16 node, u16 flags), +0x110 (region level, 20-byte entries, layout under "Region links" below), +0x130 (portal node lists), +0xB0 (records, stride 0x18: +0x10 u16 cost, +0x12 flags; +0x18 valid bits). Piece [8] +0x58 and [9] +0x28 are packed 12-bit tables, node or region -> list index, 0xFFF = none. Written by 0x141C7CE30, removed by 0x141C7DF60 / 0x141C7E800.
+- **Node search** 0x141CB83E0: after the in-mesh links, each entry of the node's list: in the corridor if the search has one and entry flag bit 0 is set, region filter, record valid and flag bit 0, cost = record cost / 256 added without rounding.
+- **Region search** 0x141CB9780: after the file links, each entry of the region's list: cluster check if flag bit 2, cost = entry cost / 256 if flag bit 0, plus the reverse entry's (index +0x11) cost, h at multiplier 1, no rounding. Entry: u32 id, u16 region +4, u32 far id +8, u16 point list +0xC, u16 cost +0xE, flags +0x10, back index +0x11. First expansion and goal regions use real searches, as for file links.
+- **Blocked region link pairs**, piece [9] +0x40 / +0x48: key (T << 15 | piece) << 32 | region << 16 | entry link << 8 | exit link, tested on every expansion but the first. Removed with the dynamic links (0x141C7E360). Live they sit on tiles 2083, 2660, 2662, on regions with dynamic links; links past the file count are the dynamic ones. They forbid mixing a file link with a dynamic one in the same pass [I]. Who adds them is not found [?]. The entry index of a tile link is its index in the far region's third list, or 0xFFFF; the port stores 0xFFFF only, no live job depends on it.
+- **Seeds and goals** 0x141C84C80: free edge nodes of the triangle. On a flagged triangle, obstacles over it (0x141CB0AA0, at most 30) hide nodes whose line from the point crosses their box, and add those ring nodes a ray from the point reaches, at most 16 in all. A goal inside a box therefore has no goal nodes.
+
+**Names [W, I]:** the community wiki's `NavWorld` properties `navigationGraphDynamicLinkContainerInfo`, `segmentGraphDynamicLinkContainerInfo`, `islandGraphDynamicLinkContainerInfo`, `maxGraphBounderCount`, `maxTacticalActionCount` fit node search / region search / cluster stage, the dynamic lists and the obstacles. `GkTacticalAction` (`Door`, `LadderUp`, `LadderDown`) has fox2 entities only in mtbs; afgh has `TppLadderData` in 34 files, not yet matched to these links. Not checked in the exe.
+
 ## Capture method and conditions
-FoxTrace `navreq` now hooks `StartPath` and logs one `navjob` per job (exact input, own output, direct flag), plus `navtiles` on each loaded-set change. **Do not use `navpath` to pair input and output**: it can read the previous path or a later leg's input.
-Conditions matter (Luc, 2026-10-31): captures must record player position, phase and life (`Memory\research\m8_nav2_20261030\drive2.py`) and stay away from soldiers. `m8_nav2` / `m8_nav3` had 50 / 30 `ChangePhase`, 4 / 19 `PlayerDamaged`, 1 / 8 deaths by the player and are contaminated (`m8_nav3` also has manual weapon, crawl and binocular inputs). `vars.playerPhase` alone is not enough: it stayed 0 while command posts went to caution after a soldier-vehicle accident.
-Clean run: `Memory\research\m8_nav6_20261031_001648` (warps 100+ m from every soldier position seen earlier, no input). It has only 299 non-direct jobs, 39 of them multi-point, so it is thin on real searches; it is not a sneak-vs-alert comparison either, which is still untested.
+FoxTrace `navreq` hooks `StartPath` and logs one `navjob` per job (exact input, own output, direct flag). **Three traps, all found by jobs that looked wrong:**
 
-## Accuracy against live jobs (2026-10-31)
-`Engine\world\navigation.py` ports all six stages, without the runtime block lists and off-mesh links below. Fixture `m8_nav_jobs.json` (`Tools\m8_nav_jobs_fixture.py`, clean runs `m8_nav6`, `m8_nav7`): every job gets its recorded start, goal, filter, cost and loaded blocks.
-**Overall 863 of 883 jobs within 0.1 m (2026-11-01): plain search finishes 530 of 530, outside loaded blocks 324 of 324, coarse 9 of 29.** The gate stays a strict xfail. The fixture holds the same jobs from two runs, so the 20 misses are about half duplicates.
-What made it equal, in order of effect: the x/z scale ([`docs\NAVMESH.md`](../formats/nav2.md) "Quantisation"), the loaded blocks, the extender step.
-**Earlier theory rejected:** the corners near goals were not dynamic obstacles. Live there are only 4 entries in the obstacle list (world +0x350), 2 with real boxes, none near those corners; they came from the wrong scale. Obstacles remain unported and untested.
+- Q +0x134 (state) is set by stage 5, but the post-process list can run over several frames. The job is finished at Q +0xB9 (0x141CC0812), or at once for direct paths. Earlier captures read the path at state >= 2, so long jobs held unfinished raw node lists: the 11 "long route" misses of `m8_nav6` / `m8_nav7` were this plus the back-index bug. **Captures before `m8_nav10` cannot be used for paths.**
+- Loaded blocks, bits and obstacles must be read at job start. Read at job end they lag by a frame or more: jobs right after a streaming change looked "unloaded" (`m8_nav13`, 2 of 485).
+- `navbits` is opt-in and bounded (triangles exact, 3 links per triangle): the tables are read by count, memory past them is junk that spammed 270 MB in `m8_nav9`.
+**Do not use `navpath` to pair input and output**: it can read the previous path or a later leg's input.
+Conditions matter (Luc, 2026-10-31): captures record player position, phase and life (`Memory\research\m8_nav2_20261030\drive2.py`) and stay away from soldiers. `m8_nav2` / `m8_nav3` are contaminated. Capture 9's boot failure ("game window not found") was Windows powering off (System log event 1074 at 11:48:43), not the game or FoxTrace. A sneak-vs-alert comparison is still untested.
 
-**Still wrong: 20 coarse jobs.** Search result 3 = reached the loaded boundary, keeps the goal as last point; result 2 = cap reached, best-h node, no goal (0x141C854A0).
-
-| Jobs | Deviation | Note |
-|---|---|---|
-| m8_nav6 1903, 1904, 1913, 2521, 2522, 2782, 2791; m8_nav7 1893, 1905, 2507, 2508 | 17.7-64.2 m | Long routes, different region path |
-| m8_nav6 800, 826, 2824; m8_nav7 815, 2829 | 2.7-2.8 m | Off-mesh link jobs [D] |
-| m8_nav6 2560, 2638; m8_nav7 2565, 2633 | 0.11 m | Just over the margin, cause not looked at |
-
-On the long routes my region route costs less than the game's under the stored link costs (job 1905: 225.9 against 239.4 at the same region; job 2507: 410.2 against 413.1), and the live clusters lie inside my cluster path. So the game either cannot use my route or orders its pops differently. The live region list is derived from stage 5's node path, so this is indirect [I].
-
-**Runtime state the region search reads and the port lacks [V static 0x141CB9780, contents not captured]:**
-
-- Blocked region link pairs: piece qword [9] +0x40 count, +0x48 u64 list. Key = node id (T << 15 | piece) << 32 | region << 16 | entry link << 8 | exit link. Tested on every expansion but the first; a match skips the link. So one way through a region can be forbidden without disabling the region. 0x141C7E3BA removes both orders of each pair; the code that adds them is not found.
-- Region bits: [9] +0x50, set bit = blocked, tested with the region filter.
-- Off-mesh links in the region graph: [9] +0x28 is a packed 12-bit table by region (0xFFF = none) into a list at search param [3] +8 (stride 0x10: pointer, u16 count). Entries are 20 bytes: u32 node id, u16 region at +4, list index at +0xC, u16 cost at +0xE, flags at +0x10 (&1, &4 = cluster check), byte at +0x11.
-
-**Set bit = blocked** [V 0x141CB83E0: link bits [8] +0x30; 0x141CA4EF0: node bits [8] +0x28].
-
-**Live bits, partial** (`m8_nav8_20261031_114257`): the logger read past the tables and hit its size cap, so 522 of 538 records fully cover one tile, 0x8A6. Filtered to each mesh's counts, the only set bits are on 0xA66: piece 1 triangles 24, 25 and nodes 59, 61; piece 4 triangles 1043-1045. No link or region bits on the logged tiles. World +0x20 = 0.1 and class table +0x78 = 00020100 00000000 03000001 03030303 as logged, bytes not yet interpreted. This does not settle the long routes.
-**Capture 9 has no data** (`m8_nav9_20261031_114822`): the boot failed ("game window not found"), cause not established. The FoxTrace build from it, one `navbits` line per piece plus the pair list, has never logged in game.
+## Accuracy against live jobs (2026-11-01)
+`Engine\world\navigation.py` ports all six stages, runtime blocks, runtime meshes and dynamic links. Fixture `m8_nav_jobs.json` (runs `m8_nav14_20261101_180029`, `m8_nav15_20261101_181436`, FoxTrace `33B4F265`, no `ChangePhase` or `PlayerDamaged` in either): every job gets its recorded start, goal, filter, cost, loaded blocks and runtime state.
+**948 of 948 jobs within 0.1 m: 639 searched (25 coarse), 309 direct.** Also, with earlier builds of the port's inputs: `m8_nav12` 472 of 472, `m8_nav13` 483 of 485 (the two start-frame jobs above). `m8_nav14` was first run after the last code change and matched without further fixes, so it is a held-out check; `m8_nav15` is the second clean run. All captures use the same warp route in f30010 and the sneak phase, so this says nothing yet about alert, other missions, mafr or mtbs.
+What made it equal, in order of effect: x/z scale, loaded blocks, extender step (863 of 883 on the old fixture); then reverse-link cost, logger fix, seeds and runtime meshes, end state, extender push.
 
 ## Route following [D live]
-With the player far away, soldiers move exactly on `.frt` route edges: of 170 moving soldiers, 97 stay within 5 cm of one f30010 route for all 90 s and advance in node order; speed 0.80 m/s at the median over all route types seen. The other 73 do not fit a single route at that tolerance: an offset of about 1 m on pairs was seen, vehicle riders go faster, route changes were not separated [?]. Near the player, soldiers also leave routes (up to 18 m) and stay on the navmesh. Which edge events set which speed, and the state sequence near the player, are not decoded.
+With the player far away, soldiers move exactly on `.frt` route edges: of 170 moving soldiers, 97 stay within 5 cm of one f30010 route for all 90 s and advance in node order; speed 0.80 m/s on every walk event seen (`RelaxedWalk`, `RelaxedWalkAct`, `RelaxedStandWalkAct`, `CautionWalk`, `CautionWalkSearch`, 0x4E87F5A9), so far soldiers do not use it for speed differences within walk. Within 200 m of the player the same event gives about 1.0 m/s and soldiers stray up to 18 m (runs B, C of `m8_nav_20261029_185330`) [D].
+
+**Edge event -> speed class [V 0x140ED4C10]:** 1 walk by default; 2 run: `RelaxedRun`, `CautionRun`, `CautionRunAim`, 0x62FE8037; 3 dash: `CautionDash`. Move family [V 0x140ED1FE0]: caution 0x62FE8037, 0x0AF9CFF0, `CautionRun`, `CautionWalk`, `CautionWalkAim`, `CautionRunAim`; relaxed `RelaxedWalkAct`, `RelaxedWalk`, `RelaxedRun`, `CautionDash`. Metres per second of run and dash are not measured [?]; no captured soldier used them. The other 73 do not fit a single route at that tolerance: an offset of about 1 m on pairs was seen, vehicle riders go faster, route changes were not separated [?]. Near the player, soldiers also leave routes (up to 18 m) and stay on the navmesh. The state sequence near the player and when the far mode (0.80 m/s) applies are not decoded.
 
 `GetUsingRoute` / `GetDoingRouteEventIndex` returned nil for TppSoldier2 instances through `GameObject.SendCommand`, so routes in the fixture are identified by geometry.
 
 ## Engine module (`Engine\world\navigation.py`)
-`NavWorld.add_file`, `set_loaded`, `in_loaded`, `locate`, `find_path(start, goal, filter=, cost_mult=, cost_mask=)` (sets `status`), `subgoal_along`, `track_route`. Vertices, node positions, g / h / f and relaxed points are float32; the ray's side tests compare float32 inputs in double [I: no difference at the gate margin, revisit for C++]. Extender tri lookup lift 2.0 = world +0x20 [I]; capture 8 logged world +0x20 = 0x3DCCCCCD (0.1), so this needs rechecking.
+`NavWorld.add_file`, `set_loaded`, `set_blocked`, `set_runtime`, `in_loaded`, `locate`, `find_path(start, goal, filter=, cost_mult=, cost_mask=)` (sets `status`), `subgoal_along`, `track_route`, `edge_speed_class`, `edge_move_family`. Vertices, node positions, g / h / f and relaxed points are float32; the ray's side tests compare float32 inputs in double [I: no difference at the gate margin, revisit for C++]. The obstacle / triangle overlap test is a separating-axis version of 0x1401A73F0 [I].
 
 ## Open (E33)
-Blocked pair list and region bits live, and who writes them (the gate needs them); off-mesh links in the region graph and node search; the 0.11 m misses; dynamic obstacles (source, effect on link and triangle bits, their runtime meshes); sneak-vs-alert comparison on the same jobs; where off-mesh links come from (a soldier climbs ~4 m at one spot at (-513, 325-328, 548), ladder or stairs [I]); `.frt` edge events → speed; route selection near the player.
+What creates the runtime state: block bits and obstacle activation, ring placement, off-mesh link sources (0x140502FC0 -> 0x141C7CE30), who adds blocked pairs; the engine replays them. Cluster-level dynamic links (`islandGraph...`) are not ported and no job needed them. Sneak-vs-alert comparison on the same jobs; other missions and locations; route selection near the player, the state sequence there, the far-mode switch, run and dash speeds.
 
 ---
 <small>Source: `docs/engine/Navigation.md` in the project repository &middot; generated 2026-11-01.</small>

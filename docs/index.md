@@ -86,10 +86,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-11-01: **M8 path gate passes**: 948 of 948 live jobs equal, xfail removed; logger bug found (paths read before post-process end), blocked bits, obstacle rings, off-mesh links, end state, extender push ported; six game runs, baseline MATCH. Route following near the player open.
 - 2026-11-01: **M8 second step, gate open**: path job decoded and ported, 863 of 883 live jobs within 0.1 m; 20 coarse jobs left, blocked region link pairs and off-mesh links decoded but not captured; capture 9 boot failed with no data; quick suite 101/101, baseline MATCH.
 - 2026-10-30: **M8 first step, gate open**: real `RequestMove` fixture via FoxTrace `navreq`, `Navigation.md` draft, `navigation.py` approximate (87 % within 1 m, worst 11.8 m), E6 narrowed; two game runs, baseline MATCH.
 - 2026-10-29: **M7 gate live part**: cluster-tiled heightMap, block origin, axes and triangle interpolation [V live]; `HeightField.from_blocks` / `from_tre2`; ground = live within 5 mm at 24 points / 6 blocks; E31 answered (E32 leftovers); one game run, baseline MATCH; quick suite 94/94. **M7 PASS** (Luc); site: Terrain explainer + ground-height guide.
 - 2026-10-29: **M7 formats**: FoxData container + typed terrain, 9,340/9,340 and 4,164/4,164 byte-identical, geom family zero gaps; E7 answered (`.ph`/`.sim` -> PhObjectDesc); ROADMAP native-boundary section; quick suite 88/88. No game run.
-- 2026-10-29: **M6 title menu + real CONTINUE**: TitleMenu / EndFadeIn / EndFadeOut / splash / loading-tips raisers decoded, `Engine/runtime/title.py`; host reaches free roam for f30010 + f30020 through the title script's own CONTINUE, title-menu messages = live; **M6 PASS** (Luc); site: World-streaming explainer; quick suite 81/81.
 
 [Full session log](status/log.md)

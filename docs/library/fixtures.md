@@ -19,6 +19,7 @@ Ground truth the engine tests (`Engine/tests/`) compare against. Each comes from
 | `m8_nav_paths.json` | 421 KB | see the test that loads it |
 | `m9_g4_route.json` | 257 KB | see the test that loads it |
 | `m9_g5_enemyBase.json` | 27 KB | see the test that loads it |
+| `m9_g6_band.json` | 245 KB | see the test that loads it |
 | `m9_known.json` | 7 KB | see the test that loads it |
 | `m9_phase.json` | 86 KB | see the test that loads it |
 | `m9_radio.json` | 9 KB | see the test that loads it |

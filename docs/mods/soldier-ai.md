@@ -8,6 +8,7 @@
 - A report lasts as long as its voice line (0x3C and 0x3B 2.45 s, 0x51 about 11.5 s) [V, D].
 - The phase falls by itself, one step at a time: alert, then evasion, then caution [V, D].
 - Each phase runs one 0-to-1 timer at its own rate: caution 36 minutes, evasion 2 minutes, alert 30 seconds, before multipliers [V, D: read live in every CP].
+- Alert's timer has a slow band: between 0.5 and 0.4 it falls 100 times slower while the player is within 10 m of the base's front point, the last place a soldier saw the player (the point moves only when a seen player is more than 10 m from it) [V, D three runs]. A mod that wants a base to calm down after you hide nearby shortens that 10 m or the band; one that wants a longer manhunt widens it.
 - A phase ends when the CP's report request finishes, not when the timer hits 0 [V, D two runs].
 - `SetPhase` works per CP but takes effect later [D].
 - Only **18 soldiers** are fully simulated at once, chosen each frame [V, D].
@@ -74,7 +75,7 @@ if vars.playerLife > 0 then vars.playerLife = vars.playerLifeMax end
 - **Never save during such a test.** Life, clock and weather live in `vars` and go into the checkpoint. Watch the save file's time.
 - `TppClock.SetTime("12:00:00")` and `TppClock.Stop()` keep daylight the same between runs. `TppWeather.ForceRequestWeather(0, 1)` is accepted, but its effect is unconfirmed [?].
 - Warp 2 m above the ground ([Ground height at any point](ground-height.md)). A 30 m drop caused fall damage, and terrain may need a moment to load.
-- **Sight scale is no safety.** IH's `soldierSightDistScale` at 0 still gave alert, about 20 s after the warp against 6 s at 100 (one run each) [D]. Patrol trucks notice you too.
+- **Sight scale 0 stops sight notice, not alerts already running.** With IH's `soldierSightDistScale` and `soldierHearingDistScale` at 0 a soldier walked within 3.5 m of the player with no notice (one run); set after an alert starts, the player stayed unseen at the spot for 21 to 63 s after the band started, but a soldier saw the player again later in all three runs (`m9_g6d` to `m9_g6f`), so something other than the scaled sight still reports at close range [?]. An older run that still gave an alert ran before the test setup was pinned [I]. Patrol trucks notice you too.
 - Don't touch the game during a run, and keep forced-phase runs apart from natural ones. A forced phase changes what follows it.
 - Hits push the player. A move over 3 m with no damage message means something else moved them.
 

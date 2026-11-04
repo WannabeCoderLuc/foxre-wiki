@@ -78,7 +78,11 @@ Each CP has one timer that falls from **1.0 to 0**. It holds no seconds. Each ph
 
 The timer stands still at 1.0 while the CP has the player in sight, so alert's 30 seconds only start once you are lost. After that it falls by rate x frame time every frame, in 32-bit floats; our engine repeats every drained frame of alert bit for bit [D].
 
-Multipliers exist in the code [V]: alert has a slow band between 0.5 and 0.4 when the player is within 10 m of a point, certain player states speed it up, and evasion can drain 10 or 20 times faster. In our runs, with the player 500 m away, **none applied** [D].
+Multipliers exist in the code [V]: alert has a slow band between 0.5 and 0.4, certain player states speed it up, and evasion can drain 10 or 20 times faster. With the player 500 m away **none applied** [D].
+
+### The slow band: the alert lingers where you were seen
+The base keeps one **front point** for the whole CP system. While the alert is on and a soldier sees the player (or lost sight less than 1 s ago), the base reads the player's position; if that is **more than 10 m** from the front point, the point jumps there [V]. So the point marks where the fight is, and it only moves when you do.
+When the alert timer is between 0.5 and 0.4 and the player is still within 10 m of that point (and within 2 m of its height), the timer falls 100 times slower (x0.01; x0.025 or x0.1 in other CP setups) [V]. That last tenth then takes 300 s instead of 3 s: a base that lost sight of you but knows you are still at the spot does not calm down. Three runs at Wakh Sind Barracks, with sight switched off after the alert so the player stayed unseen at the spot, show the band switching on at timer 0.4995; after the player warps far away the timer falls at the normal rate through the same range [D].
 
 ### What really ends a phase: the base's reports
 The surprise from the live log: **a timer at 0 does not end a phase.** It only makes the CP start asking. The CP sends numbered requests (radio calls and member reports), and the phase steps down when one of them *finishes* [V, D]:
@@ -104,7 +108,7 @@ The same chain was captured twice at Wakh Sind Barracks (`afgh_enemyBase_cp`), w
 ## How the new engine does it
 - `Engine/world/realize.py` selects realized soldiers from steps 1 and 2 and the budget. **159 of 181 live lists give the same set**, and the rest differ only by the distance a soldier moves in the sample's age, or on the first list after the window moved [D]. The view penalty and slot swaps are not ported.
 - `Engine/world/route_follow.py` has the step order and the path request rule.
-- `Engine/world/cp_phase.py` has the rates, the float32 drain and the request order. `test_m9_phase.py` pins them on two runs: drain bit-exact, alert 1798 frames from the last sighting to state 1, each fall-back one frame after its request finishes, evasion 3684 frames in both runs. Request lengths are taken from the log (they are voice line lengths). `role_holds` and `complete_investigation` port the rule that ends an investigation; `test_m9_g5.py` pins the whole chain at the second base.
+- `Engine/world/cp_phase.py` has the rates, the float32 drain and the request order. `test_m9_phase.py` pins them on two runs: drain bit-exact, alert 1798 frames from the last sighting to state 1, each fall-back one frame after its request finishes, evasion 3684 frames in both runs. Request lengths are taken from the log (they are voice line lengths). `role_holds` and `complete_investigation` port the rule that ends an investigation; `test_m9_g5.py` pins the whole chain at the second base. `front_point_update`, `near_point` and `alert_drain_step` port the front point and the slow band; `test_m9_g6.py` checks every logged alert drain update bit for bit.
 
 ## How we know
 Running tests near armed soldiers needs a safety protocol, written after real accidents:
@@ -121,7 +125,7 @@ Each statement here says how it was checked. Things that differ between two runs
 
 ## Still open
 - How long an investigator searches before it marks the point done; why evasion's timer runs 40 times slower for most of evasion at the second base [?].
-- The slow band of the alert timer applied at the village with the player 490 m away; which point it compares is not read yet [?].
+- Why the base kept the player's old position for about 80 frames after a warp; at the village the warp came while the player still counted as seen, which is the likely reason its front point sat at the far spot [I].
 - Repeat the sight-scale runs once more each (one run each so far) [?].
 - Which movement bits pick the unrealized (phase, speed) pair, read live [I].
 - Which idle animation is picked and when (a random draw), and the truck's own arrival test [?].

@@ -98,7 +98,7 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
-- 2026-11-04: **M10 G7 Ownership PASS**: natives_owner.json 5,532 bindings (3,030 implemented), commands_owner.json 514 entries, rules in ModAPI.md "Ownership"; `owner_milestone` in the registry; `test_natives_owned.py` 10/10; full suite incl. slow PASS (C1); M10 4/15.
+- 2026-11-04: **M10 G7 Ownership PASS**: natives_owner.json 5,532 bindings (3,104 implemented, stripped bindings now host no-ops; gate-b threshold 93.5 % relocked, Luc), commands_owner.json 514 entries, rules in ModAPI.md "Ownership"; `owner_milestone` in the registry; `test_natives_owned.py` 10/10; full suite incl. slow PASS (C1); M10 4/15.
 - 2026-11-04: **M10 G1 Registries PASS**: [`docs\engine\ModAPI.md`](engine/mod-api.md), `Engine\mods\` (registry, loader, vanilla mod); ScriptHost Lua libraries + natives through the registry; `test_m10_registry.py` 17/17; full suite 196/196; M0-M9 gates PASS.
 - 2026-11-04: **Gates aligned**: every milestone M0-M24 has numbered gate items matching its name and goal in ROADMAP.md; gates.json generated from it (`Tools/gates_sync.py`), checked by `test_gates_roadmap.py`.
 - 2026-11-04: **M9 Gameplay core PASS** (Luc accepted the gate, G1-G6); milestone-end site pages rewritten.

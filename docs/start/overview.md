@@ -41,15 +41,29 @@ Every milestone ends on a test a computer decides: pass or fail. A file reader o
 | M7 Terrain and collision | read the ground height maps and collision shapes, answer the ground height anywhere | <span class="status pass">PASS</span> |
 | M8 Navigation and routes | path finding on the navmesh, far soldiers walking their routes | <span class="status pass">PASS</span> |
 | M9 Gameplay core | soldiers, alert phases, noticing, damage, commands (no graphics), soldiers following routes near the player | <span class="status in-progress">IN PROGRESS</span> |
-| M10 Asset formats | textures, models, skeletons, outfit and language files | <span class="status planned">PLANNED</span> |
-| M11 Animation | animation clips and motion graphs | <span class="status planned">PLANNED</span> |
-| M12 Gameplay extended | sound, bosses, menus and the iDroid | <span class="status planned">PLANNED</span> |
-| M13 Rendering | drawing the world | <span class="status planned">PLANNED</span> |
-| M14 Playable slice | one free-roam area with the player and one kind of enemy | <span class="status planned">PLANNED</span> |
+| M10 Mod API core | the engine's own systems opened up for mods: register new systems, hook and extend existing ones | <span class="status planned">PLANNED</span> |
+| M11 Asset formats | textures, models, skeletons, outfit, language and sound container files | <span class="status planned">PLANNED</span> |
+| M12 Sound and UI logic | which sounds and music the game asks for, menus, the iDroid and the HUD (no playback or drawing yet) | <span class="status planned">PLANNED</span> |
+| M13 Open world complete | both maps fully streamed, clock, weather and the game's random numbers | <span class="status planned">PLANNED</span> |
+| M14 Collision and physics | collision queries, how the player and soldiers move against the world, moving objects | <span class="status planned">PLANNED</span> |
+| M15 Combat and equipment | weapons, bullets, hits, damage, close combat, items and the Fulton | <span class="status planned">PLANNED</span> |
+| M16 Animation | animation clips, motion graphs and ragdolls | <span class="status planned">PLANNED</span> |
+| M17 Headless slice | one free-roam area, the player and one kind of enemy, replayed from recorded input without graphics | <span class="status planned">PLANNED</span> |
+| M18 Full cast | every soldier type, animals, buddies, the helicopter, vehicles and bosses | <span class="status planned">PLANNED</span> |
+| M19 Missions and progression | missions, cutscene logic, Mother Base and save files | <span class="status planned">PLANNED</span> |
+| M20 Rendering | drawing the world | <span class="status planned">PLANNED</span> |
+| M21 Audio output | playing the game's sounds | <span class="status planned">PLANNED</span> |
+| M22 Playable game | graphics, sound and controls on top of the checked game logic | <span class="status planned">PLANNED</span> |
+| M23 Standalone runtime | a fast native engine that installs against your own copy of the game | <span class="status planned">PLANNED</span> |
+| M24 Mod platform 1.0 | a frozen, documented mod interface, asset packs and native plugins | <span class="status planned">PLANNED</span> |
+
+Alongside these runs a mod track (MOD-A to MOD-E): editors and checkers for game files, an AI sandbox, importers for models and animations, world and navmesh authoring, and an enhanced renderer. Tools whose output is tested in the original game (MOD-A) are not planned for now.
 
 M8 passed on 2026-11-01: the engine plans the same paths as the real game on 948 of 948 recorded path jobs, within 10 cm, in Afghanistan free roam (see [Routes and navmeshes](../explain/routes-and-navmeshes.md)). Obstacles and ladders are replayed from recordings for now, because what creates them in the game is not decoded yet.
 
-The milestones from M6 on were re-ordered on 2026-10-29 so that each one only needs what came before it, and the next one is always the most doable. Next is M9: soldiers, alert phases and noticing, starting with how soldiers behave and follow routes near the player. Gameplay beyond that, assets, animation, sound and rendering follow after.
+The milestones from M6 on were re-ordered on 2026-10-29 so that each one only needs what came before it, and the next one is always the most doable. Now in progress is M9: soldiers, alert phases and noticing, starting with how soldiers behave and follow routes near the player.
+
+On 2026-11-04 the order from M10 on was cut again, for two reasons. First, the engine should become something modders can build on, so the mod interface comes right after M9, while the engine's systems are still few and easy to open up. Second, the order follows what is most doable: work on what already exists first, then file formats, then systems the game already reveals through its scripts, then new runtime work, and the outputs (graphics, sound, the playable game) last. Every milestone still ends on a pass-or-fail test against the real game, now listed item by item.
 
 ## Where to go next
 - New here: [How to use this site](how-to-read.md), then the [Explanations](../explain/game-data.md) in order.

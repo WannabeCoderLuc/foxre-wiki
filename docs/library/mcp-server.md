@@ -4,7 +4,7 @@ Single MCP endpoint for MGSV:TPP 1.0.15.4 EN work: static RE of `mgsvtpp.exe`, f
 
 - Entry: `server\mgsv_unified_server.py` (stdio JSON-RPC, protocol 2024-11-05), run by `C:/Python313/python.exe`, registered in `..\.mcp.json` (+ `..\.agents\mcp_config.json`), enabled in `..\.claude\settings.local.json`. Restart the Claude session after changing tool schemas.
 - Self-test: `python mgsv_unified_server\server\mgsv_unified_server.py --selftest` (must stay all-pass).
-- Version 1.5.0, 34 tools. History: §8. Parameter names are forgiving: `va` / `address` / `query` / `name` … map to the tool's main parameter, plus tool-specific aliases (e.g. `offset` → `offset_hex`); unknown names fail with the list of accepted ones.
+- Version 1.6.0, 34 tools. History: §8. Parameter names are forgiving: `va` / `address` / `query` / `name` … map to the tool's main parameter, plus tool-specific aliases (e.g. `offset` → `offset_hex`); unknown names fail with the list of accepted ones.
 
 ## 1. Which tool first
 | Question | Start | Then |
@@ -22,6 +22,7 @@ Single MCP endpoint for MGSV:TPP 1.0.15.4 EN work: static RE of `mgsvtpp.exe`, f
 | Navmesh | `navmesh_inspect` → edit → `navmesh_validate` (ship only `VALID`) | |
 | Live game | `game_status` → `game_session(boot)` → `game_send_keys` / `game_pipe_lua` / `game_screenshot` → `game_session(stop)` | `game_plugin(restore)` after any run |
 | Ground-truth capture | `trace_capture(run, config, seconds, runs)` → `trace_capture(status)` | `fox-ground-truth` skill |
+| Unnamed function / dev name + 2015 dev source | `re_devmap(va)` (`mode=name\|vtable\|code`) | dev names are [I] until the retail body is read ([`..\docs\TOOLING.md`](tooling.md)) |
 | Raw exe bytes / exact vtable slots | `re_bytes(va, n)` | `re_class(addr, exact=true)` |
 | What do IHHook / IH / V_F / wiki say about X? | `mgsv_query_knowledge(claims, "X")` (V/W/x verdicts) | [`..\docs\CLAIMS.md`](../engine/claims.md); re-run `python Tools\claims_import.py all` |
 
@@ -42,6 +43,7 @@ Single MCP endpoint for MGSV:TPP 1.0.15.4 EN work: static RE of `mgsvtpp.exe`, f
 | Tool | Inputs | Notes |
 |---|---|---|
 | `re_decompile` | `va_or_name`, `max_lines` | Ghidra server; FUN_ → names; hashes `/*"name"*/` (`s32` 32-bit match, `~` unverified candidate) |
+| `re_devmap` | `query`, `mode` auto\|va\|name\|vtable\|code, `limit`, `lines`, `start_line` | `GeminiWork\decomp\mgsv.db` (`mgsv_paths.DEVMAP_DB`, `mode=ro`, refused unless build-1 sha256 = GameBackup exe): name, source EXACT/AUTO/REF, verify evidence, proto/class, vtable slots, dev decompile; FTS4 over dev code. `re_decompile`/`re_xrefs` add `[dev] Name` (EXACT) / `[hint SRC] Name` where symbol_map has none |
 | `re_decompile_batch` | `va_list`, `grep`, `head_lines` | `.c` → `data\re\decomp\mcp\` |
 | `re_xrefs` | `va_or_name`, `abi`, `limit` | callers, refs, vtable slots, callees, hashes, ABI |
 | `re_class` | name / vt / ctor / QI hash, `exact` | vtables, ctors, slot map, `[rcx+disp]` fields; an address inside a vtable run is dumped from exactly that address (pristine exe), never snapped to the run start |
@@ -68,7 +70,7 @@ Single MCP endpoint for MGSV:TPP 1.0.15.4 EN work: static RE of `mgsvtpp.exe`, f
 - `re_emulate(va, args, memory, max_insns)`: one function of the `GameBackup` `mgsvtpp.exe` in unicorn; sections mapped from the file (lief, relocs not parsed). Win64 ABI: args `int | "0x.." | "@buf" | "@buf+off" | "len:buf" | {"f": x} | {"f32": x}` → rcx/rdx/r8/r9 or xmm0-3 by position, the rest on the stack; `memory` = `[{name, hex|str|size, nul, align}]`. Returns status `ok|refused|insn_limit|error`, rax (+ u48/eax), xmm0, buffers after the call, insn count, writes into image sections (= not pure). Refused: execution outside `.xtext`, any touch of `.xdata`/`.ecode`/`.trace` (never mapped), import calls (IAT slots → trap addresses, reported by name), unmapped reads (gs:/TEB, heap).
   StrCode64: `0x141A09AC0(s, strlen)` (`ff_stringid_hash_n`) → `0x141A09770` `fox::StrCode64_Seeded(s, strlen+1, ((int8)s[0]<<16)+strlen)` (signed first byte). Body: CityHash 1.0.3 for ≤ 64 hashed bytes, CityHash 1.1 long-string loop above (0x141A08CB0 unaligned / 0x141A091F0 aligned, picked by pointer alignment). [V] `Tools\foxhash.py` == game for byte lengths 0–300 incl. non-ASCII (fixed 2026-10-21; verifier `Engine\tests\test_strcode64_oracle.py`). The game code is the oracle.
 
-- `engine_verify(target, quick, relock)`: `quick=true` deselects the all-game-file verifiers (marker `slow` from `Engine\tests\conftest.py`: fox2/qar/fpk round-trips; ~30 s instead of ~10 min). pytest over `..\Engine\tests\` (or one file / dir / node id), junit → counts, `PASS`/`FAIL`. `Engine\tests\verifiers.lock.json` holds each verifier's sha256: changed/removed verifiers are reported and the lock is kept until `relock=true` (review first); new files are locked automatically.
+- `engine_verify(target, quick, relock)`: `quick=true` deselects the all-game-file verifiers (marker `slow` from `Engine\tests\conftest.py`: fox2/qar/fpk round-trips; ~30 s instead of ~10 min). pytest over `..\Engine\tests\` (or one file / dir / node id), junit → counts, `PASS`/`FAIL`. `Engine\tests\verifiers.lock.json` holds each verifier's sha256: changed/removed verifiers are reported and the lock is kept until `relock=true` (review first); new files are locked automatically. `gate="Mxx"` (milestone id from `..\Engine\tests\gates.json`, also `MOD`) instead runs the tests listed for that milestone's gate items and reports each item PASS / FAIL / NOT BUILT (listed test file missing) / NO TEST; from M10 the common gate C1-C8 is included (ROADMAP "Common gate").
 - `lua51_run(code, files, stubs, max_insns)`: lupa Lua 5.1 without os/io/debug/package/require/dofile/loadfile/string.dump, no Python attribute access, text chunks only (bytecode refused), instruction limit. `files` = vanilla Lua (Assets-relative path or unique substring), each return value bound to the file's base name. `stubs` auto-creates unknown capitalised globals (a stub used as a number = 0); real `StrCode32/64` (+ `Fox.`), `bit` (LuaBitOp). Returns output, returns, errors, loaded, stubbed_globals.
 
 Boundaries: paths resolve inside `C:\Users\Luc\Desktop\MetalGear` (traversal rejected). Only `game_send_keys`, `game_pipe_lua`, `game_screenshot`, `game_session`, `game_plugin`, `trace_capture` mutate (the last two only `plugins\` + `mod\modules\` of the closed game, through the stash); knowledge tools write only `data\knowledge\` and `logs\`; `engine_verify` writes `..\Engine\tests\verifiers.lock.json` and `logs\engine_verify_junit.xml`.
@@ -137,6 +139,7 @@ Ingest formats: TSV `address|addr|va`+name → symbols; `strcode*|hash`+name →
 
 ## 8. History
 - 2026-10-23: claims ledger: knowledge source + category `claims`, V_F qualified names (`tpp::…`) in `symbols`; promoted names carry source `claims_<src>` ([`..\docs\CLAIMS.md`](../engine/claims.md)).
+- 1.6.0 (2026-11-04): `re_devmap` (dev-build symbol DB `GeminiWork\decomp\mgsv.db`, `server\devmap.py`, build guard) + `[dev]`/`[hint]` names in `re_decompile`/`re_xrefs`; selftest `_devmap_checks`. `engine_verify(gate="Mxx")` per-item gate report from `..\Engine\tests\gates.json` (roadmap re-cut 2026-11-04: M10-M24 + mod track, common gate C1-C8); `_upkeep_checks` asserts every PASS milestone's gate tests exist.
 - 1.5.0 (2026-10-22): tool upkeep (11-item backlog in [`..\docs\TOOLING.md`](tooling.md)): `game_status` diffs every file against manifest profiles; new `game_plugin`, `game_session`, `trace_capture`, `re_bytes`; `re_class` exact mode; parameter aliases on every tool; `re_field_access` default whole exe (static_map index over all of `.xtext`); `engine_verify(quick)`; `re_hash` GameObject type names + shared resolver `Tools\foxnames.py`; FoxTrace 2 (config-driven entry hooks, stub tested off-game). Selftest +8 cases incl. `_upkeep_checks`.
 - 1.4.0 (2026-10-21): engine oracles `re_emulate`, `engine_verify`, `lua51_run` (`server\oracle_tools.py`); `..\Engine\tests\` (nav2 round-trip verifier + sha256 lock); selftest 31/31 with real assertions (`_oracle_checks`: StrCode64 x5 vs foxhash, refusals, Lua sandbox).
 - 1.3.1 (2026-10-19): FoxRe review + ingest (`foxre` source, raw48 hash sites).

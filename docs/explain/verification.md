@@ -5,6 +5,8 @@
 ## Pass or fail, decided by a computer
 Plausible-looking reverse engineering can still be wrong. So every milestone has a **gate**: an automated test that either passes or fails, written before the work counts as done. The tests run with `engine_verify` (pytest, `Engine/tests/`): 57 tests today, covering every game file mentioned on this site and the live fixtures.
 
+Since 2026-11-04 each gate is a list of numbered items (for example "raycasts: at least 5,000 of the game's own queries, hit point within 1 cm"), and every milestone from M10 on also has to pass a common gate: the whole test suite, specifications that say how mods can extend each system, the game's native functions really implemented instead of replayed, runs that repeat exactly, fixtures from at least two agreeing live runs, reference mods for every extension point, and a clean site build. A machine-readable list (`Engine/tests/gates.json`) names the tests that decide each item, and `engine_verify(gate="M10")` reports each item as passed, failed or not built yet.
+
 ## Three kinds of evidence
 | Kind | How it works | Example |
 |---|---|---|

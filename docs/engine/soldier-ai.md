@@ -1,6 +1,6 @@
 # Soldier AI
 
-Far mode, move speeds, route state and CP phase sequences of `TppSoldier2`, f30010. Engine: `Engine/world/realize.py`, `Engine/world/route_follow.py`. Tests: `Engine/tests/test_m9_soldier.py`, `test_m9_route.py`. Fixtures: `m9_soldier_free.json`, `m9_soldier_forced.json` (`Tools/m9_fixture.py`), `m9_route.json`, `m9_known.json` (`Tools/m9_route_fixture.py`), `m9_phase.json` (`Tools/m9_phase_fixture.py`); phase port `Engine/world/cp_phase.py`, test `test_m9_phase.py`. Tags: [V] static or exact, [D] measured live, [I] inferred, [?] open.
+Far mode, move speeds, route state and CP phase sequences of `TppSoldier2`, f30010. Engine: `Engine/world/realize.py`, `Engine/world/route_follow.py`. Tests: `Engine/tests/test_m9_soldier.py`, `test_m9_route.py`. Fixtures: `m9_soldier_free.json`, `m9_soldier_forced.json` (`Tools/m9_fixture.py`), `m9_route.json`, `m9_known.json` (`Tools/m9_route_fixture.py`), `m9_phase.json` (`Tools/m9_phase_fixture.py`), `m9_radio.json` (`Tools/m9_radio_fixture.py`); phase port `Engine/world/cp_phase.py`, tests `test_m9_phase.py`, `test_m9_radio.py`. Names marked [dev] come from the 2015 dev build mapped onto this exe (`GeminiWork/decomp/mgsv.db`, build sha256 = ours); a [dev] name counts only where the retail body was read and matches. Tags: [V] static or exact, [D] measured live, [I] inferred, [?] open.
 
 ## Capture protocol
 Near soldiers the run must stay readable and the player must not die. `Tools/m9_run.py <name> <plan>` runs one capture end to end (deploy, boot, drive, stop, restore); the driver is `Tools/m9_drive.py`, plans in `Tools/m9_plans/`. Runs live in `Memory/research/m9_*`, apart from `m8_nav14`, `m8_nav15`.
@@ -12,7 +12,7 @@ Near soldiers the run must stay readable and the player must not die. `Tools/m9_
 | Phase clamp, global | IH `phaseUpdate` 1, `minPhase`, `maxPhase`, `phaseUpdateRate` | **Proven**: max sneak pulled a commanded caution back in 3 s (`m9_opt2`). Not used in fixtures |
 | Clock | `TppClock.SetTime("12:00:00")`, `TppClock.Stop()` | Accepted; read back as set |
 | Weather | `TppWeather.ForceRequestWeather(0, 1)` (sunny) | Accepted; the one reading came too soon to show a change, so not confirmed [?] |
-| Sight, hearing scale | IH `soldierParamsProfile` 1, `soldierSightDistScale`, `soldierHearingDistScale`, `InfSoldierParams.SoldierParametersMod()` | **Does not stop notice, not used**: soldier walking up at 15 m reached alert 19.9 s after the warp at scale 0, 6.1 s at 100 (`m9_sight0`, `m9_sight100`, one run each). Later at 0 [D], but who noticed was not logged, so the cause is not shown [?]. Hearing was not tested: the driver makes no noise |
+| Sight, hearing scale | IH `soldierParamsProfile` 1, `soldierSightDistScale`, `soldierHearingDistScale`, `InfSoldierParams.SoldierParametersMod()` | **Scale 0 stops sight notice in the pinned setup [D one run each, notice log, 2026-11-04]**: `m9_sight0n`: soldier 81 walked up to 3.5 m of the player and past, **no AddNoticeInfo call from any soldier**, CP stayed sneak 60 s. `m9_sight100n`: soldier 81 alone, kind 0 (sight) 0.52 s after the 15 m warp, kind 55 at 4.58 s, alert the next frame. The older `m9_sight0` alert (19.9 s) ran before the save / IH setup was pinned [I: likely cause, not proven]. Not used in fixtures. Hearing not tested: the driver makes no noise |
 | Reinforcements | none set: `forceReinforceRequest`, `enableHeliReinforce`, `enableSoldiersWithVehicleReinforce` read 0 | No reinforcement message in the Central Base Camp runs [D]. `SetReinforceEnable` exists, untested |
 | Heli and support | IH `disableHeliAttack` exists; no call is ever made | Not tested, nothing to switch off so far |
 | Vehicles | The player stands on foot; riders stay in the logs at 8 to 12.5 m/s, without a move bit | Excluded from the speed tables by that rule |
@@ -53,7 +53,16 @@ Flag word +0x110, stride 0x28: bits 16 to 23. Bit 0x10 walk, 0x20 run, 0x40 dash
 | 0x30 | | | 2.00 free, 2.75 forced [?] |
 | 0x40, 0x44 | dash | 6.43 | 4.00 |
 
-Realized speed comes from animation; unrealized values look like constants [I]. Their table is not decoded [?]. It is not `TppSoldier2UnrealStepAction` (0x1415940C0): that is a one-off 2 s relocation (state 0x141595B70), holding none of these speeds [V].
+Realized speed comes from animation. **Unrealized speed [V 0x14139D600, `UnrealBasicAction2Impl::GetMoveVelocityForUnreal` [dev], retail = dev instruction for instruction]:** `(soldier, phase, speed, flag)`, called by ProcessMove (0x1413A1270) with phase = action task (+0x68 table, stride 0xD0) +0xC2 >> 6 & 3, speed = +0xC2 >> 3 & 7, flag = Work +0x1E bit 0. The values are separate float constants, not a table (why the table search failed):
+
+| | speed 1 | speed 2 | speed 3 | other |
+|---|---|---|---|---|
+| phase 0 | 0.8 | 2.0 | 2.6 | as flag row |
+| phase 1 | 1.5 | 2.75 | 4.0 | as flag row |
+| phase 2, 3 | as flag row | | | |
+| flag row (flag set; else all 1.0) | 1.5 | 2.75 | 4.0 | 1.0 |
+
+Times 0.77197 (0x1423EBD58) when the move record (+0x60 +0x98, stride 0x70) +0x34 & 0x700 = 0x300. Port `realize.unreal_move_speed`. Every measured unrealized speed is in the table; 2.6 was not seen live. Which flag-word bits give which (phase, speed) is not read live [I]: 0x30 at 2.0 free and 2.75 forced fits speed 2 in phase 0 and 1. `TppSoldier2UnrealStepAction` (0x1415940C0) is a one-off 2 s relocation, holding none of these [V].
 
 ## Route step machine [V, D 2 free runs]
 Route action plugin (vtables 0x142418930 and siblings; +0x1B0 soldier impl, +0x1C0 move records stride 0x70, +0x1B8 route set). Per-frame update 0x141570FA0 runs the step in the table 0x142C62A30 by record +0x26 with op 3 (update); a changed step, or a restart asked by the step, gets op 1 (leave) on the old one and op 0 (enter) on the new one; 0x14157AF10 then copies the record to the route table.
@@ -117,9 +126,9 @@ Each CP has one **normalized timer, 1.0 down to 0**, not seconds. Offsets are fr
 | Evasion: sends 0x51, its finish sends 0x53; 0x3A finished -> +0x4C = 1 (1 frame), timer still 0.67 | 3684 frames | 3684 frames | [V 0x140D70370 cases 0x51, 0x3A; D] |
 | Caution drain at 1/2160 x dt (36 min), then 0x39 | x1.003 slope | x1.003 | [V 0x140D6F480, D slope] |
 
-So alert past the player's leaving = 30 s + about 4 s + 21 s + 5 s = 60.8 s in both runs, the 58 s of `m9_known1`. Who sends 0x3A, what sets and clears record +4 bit 7 (21 s both runs; the 20 s countdown of 0x140D6DCF0 is a candidate [I]) and the 180 s alert of `m9_known2` (unlogged) are open [?]. Alert sends 0x3D on entry (finished 8.4 s later, no phase effect seen).
+So alert past the player's leaving = 30 s + about 4 s + 21 s + 5 s = 60.8 s in both runs, the 58 s of `m9_known1`. The 21 s and the evasion length are soldier work, not timers: see "Radio and member roles". The 180 s alert of `m9_known2` (unlogged) is open [?]. Alert sends 0x3D on entry (finished 8.4 s later, no phase effect seen).
 
-Phase state tables [V static initialisers 0x142014A70 ...]: sneak 0x142C3E118 {0x140D68F80, 0x140D694D0, 0x140D69000}, alert 0x142C3E150 {0x140D6CA20, 0x140D6D240, 0x140D6D4D0}, caution 0x142C3E188 {0x140D6F210, 0x140D6F480}, evasion 0x142C3E1B8 {0x140D708F0, 0x140D70CC0}; entries are 16 bytes. 0x142C3E1F0 is not a state table (0x140D71900 takes 3 arguments). State record (argument 4): +0 u16 flags (evasion bits 6, 2), +4 u32 flags, +8 float time in state.
+Phase state tables [V static initialisers 0x142014A70 ...]: 0x142C3E118 {0x140D68F80, 0x140D694D0, 0x140D69000} is **not sneak** but the CP radio player (`ActionControllerImpl` [dev]: state 1 `StateWaitForCompanion`, state 2 `StateRadio`; FoxTrace logs it as table 0), its finish 0x140D68D60 posts `RadioEnd`, alert 0x142C3E150 {0x140D6CA20, 0x140D6D240, 0x140D6D4D0}, caution 0x142C3E188 {0x140D6F210, 0x140D6F480}, evasion 0x142C3E1B8 {0x140D708F0, 0x140D70CC0}; entries are 16 bytes. 0x142C3E1F0 is not a state table (0x140D71900 takes 3 arguments). State record (argument 4): +0 u16 flags (evasion bits 6, 2), +4 u32 flags, +8 float time in state.
 
 | Impl field | Meaning [V unless tagged] |
 |---|---|
@@ -160,9 +169,25 @@ Live: every CP of both runs holds exactly these three rates [D]. Caution's timer
 
 **`SetKeepCaution` true (0x140D63510):** sets bit 0 of record +0x79 (table impl +0x1E0, stride 0x80), and if that record's phase is under 2, requests caution and sets the timer to 1.0. Whether `vt+0xE8` reads this bit is not checked [?].
 
-**0x140D6DCF0 (180 s and 20 s)** is not the phase timer. It runs a separate countdown at state object +0x78, stride 0x30, +0x20, tied to reinforcement: 180 s, or 20 s if the +0x2A count is nonzero; 5 s and 30 s on its other paths.
+**0x140D6DCF0 (180 s and 20 s)** = `AlertAiImpl::UpdateReinforce` [dev], not the phase timer and not the 21 s. It runs a separate countdown at state object +0x78, stride 0x30, +0x20, tied to reinforcement: 180 s, or 20 s if the +0x2A count is nonzero; 5 s and 30 s on its other paths.
 
-**Who noticed [D run 1, I names]:** AddNoticeInfo 0x1414DBA80 (self, soldier, info[16]) -> 1 if stored; info[0] = kind. Only soldier 81 noticed: kind 0 from 0x1414E1F27, inside `CheckSightNoticePlayer` (0x1414E0FC0, name from the V_Framework hook list [I]), stored at f5972; alert 251 frames (4.2 s) later. Kind 55 (0x37, from 0x1414DF08C) followed. FoxTrace keeps one row per change, and two alternating kinds give a row each frame (578 rows). The sight-scale runs were not repeated with this log.
+**Who noticed [D run 1, I names]:** AddNoticeInfo 0x1414DBA80 (self, soldier, info[16]) -> 1 if stored; info[0] = kind. Only soldier 81 noticed: kind 0 from 0x1414E1F27, inside `CheckSightNoticePlayer` (0x1414E0FC0, name from the V_Framework hook list [I]), stored at f5972; alert 251 frames (4.2 s) later. Kind 55 (0x37, from 0x1414DF08C) followed. FoxTrace keeps one row per change, and two alternating kinds give a row each frame (578 rows). Sight scale 100 (`m9_sight100n`): the same pattern, kind 0 at f5890 then kind 55 stored at f6134 and alert at f6135 (245 frames after the sight notice); scale 0 gave no notice row at all (see Capture protocol).
+
+## Radio and member roles [V static, D runs `m9_phase3`, `m9_phase4`, FoxTrace 3.2, soldier 81, CP 39]
+Request ids are radio types (`Cp2RadioType` [dev]). A request is a pending entry per CP (impl +0x38, stride 0x18: +0xE handle, +0x12 arg, +0x16 type, priority `GetRadioAttributeByRadioType` 0x140D5B6A0; a new one replaces a pending one only with higher priority) [V 0x140D62660 `RequestRadioByCp`]. Three writers: `RequestRadioByCp` (impl vt+0x30), `Controller_RequestRadioByCp_` 0x140D58050 (vt+0x1D8 of impl-0x18) and `Controller_RequestRadioByMember_` 0x140D58220 (vt+0x1C0) -> `DoRequestRadio` 0x140D5AAA0 [dev names, bodies read]. The radio controller (`RadioControllerImpl`, steps 0x142C3E5B0) posts 0xCE56A00E with the type when it is spoken.
+
+**Member roles:** member record impl +0x50, stride 0x20, +0x1D role, +0x1E counter, payload copied in (`SetMemberRole_` 0x140D63550, impl vt+0x130, the only writer [V]). Roles: 0 none, 1 investigate, 2 radio, 3 guard [names: dev `Cp2MemberRoleCoderImpl::s_processFuncs`]. impl+0x18 (vtable 0x14233F1A0): vt+0x60 0x140D733F0 gives the nearest free member role 2 with a type (the CP's own radios 0x3C, 0x3B are spoken by that soldier, through ByMember_ from 0x141551383); vt+0x58 0x140D73CC0 and vt+0x50 0x140D744E0 give the nearest free members role 1 at the CP's search point (impl +0x80, stride 0x1C).
+
+| Step (both runs, frames) | Run 3 | Run 4 | Source |
+|---|---|---|---|
+| 0x3C finished; next frame soldier 81 gets role 1 at the search point (-2208.4, 444.1, -1274.4) from vt+0x58 | 12240 -> 12241 | 12153 -> 12154 | [D] |
+| `CheckActiveMember` 0x140D69FB0 sets alert record +4 bit 7 while an active member holds role 1; state 2 waits | | | [V] |
+| Role 1 cleared by the role update 0x140D7BBE0 (impl+0x18 vt+0x188, call 0x140D7BE72); the same frame state 2 sends 0x3B | **1264 frames (21.07 s)** | **1264** | [D] |
+| Evasion entry: soldier 81 gets role 1 again (vt+0x50, call 0x140D744E0) | 13816 | 13731 | [D] |
+| The investigator's own step 10 (`InvestigateAiImpl::StepRadio` [dev]; retail table 0x142C5FD10, step 4 empty as in dev) calls the CP's vt+0x1C0 with **literal 0x3A** (0x14149D887) | 17405 | 17318 | [V, D run 4 return address] |
+| 0x3A finished (95 frames); next frame evasion -> caution and the role is cleared | 17500 | 17413 | [D] |
+
+So **0x3A = the investigating soldier's report**; evasion lasts as long as the investigation. The role update clears role 1 when the order's search point is no longer current (point +0x16 bit 0x40 clear or sequence +0x12 changed) [V], or through 0x140D76ED0; which of these fired at 21 s is not read [?]. Pinned in `test_m9_radio.py`.
 
 ## Phases [D, forced, soldier 78, afgh_sovietBase_cp, player 120 m away]
 - Sneak: route 1E072FB4, state 2 at the node.
@@ -175,11 +200,20 @@ Forced2 ended at 244 s (reply lost on the pipe, driver now retries and always wr
 
 Seen in hand play only, not pinned: other CPs went to caution when this CP fell back (`m9_humanplay1_contaminated`) [?].
 
+## Extension points
+Planned for the engine's Mod API (none built yet):
+
+- **Radio types and priorities:** the per-type attribute (`GetRadioAttributeByRadioType`) and what each type's finish does (the per-phase callbacks) as a registry; a mod adds a type or changes which finish ends a phase.
+- **Member roles:** role kinds (none, investigate, radio, guard, mortar, turret, anti-sniper ...) registered with their process step, so a mod adds a role or changes how many members investigate (2 or 4 in alert).
+- **Phase rates and multipliers:** the per-CP rate block (impl +0x28) and the drain multipliers, overridable per CP (what the retired V_Framework `SetCautionPhaseDuration` did by hooking).
+- **Unrealized speeds:** the (phase, speed, flag) table and crouch scale as data.
+- **Realize budget and window inset** (18 soldiers, 32 / 28 m) as settings.
+
 ## Open
-- The move table of unrealized soldiers; bits 0x30.
-- Phase lengths: the request rule is pinned over two runs (`test_m9_phase.py`); request durations (radio), the 0x3A sender, record +4 bit 7, the slow band live, commanded evasion's 26 s; whether `SetKeepCaution` feeds `vt+0xE8`.
+- Which flag-word bits give the unrealized (phase, speed) pair (task +0xC2 not logged live); crouch case.
+- Phase lengths: request rule, investigate role and 0x3A report pinned (`test_m9_phase.py`, `test_m9_radio.py`); still open: what ends the alert investigate role at 21 s (point check or 0x140D76ED0), how long `RadioControllerImpl` takes per type, the slow band live, commanded evasion's 26 s, whether `SetKeepCaution` feeds `vt+0xE8`.
 - Node waits longer than `time`; steps 4, 5, 0x10; the same-spot test; arrival tests in the port.
-- Sight scale 0 and 100 with the notice log (one run each); hearing, which needs a noise source; the hit-push path of the driver.
+- Sight scale runs repeated once more each; hearing, which needs a noise source; the hit-push path of the driver.
 - A second base and Africa; the +0x1A0 byte (0 on all soldiers in the last 20 samples of `m9_route1`), the view test and the slot swaps in the port.
 
 ---

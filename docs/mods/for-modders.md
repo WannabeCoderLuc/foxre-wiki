@@ -9,6 +9,9 @@
 - **Which packages a mission loads is decided in Lua** (`TppMissionList` / `TppPackList`), not in the executable. You can add or swap packages without touching the exe.
 - We have a **list of every native Lua function the game registers** (5,532 of them, with their addresses), plus recorded examples of what many of them return in a real session.
 
+## Where this is heading (planned, 2026-11-04)
+The new engine is being built so modders can rely on it. Planned, none of it exists yet: a **Mod API** (milestone M10) that lets a mod register new systems, add game object types and commands, override values, hook events and extend the soldier AI, with tests that check a mod changes only what it says it changes; later **importers** for models, textures and animations, **world and navmesh authoring**, and an **enhanced renderer** that stays separate from the faithful one. With no mods loaded the engine must behave exactly like the original game. See the [Roadmap](../status/roadmap.md) for the order and the test each step must pass.
+
 ## Step-by-step guides
 | Guide | Finding it builds on |
 |---|---|

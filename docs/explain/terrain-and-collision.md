@@ -12,7 +12,7 @@ The ground you walk on and the shapes you bump into come from five file types:
 All five turned out to be the same container underneath (a "FoxData" tree of named nodes with parameters and data), so one reader handles them all.
 
 ## Why it matters
-Everything that moves needs the ground: the player stands on it, soldiers walk their routes over it (M8), bullets and grenades hit it (M9), and the renderer draws it (M13). M7 makes the engine answer "how high is the ground here?" for any point, the same way the game does.
+Everything that moves needs the ground: the player stands on it, soldiers walk their routes over it (M8), bullets and grenades hit it (M15), and the renderer draws it (M20). M7 makes the engine answer "how high is the ground here?" for any point, the same way the game does.
 
 ## How the original does it
 ```mermaid

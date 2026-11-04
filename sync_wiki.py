@@ -111,7 +111,7 @@ SITE = [
     ]),
     ("Project status", "status", "reference", "Where the project stands: milestones with their pass/fail gates, "
      "the numbers, and the full dated log of every working session. Generated on every sync.", [
-        ("Roadmap", "roadmap", "docs/ROADMAP.md", "Milestones M0-M14, their order and the gate each one must pass."),
+        ("Roadmap", "roadmap", "docs/ROADMAP.md", "Milestones M0-M24 and the mod track, their order and the gate each one must pass."),
         ("Numbers at a glance", "numbers", "gen:numbers", "Milestones, verified modules and test fixtures, counted at build time."),
         ("Session log", "log", "docs/LOG.md", "Every session, newest first, with addresses and test counts."),
     ]),

@@ -11,7 +11,7 @@ hide:
 
 PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &middot; every claim backed by a pass/fail test
 
-**8 of 15 milestones passed** &middot; current: **M9 Gameplay core**
+**8 of 25 milestones passed** &middot; current: **M9 Gameplay core**
 
 </div>
 
@@ -57,11 +57,21 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 | M7 | Terrain & collision formats [PASS 2026-10-29] — `.htre`/`.tre2`, `.geom` | `.htre`/`.tre2`, `.geom` | <span class="status planned">PLANNED</span> |
 | M8 | Navigation & routes | nav2 runtime, path queries (Luc, 2026-11-01) | <span class="status pass">PASS</span> |
 | M9 | Gameplay core | Soldier AI, CP / notice, damage, SendCommand handlers (headless) | <span class="status in-progress">IN PROGRESS</span> |
-| M10 | Asset formats | textures, models, rigs, fova, parts, language | <span class="status planned">PLANNED</span> |
-| M11 | Animation | clips, motion graphs, motion events | <span class="status planned">PLANNED</span> |
-| M12 | Gameplay extended | sound, bosses, UI | <span class="status planned">PLANNED</span> |
-| M13 | Rendering & viewer | renderer last | <span class="status planned">PLANNED</span> |
-| M14 | Playable slice | one free-roam area, player + one AI type | <span class="status planned">PLANNED</span> |
+| M10 | Mod API core [PLANNED, next after M9] — registries, manifest, loader, hooks (headless) | registries, manifest, loader, hooks (headless) | <span class="status planned">PLANNED</span> |
+| M11 | Asset formats | textures, models, rigs, fova, parts, language, sound containers | <span class="status planned">PLANNED</span> |
+| M12 | Sound & UI logic | sound events, music states, menus, iDroid, HUD (headless) | <span class="status planned">PLANNED</span> |
+| M13 | Open world complete | both maps, every block level, clock, weather, random numbers (headless) | <span class="status planned">PLANNED</span> |
+| M14 | Collision & physics | shape trees, queries, character controller, rigid bodies | <span class="status planned">PLANNED</span> |
+| M15 | Combat & equipment | weapons, ballistics, hits, damage, CQC logic, items, Fulton (headless) | <span class="status planned">PLANNED</span> |
+| M16 | Animation | clips, motion graphs, motion events, root motion, ragdoll | <span class="status planned">PLANNED</span> |
+| M17 | Headless slice | one free-roam area, player + one AI type, input replay, zero recorded natives | <span class="status planned">PLANNED</span> |
+| M18 | Full cast | every soldier type, animals, buddies, heli, vehicles, bosses | <span class="status planned">PLANNED</span> |
+| M19 | Missions & progression | missions, objectives, demos, Mother Base, saves | <span class="status planned">PLANNED</span> |
+| M20 | Rendering | reference renderer, renderer last | <span class="status planned">PLANNED</span> |
+| M21 | Audio output | Wwise-compatible playback | <span class="status planned">PLANNED</span> |
+| M22 | Playable game | rendering + audio + input on the verified headless game | <span class="status planned">PLANNED</span> |
+| M23 | Standalone runtime | C++ frame loop, packaging | <span class="status planned">PLANNED</span> |
+| M24 | Mod platform 1.0 | API freeze, asset packs, native plugins, mod manager | <span class="status planned">PLANNED</span> |
 
 ## Verified engine modules
 
@@ -87,10 +97,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-11-04: **M9 third step, rest**: 0x3A = investigator's report, alert 21 s = investigate role (two runs), unrealized speed function decoded and ported, sight 0 / 100 read; FoxTrace 3.2; 4 game runs, baseline MATCH; quick suite 140/140.
 - 2026-11-04: **M9 third step, live part**: CP phase logger (FoxTrace 3.1), two clean runs; phases end when CP requests finish, rule pinned in `test_m9_phase.py`; save and IH config restored to the capture setup; quick suite 134/134, baseline MATCH.
 - 2026-11-01: **M9 third step, static part + wiki**: CP timer rates and alert multipliers decoded, evasion not explained, nothing logged live, no game run; four new wiki pages for M8 and M9; baseline MATCH.
 - 2026-11-01: **M9 second step**: route step machine, one request per leg, order equal live on 1,662 changes; known target alert, evasion, caution over two runs; six game runs, one stopped by a truck; quick suite 128/128, baseline MATCH.
 - 2026-11-01: **M9 first step**: capture protocol proven, far mode = realize budget 18 in the stage window, run and dash speeds, route state, first behaviour fixtures; spawn under the map fixed; quick suite 114/114, baseline MATCH.
-- 2026-11-01: **M8 PASS (Luc)**: 948 of 948 live jobs equal, xfail removed; logger bug found (paths read before post-process end), blocked bits, obstacle rings, off-mesh links, end state, extender push ported; six game runs, baseline MATCH. Route following near the player moved to M9 with a safety protocol.
 
 [Full session log](status/log.md)

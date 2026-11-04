@@ -46,7 +46,9 @@ SITE = [
      "Hand-written.", [
         ("What this project is", "overview", "docs/site/start/Overview.md", "Goal, how the game is built, how we work, where we are."),
         ("How to use this site", "how-to-read", "docs/site/start/How-To-Read.md", "Hand-written vs generated pages, confidence tags, statuses."),
-        ("Glossary", "glossary", "docs/site/start/Glossary.md", "Short definitions of the terms used on this site."),
+        ("Getting started as a modder", "modder-start", "docs/site/start/Modder-Start.md", "What the site gives modders, which guide to read first, five things to know."),
+        ("Addresses, hashes and tags", "conventions", "docs/site/start/Conventions.md", "How addresses, offsets, hashes, ids, units and confidence tags are written."),
+        ("Glossary", "glossary", "docs/site/start/Glossary.md", "Short definitions of the terms used on this site, by topic."),
     ]),
     ("Explanations", "explain", "manual", "One topic per page, in plain language: what it is, why it matters, how the "
      "original game does it, how the new engine does it, and how we know. Hand-written; rewritten at the end of "
@@ -62,22 +64,27 @@ SITE = [
         ("Terrain and collision files", "terrain-and-collision", "docs/site/explain/Terrain-And-Collision.md", "Height maps, collision shapes and the game's ground-height rule (M7)."),
         ("Routes and navmeshes", "routes-and-navmeshes", "docs/site/explain/Routes-And-Navmeshes.md", "Patrol routes and walkable surfaces (formats M1, runtime M8)."),
         ("How soldiers find their way", "path-finding", "docs/site/explain/Path-Finding.md", "One path job from request to result: loaded blocks, six stages, smoothing, runtime state (M8)."),
-        ("How soldiers think", "soldier-ai", "docs/site/explain/Soldier-AI.md", "Realized soldiers, route steps, phases and their timers (M9, IN PROGRESS)."),
+        ("How soldiers think", "soldier-ai", "docs/site/explain/Soldier-AI.md", "Realized soldiers, route steps, phase timers, reports and investigators (M9, IN PROGRESS)."),
         ("How we verify", "verification", "docs/site/explain/Verification.md", "Pass/fail gates, FoxTrace captures, record/replay, claims, confidence tags."),
     ]),
     ("Modding guides", "mods", "manual", "What each finding means for a mod, with a worked (hypothetical) example "
      "of how it would be used. Hand-written; addresses are for PC 1.0.15.4 EN.", [
         ("For modders: findings at a glance", "for-modders", "docs/site/mods/For-Modders.md", "Every finding that matters for modding, in one page."),
+        ("Where things stand for modders", "where-things-stand", "docs/site/mods/Where-Things-Stand.md", "What is decoded, what the engine runs, what the planned Mod API (M10, M24) will offer."),
+        ("Archives, packages and hashes", "archives-and-hashes", "docs/site/mods/Archives-And-Hashes.md", "PathCode64, the name gap, package contents, checks for file tools."),
         ("Add a package to a mission", "add-a-package", "docs/site/mods/Add-A-Package.md", "Mission package lists are Lua: wrap the package-path function."),
         ("Run your own Lua from a package", "lua-from-packages", "docs/site/mods/Lua-From-Packages.md", "Package scripts run on load, in path order."),
         ("Find and call Lua natives", "lua-natives", "docs/site/mods/Lua-Natives.md", "The binding map, stripped functions, recorded return values."),
+        ("Messages and commands in a mod", "messages-and-commands", "docs/site/mods/Messages-And-Commands.md", "SendCommand, OnMessage and hand-back, timers, the 128-message queue, update order."),
         ("Side content with script blocks", "script-blocks", "docs/site/mods/Script-Blocks.md", "Load and unload your own content with the area."),
+        ("Locators and map blocks in a mod", "locators-and-blocks", "docs/site/mods/Locators-And-Blocks.md", "DataIdentifier lookups, the 128 m block window, large-block messages."),
         ("Patching the iDroid tables", "idroid-tables", "docs/site/mods/IDroid-Tables.md", "Changes that survive the language reload."),
         ("Editing fox2 DataSets", "editing-datasets", "docs/site/mods/Editing-DataSets.md", "Typed entities, loader entities, byte-exact writing."),
         ("Tracing the game with FoxTrace", "foxtrace", "docs/site/mods/FoxTrace.md", "Log-only hooks to see what the game really does."),
         ("Ground height at any point", "ground-height", "docs/site/mods/Ground-Height.md", "Terrain blocks, tiling and the triangle rule: place things on the ground."),
+        ("Terrain and collision files in a mod", "collision-files", "docs/site/mods/Collision-Files.md", "The FoxData container, what is decoded, what you can safely do today."),
         ("Navmeshes and routes in a mod", "navigation-and-routes", "docs/site/mods/Navigation-And-Routes.md", "Route commands, writing patrols, why far soldiers ignore walls, tracing paths."),
-        ("Soldiers and alert phases in a mod", "soldier-ai", "docs/site/mods/Soldier-AI.md", "Phase commands, timers, the realize budget, safe tests near soldiers (IN PROGRESS)."),
+        ("Soldiers and alert phases in a mod", "soldier-ai", "docs/site/mods/Soldier-AI.md", "Phase commands, reports, investigators, the realize budget, safe tests near soldiers (IN PROGRESS)."),
         ("Checking community addresses", "claims", "docs/site/mods/Claims.md", "Use the claims ledger before you hook an address."),
     ]),
     ("Reference: engine", "engine", "reference", "Clean-room specifications of Fox Engine subsystems, and the state "
@@ -117,6 +124,7 @@ SITE = [
     ]),
     ("Library", "library", "mixed", "Everything the work is built on and produces: sources, tools, test fixtures, "
      "live captures and external references.", [
+        ("Topic index", "topics", "docs/site/library/Topics.md", "Every topic with its explanation, guide, reference page and milestone."),
         ("Sources", "sources", "docs/site/library/Sources.md", "The executable, the data, the running game, community projects, name dictionaries."),
         ("Tools", "tools", "docs/site/library/Tools.md", "What the project built and which third-party tools it uses."),
         ("Test fixtures", "fixtures", "gen:fixtures", "Ground-truth files the engine tests compare against (generated list)."),
@@ -147,7 +155,8 @@ WIKI_NAMES = {
     "Format-FOX2": "docs/formats/FOX2.md", "Format-FRT": "docs/formats/FRT.md", "Format-NAV2": "docs/NAVMESH.md", "Format-HTRE": "docs/formats/HTRE.md",
     "Format-GEOM": "docs/formats/GEOM.md", "Format-FOXDATA": "docs/formats/FOXDATA.md",
     "MCP-Server": "mgsv_unified_server/AI_GUIDE.md", "Tooling": "docs/TOOLING.md", "Background": "docs/BACKGROUND.md",
-    "Engine-Resources": "docs/engine/Resources.md", "Engine-World": "docs/engine/World.md", "Claims": "docs/CLAIMS.md", "Claims-Contradictions": "docs/CLAIMS_CONTRADICTIONS.md",
+    "Engine-Resources": "docs/engine/Resources.md", "Engine-World": "docs/engine/World.md",
+    "Engine-Navigation": "docs/engine/Navigation.md", "Engine-SoldierAI": "docs/engine/SoldierAI.md", "Claims": "docs/CLAIMS.md", "Claims-Contradictions": "docs/CLAIMS_CONTRADICTIONS.md",
     "Sahelanthropus": "docs/SAHELAN.md", "Battlefield-AI": "docs/BATTLEFIELD.md",
     # 2026-10-24 restructure; the old Guide-* names keep working
     "Guide-Overview": "docs/site/start/Overview.md", "Guide-Glossary": "docs/site/start/Glossary.md",
@@ -175,6 +184,7 @@ def site_path_of() -> dict[str, str]:
 
 
 SRC_TO_SITE = site_path_of()
+UNRESOLVED: list[str] = []                                 # hand-written links with no target (printed by generate)
 
 
 def norm(p: str) -> str:
@@ -242,7 +252,11 @@ def transform(text: str, src: str, page: str) -> str:
         anchor = "#" + target.split("#", 1)[1] if "#" in target else ""
         s = resolve_src(target, src)
         if s is None:
-            return m.group(0) if target.endswith((".png", ".svg", ".jpg")) else label
+            if target.endswith((".png", ".svg", ".jpg")):
+                return m.group(0)
+            if src.startswith("docs/site/"):                # hand-written pages: report links that lost their target
+                UNRESOLVED.append(f"{src}: [{label}]({target})")
+            return label
         if s in NOT_PUBLISHED:
             return f"{label} (not published)"
         return f"[{label}]({rel(page, SRC_TO_SITE[s])}{anchor})"
@@ -494,6 +508,8 @@ def generate() -> None:
     open(y, "w", encoding="utf-8").write(cfg)
     n = sum(len(p) for *_x, p in SITE)
     print(f"generated {n} pages + {len(SITE)} section overviews + home + {len(MOVED)} redirects -> {OUT}")
+    for u in UNRESOLVED:
+        print(f"WARNING unresolved link: {u}")
 
 
 def mkdocs(*args) -> int:

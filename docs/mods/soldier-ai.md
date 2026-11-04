@@ -1,9 +1,11 @@
 # Soldiers and alert phases in a mod
 
-*Based on: [How soldiers think](../explain/soldier-ai.md). Exact details: Soldier AI. M9 is IN PROGRESS, so this guide will change. Addresses are for 1.0.15.4 EN. Live data comes from one base, `afgh_sovietBase_cp`. Tags: [V] read in code, [D] measured live, [I] inferred, [?] open.*
+*Based on: [How soldiers think](../explain/soldier-ai.md). Exact details: Soldier AI. M9 is IN PROGRESS, so this guide will change. Addresses are for 1.0.15.4 EN. Live data comes from `afgh_sovietBase_cp`, with the same chain checked at a second base, `afgh_enemyBase_cp`. Tags: [V] read in code, [D] measured live, [I] inferred, [?] open.*
 
 ## The findings
-- A CP has a phase: 0 sneak, 1 caution, 2 evasion, 3 alert. It falls by itself, one step at a time [V, D].
+- A CP has a phase: 0 sneak, 1 caution, 2 evasion, 3 alert.
+- Waits inside a phase are investigations: the CP sends 3, then 2, then 4 soldiers to one search point, and the next report goes out in the frame an investigator marks the point done [V, D two bases]. A mod that changes how many soldiers investigate, or ends the search early, changes how long alert and evasion last.
+- A report lasts as long as its voice line (0x3C and 0x3B 2.45 s, 0x51 about 11.5 s) [V, D]. It falls by itself, one step at a time [V, D].
 - Each phase runs one 0-to-1 timer at its own rate: caution 36 minutes, evasion 2 minutes, alert 30 seconds, before multipliers [V, D: read live in every CP].
 - A phase ends when the CP's report request finishes, not when the timer hits 0 [V, D two runs].
 - `SetPhase` works per CP but takes effect later [D].

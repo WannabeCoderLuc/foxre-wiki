@@ -90,10 +90,18 @@ The surprise from the live log: **a timer at 0 does not end a phase.** It only m
 
 So alert lasted 60.8 s after the player left, in both runs, matching the 58 s of an older run. Older runs that lasted longer (180 s alert, 42 or 59 s evasion) had no request log; report lengths and a re-sighting are the likely causes, not yet shown [?].
 
+### Who does the waiting: investigators and their search point
+The "wait" in the table is soldier work, not a clock. The base picks the nearest free soldiers as **investigators** and sends them to one **search point** per base: 3 at the start of alert, 2 more after the first report, 4 when evasion starts. When an investigator finishes searching, it marks the point as done (`CompleteInvestigation`) [V]. In that same frame the base drops every investigator's order and sends the next report (0x3B), which leads to evasion [D, two runs]. Evasion ends the same way, with the investigator's own report 0x3A.
+
+How long is a report? **As long as the soldier's voice line plays** [V]: the base's radio waits for the voice player to go quiet. Measured: 147 frames (2.45 s) for 0x3C and 0x3B, about 11.5 s for 0x51, about 10.4 s for 0x53, 1.6 to 3.0 s for 0x3A depending on who speaks [D].
+
+### A second base
+The same chain was captured twice at Wakh Sind Barracks (`afgh_enemyBase_cp`), with a soldier who patrols alone: same order, same investigator counts, same report lengths, same rule for the end of each wait. What differs between runs is how long the investigators take (23 or 31 s in alert, 72 or 119 s in evasion), because they walk and search. At Da Wialo Kallai one run showed a shortcut: an investigator who went indoors sent 0x3B itself before the alert timer ran out, and the base went to evasion at once.
+
 ## How the new engine does it
 - `Engine/world/realize.py` selects realized soldiers from steps 1 and 2 and the budget. **159 of 181 live lists give the same set**, and the rest differ only by the distance a soldier moves in the sample's age, or on the first list after the window moved [D]. The view penalty and slot swaps are not ported.
 - `Engine/world/route_follow.py` has the step order and the path request rule.
-- `Engine/world/cp_phase.py` has the rates, the float32 drain and the request order. `test_m9_phase.py` pins them on two runs: drain bit-exact, alert 1798 frames from the last sighting to state 1, each fall-back one frame after its request finishes, evasion 3684 frames in both runs. Request lengths are taken from the log; how long a radio report runs is not modelled.
+- `Engine/world/cp_phase.py` has the rates, the float32 drain and the request order. `test_m9_phase.py` pins them on two runs: drain bit-exact, alert 1798 frames from the last sighting to state 1, each fall-back one frame after its request finishes, evasion 3684 frames in both runs. Request lengths are taken from the log (they are voice line lengths). `role_holds` and `complete_investigation` port the rule that ends an investigation; `test_m9_g5.py` pins the whole chain at the second base.
 
 ## How we know
 Running tests near armed soldiers needs a safety protocol, written after real accidents:
@@ -109,11 +117,12 @@ Running tests near armed soldiers needs a safety protocol, written after real ac
 Each statement here says how it was checked. Things that differ between two runs, like fight details, are written down as not pinned instead of being averaged.
 
 ## Still open
-- What sends report 0x3A, what makes alert wait 21 s, how long each report runs [?].
+- How long an investigator searches before it marks the point done; why evasion's timer runs 40 times slower for most of evasion at the second base [?].
+- The slow band of the alert timer applied at the village with the player 490 m away; which point it compares is not read yet [?].
 - Re-run the sight test with the notice log [?].
 - The unrealized speed table and the movement bits 0x30 [?].
 - Route steps 4, 5 and 0x10, the same-spot test, and waits longer than their time [?].
-- Hearing, combat AI and damage have not been studied here yet. All data is one base, Central Base Camp in Afghanistan.
+- Hearing, combat AI and damage have not been studied here yet. Data comes from three Afghan bases (Central Base Camp, Wakh Sind Barracks, Da Wialo Kallai); none from Africa yet.
 
 ---
 <small>Hand-written article (`docs/site/explain/Soldier-AI.md`) &middot; published 2026-11-04.</small>

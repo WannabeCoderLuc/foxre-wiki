@@ -1,6 +1,6 @@
 # Soldier AI
 
-Far mode, move speeds, route state and CP phase sequences of `TppSoldier2`, f30010. Engine: `Engine/world/realize.py`, `Engine/world/route_follow.py`. Tests: `Engine/tests/test_m9_soldier.py`, `test_m9_route.py`. Fixtures: `m9_soldier_free.json`, `m9_soldier_forced.json` (`Tools/m9_fixture.py`), `m9_route.json`, `m9_known.json` (`Tools/m9_route_fixture.py`), `m9_phase.json` (`Tools/m9_phase_fixture.py`), `m9_radio.json` (`Tools/m9_radio_fixture.py`); phase port `Engine/world/cp_phase.py`, tests `test_m9_phase.py`, `test_m9_radio.py`. Names marked [dev] come from the 2015 dev build mapped onto this exe (`GeminiWork/decomp/mgsv.db`, build sha256 = ours); a [dev] name counts only where the retail body was read and matches. Tags: [V] static or exact, [D] measured live, [I] inferred, [?] open.
+Far mode, move speeds, route state and CP phase sequences of `TppSoldier2`, f30010. Engine: `Engine/world/realize.py`, `Engine/world/route_follow.py`. Tests: `Engine/tests/test_m9_soldier.py`, `test_m9_route.py`. Fixtures: `m9_soldier_free.json`, `m9_soldier_forced.json` (`Tools/m9_fixture.py`), `m9_route.json`, `m9_known.json` (`Tools/m9_route_fixture.py`), `m9_phase.json` (`Tools/m9_phase_fixture.py`), `m9_radio.json`, `m9_g5_enemyBase.json` (`Tools/m9_radio_fixture.py`); phase port `Engine/world/cp_phase.py`, tests `test_m9_phase.py`, `test_m9_radio.py`, `test_m9_g5.py`. Names marked [dev] come from the 2015 dev build mapped onto this exe (`GeminiWork/decomp/mgsv.db`, build sha256 = ours); a [dev] name counts only where the retail body was read and matches. Tags: [V] static or exact, [D] measured live, [I] inferred, [?] open.
 
 ## Capture protocol
 Near soldiers the run must stay readable and the player must not die. `Tools/m9_run.py <name> <plan>` runs one capture end to end (deploy, boot, drive, stop, restore); the driver is `Tools/m9_drive.py`, plans in `Tools/m9_plans/`. Runs live in `Memory/research/m9_*`, apart from `m8_nav14`, `m8_nav15`.
@@ -27,6 +27,8 @@ Rules that came from mistakes:
 - Hits push the player: `m9_sb_forced1` stopped on a 4 m push at the end of the fire test, as it should. Its fixture part ends before that test.
 - Patrol trucks notice the player too: `m9_route2` stopped at 228 s when one drove past (Luc saw it); its fixture part ends there.
 - **The save and IH settings are part of the setup (2026-11-04).** A save that starts in the heli drops the warp and flies the player (stopped `m9_phase1` at 18 s); a night checkpoint gives night routes (soldier 81 stood on `rt_sovietBase_snp_0002n`); IH route-set randomisation, CP subtype and revenge options moved soldier 81 to a sniper route. Runs need `ih_save.lua` = `Backups\ih_save\20261101_opt_test` and the checkpoint at (1040, 322.5, 1214.5) at 12:00, written with `UpdateCheckPointAtCurrentPosition()` outside a run.
+- **Checkpoint traps (2026-11-04).** Each base has a `trap_CHK_<base>` ring of 10 m wide box walls (village: about 227 m around (492, 1126); enemyBase: 190 to 280 m around (-535, 544)). A warp that lands inside a wall writes a checkpoint (`m9_village2`: warp to (727, 326, 1177), save at 13.8 s; save repaired with `UpdateCheckPointAtCurrentPosition()` at the spawn spot, now (1039.97, 322.35, 1215.65), backup of the bad one `Backups\saves\20261104_village2_checkpoint_contaminated`). Plans now disable the checkpoints first (`TppCheckPoint.Disable{baseName=...}`, svars only, never saved); it left 26 still enabled, so warps also go to proven points.
+- **Pick the soldier from a log, not a recon snapshot.** `sol_village_0000` was running to its post at boot in `m9_village1`; it holds a fixed post (two nodes at one spot), so `m9_village3` found it standing and stopped. `Tools/m9_recon.py` lists soldiers; legs and closest approach come from a FoxTrace run.
 - **Never save during a run.** Life, clock and weather live in `vars` and would go into the checkpoint. The driver watches the save file. A checkpoint written out of bounds put the player at y = -79.2 on every boot; repaired on 2026-11-01 with `TppMission.UpdateCheckPointAtCurrentPosition()` from solid ground with vanilla state (old save: `Backups\saves\20261101_before_spawnfix`). The likely source is the M7 warp drops of 2026-10-29: the save's date matches [I].
 
 ## Far mode is the unrealized state [V 0x141551820, D live]
@@ -187,7 +189,46 @@ Request ids are radio types (`Cp2RadioType` [dev]). A request is a pending entry
 | The investigator's own step 10 (`InvestigateAiImpl::StepRadio` [dev]; retail table 0x142C5FD10, step 4 empty as in dev) calls the CP's vt+0x1C0 with **literal 0x3A** (0x14149D887) | 17405 | 17318 | [V, D run 4 return address] |
 | 0x3A finished (95 frames); next frame evasion -> caution and the role is cleared | 17500 | 17413 | [D] |
 
-So **0x3A = the investigating soldier's report**; evasion lasts as long as the investigation. The role update clears role 1 when the order's search point is no longer current (point +0x16 bit 0x40 clear or sequence +0x12 changed) [V], or through 0x140D76ED0; which of these fired at 21 s is not read [?]. Pinned in `test_m9_radio.py`.
+So **0x3A = the investigating soldier's report**; evasion lasts as long as the investigation. Pinned in `test_m9_radio.py`. What ends the role: see "Second base" below (0x140D76ED0 = `MemberRoleControllerImpl::DecrementLocatorMember` [dev], called before every clear, not an alternative path [V]).
+
+## Second base: afgh_enemyBase_cp (G5) [V static, D runs `m9_eb1`, `m9_eb2`, FoxTrace 3.3, CP index 18, soldier 6]
+Wakh Sind Barracks, lone patrol `sol_enemyBase_0001` (index 6: 24 legs over 34 m, never within 26 m of another soldier of the CP in `m9_village3`). Plan `enemyBase_known` (the `sb_known` steps; the far point is a fixed spot). Both runs clean, baseline MATCH. Pinned in `test_m9_g5.py` (gate M9 G5).
+
+**Search point [V 0x140D7BBE0, 0x140D57260, 0x140D744E0]:** one per CP at impl +0x80 (stride 0x1C, by CP index): +0 position, +0x12 u16 sequence, +0x16 flags (bit 0x40 = current), +0x18. A role-1 order carries the member's link to it (member +0xC u16: bits 7..13 CP index, bits 0..6 sequence). Each new order re-issues the point (sequence + 1, bit 0x40 set). `Controller_CompleteInvestigation_` 0x140D57260 [dev, body read], called by the investigator's AI, clears +0x16 bits 0x40 / 0x80 and +0x18 (and phase record +0x54 bits 15, 16) when the link's sequence is current. The role update 0x140D7BBE0 keeps role 1 for an active member only while the point is current with the member's sequence; otherwise it calls `DecrementLocatorMember` and clears the role (0x140D7BE72). Port: `cp_phase.role_holds`, `complete_investigation`.
+
+**What ends the alert investigate role [D both runs, 7 of 7 role ends]:** the point stops being current (completed), never a re-issued sequence. In alert state 2 the role update drops every holder in the frame the point is completed, `CheckActiveMember` clears record +4 bit 7, and state 2 sends 0x3B **in that same frame** (frames 18526, 15915). The 21 s at sovietBase and the 31 s / 23 s here are the investigators' own walk and search, not a timer.
+
+| Step | `m9_eb1` | `m9_eb2` | Source |
+|---|---|---|---|
+| Alert entry | 10863 | 9491 | |
+| `UpdateFrontLineInAlert` (0x140D661F0 [dev hint], call 0x140D6679E) gives role 1 to **3** members (vt+0x58 count 3) | 11245 (5, 6, 9) | 9672, again 10870 | [D] |
+| Front-line roles end through 0x140D66B0B once the point is completed | 14605 | 13287 | [D] |
+| Alert state 1 at timer 0, sends 0x3C (vt+0x60, radio member 225) | 16389 | 14267 | [D] |
+| 0x3C finished -> state 2; vt+0x58 from 0x140D6D795 gives role 1 to **2** members | 16681 | 14539 | [D] |
+| Point completed; role cleared (0x140D7BE72); state 2 sends 0x3B (0x140D6D612), same frame | 18526 | 15915 | [D] |
+| 0x3B finished -> evasion; vt+0x50 from 0x140D709DD gives role 1 to **4** members, soldier 6 among them | 18839 | 16199 | [D] |
+| 0x51 finished -> 0x53 sent the same frame | 19525 | 16887 | [D] |
+| Soldier 6 sends 0x3A (0x14149D887); other investigators' 0x3A came first | 25774 | 20312 | [D] |
+| 0x3A finished -> caution next frame, the 4 roles cleared with the point completed | 25953 | 20491 | [D] |
+
+Same in both runs: the phase order, the giver call sites and counts (3, 2, 4), the same-frame 0x3B rule, the radio lengths below. Differs: when the target noticed the player (47 s after the warp in `m9_eb1`), the state 2 wait (1845 / 1376 frames), evasion (7114 / 4292 frames). Evasion timer ran at x0.025 for most of it [D slope], not decoded [?].
+
+**Same rule, other route [D one run, `m9_village1`, afgh_village_cp = CP 3, soldier 118]:** the alert ended at timer 0.30 without 0x3C: the investigator sent 0x3B itself from 0x1413F9324 (a step function with the dev shape of `CombatInDoorImpl::StepRadio` [I, no exact dev map]: op 0 sends 0x3B through vt+0x1C0 when record +0x64 = 1), and the CP's 0x3B callback (timer < 0.8 -> evasion) applied. At evasion entry the old role was cleared because the sequence changed (link 0x181, point sequence 2); at evasion end because bit 0x40 was clear. The alert timer crawled at x0.025 in (0.4, 0.5) **before** record +4 bit 7 was set, so the 10 m test of the slow band passed with the player 490 m away. Its two points are impl +0x5D8 (`vt+0x138` = `lea rax,[rcx+0x384]`, +0x254) and the PlayerInfo position; what writes impl +0x5D8 is not read [?]. `m9_eb2` also had soldier 6 send 0x3B from 0x1413F9324 in alert state 0; it had no phase effect there.
+
+## Radio lengths [V 0x140DA1CE0, D 7 runs]
+`RadioControllerImpl` (steps at 0x142C3E5B0 by record +0xB; Update 0x140DA24F0 [dev]) per CP: `StepIdle` 0x140DA1C70 moves to `StepRadio` 0x140DA1CE0 once the CP's pending entry has a handle; `StepRadio` hands the entry to the CP's voice player (impl+0x10 vt+0) and waits on the player's two state bytes per CP: bit 4 -> chaff step, bit 2 -> drop without a finish, bit 1 -> no-response step (sends 0x4B), else when the busy byte is 0 (or a Quark query 8 answers true) it posts 0xCE56A00E with the type. **So a radio lasts as long as its voice line plays** (sound data, M12 / M21), not a code table. Write (DoRequestRadio) -> finish, frames:
+
+| Type | sovietBase 3, 4 | village 1 | enemyBase 1, 2 | Speaker |
+|---|---|---|---|---|
+| 0x3C | 147, 147 | not sent | 147, 147 | radio member |
+| 0x3B | 145, 147 | 162 | 147, 147 | radio member (village: investigator) |
+| 0x3A | 95, 95 | 162 | 178, 178 | investigator |
+| 0x51 | 685, 689 | 687 | 686, 688 | CP (no member write) |
+| 0x53 | 611, 624 | 622 | 621, 623 | CP |
+| 0x3D (from the CP send) | 421, 403 | 378 | 393, 377 | CP |
+| 0x1C (caution, repeats every ~12.4 s) | | 64 | 63, 64 | member |
+
+A CP send to the member's write adds 110 to 165 frames (the member is chosen and reaches `StepRadio`). Tool `Tools/m9_radio_lengths.py`.
 
 ## Phases [D, forced, soldier 78, afgh_sovietBase_cp, player 120 m away]
 - Sneak: route 1E072FB4, state 2 at the node.
@@ -204,17 +245,19 @@ Seen in hand play only, not pinned: other CPs went to caution when this CP fell 
 Planned for the engine's Mod API (none built yet):
 
 - **Radio types and priorities:** the per-type attribute (`GetRadioAttributeByRadioType`) and what each type's finish does (the per-phase callbacks) as a registry; a mod adds a type or changes which finish ends a phase.
-- **Member roles:** role kinds (none, investigate, radio, guard, mortar, turret, anti-sniper ...) registered with their process step, so a mod adds a role or changes how many members investigate (2 or 4 in alert).
+- **Member roles:** role kinds (none, investigate, radio, guard, mortar, turret, anti-sniper ...) registered with their process step, so a mod adds a role or changes how many members investigate (live: 3 at the alert front line, 2 in alert state 2, 4 in evasion; `cp_phase.INVESTIGATORS`).
+- **Search point and completion:** the per-CP search point and the completion rule (`role_holds`, `complete_investigation`) as hooks, so a mod ends or extends an investigation.
+- **Radio lengths:** a radio lasts as long as its voice line; the engine takes the length per type and voice as data (measured table above) until audio (M21) plays it.
 - **Phase rates and multipliers:** the per-CP rate block (impl +0x28) and the drain multipliers, overridable per CP (what the retired V_Framework `SetCautionPhaseDuration` did by hooking).
 - **Unrealized speeds:** the (phase, speed, flag) table and crouch scale as data.
 - **Realize budget and window inset** (18 soldiers, 32 / 28 m) as settings.
 
 ## Open
 - Which flag-word bits give the unrealized (phase, speed) pair (task +0xC2 not logged live); crouch case.
-- Phase lengths: request rule, investigate role and 0x3A report pinned (`test_m9_phase.py`, `test_m9_radio.py`); still open: what ends the alert investigate role at 21 s (point check or 0x140D76ED0), how long `RadioControllerImpl` takes per type, the slow band live, commanded evasion's 26 s, whether `SetKeepCaution` feeds `vt+0xE8`.
+- Phase lengths: request rule, investigate role, 0x3A report, role end (point completed) and radio lengths pinned (`test_m9_phase.py`, `test_m9_radio.py`, `test_m9_g5.py`); still open: what writes impl +0x5D8 (the slow band's 10 m point, band seen live in `m9_village1`), the evasion x0.025 stretch at enemyBase, how long an investigator searches before `CompleteInvestigation`, commanded evasion's 26 s, whether `SetKeepCaution` feeds `vt+0xE8`, the 0x1413F9280 step's class.
 - Node waits longer than `time`; steps 4, 5, 0x10; the same-spot test; arrival tests in the port.
 - Sight scale runs repeated once more each; hearing, which needs a noise source; the hit-push path of the driver.
-- A second base and Africa; the +0x1A0 byte (0 on all soldiers in the last 20 samples of `m9_route1`), the view test and the slot swaps in the port.
+- Africa (afgh second base done: G5); the +0x1A0 byte (0 on all soldiers in the last 20 samples of `m9_route1`), the view test and the slot swaps in the port.
 
 ---
 <small>Source: `docs/engine/SoldierAI.md` in the project repository &middot; generated 2026-11-04.</small>

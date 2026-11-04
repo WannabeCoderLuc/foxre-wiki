@@ -1,6 +1,7 @@
 # Engine modules
 
 Tests: `tests\` (pytest; `verifiers.lock.json` = sha256 of each verifier, enforced by `engine_verify`). Census tools that produce the spec statistics: `Tools\{fox2,fpk,qar}_census.py`, `Tools\qar_harvest_paths.py`.
+| `mods/` (registry, loader, vanilla) | Python | [`docs/engine/ModAPI.md`](mod-api.md) | <span class="status in-progress">IN PROGRESS</span> | Mod API core (M10): registries for GameObject types, commands, messages, updaters, AI tables, parameters, resource loaders, reflection classes, Lua libraries, natives; manifest + load order; vanilla registered through the same `ModContext`; ScriptHost installs Lua libraries and natives only from its registry. G1: every dump equals its source table (`test_m10_registry.py`). |
 | `world/realize.py` | Python | [`docs/engine/SoldierAI.md`](soldier-ai.md) | <span class="status in-progress">IN PROGRESS</span> | Soldier realize selection (far mode): budget inside the stage window, 32 / 28 m inset. 159 of 181 live lists equal, the rest within sample age (`test_m9_soldier.py`). |
 
 # Engine

@@ -49,6 +49,13 @@ Re-verification (2026-10-21) of [`docs\ENGINE.md`](core-architecture.md) milesto
 - **Third mission category** 0xDC05D615 = StrCode32 `"DebugUi"` (dictionary + two-word search over ~19 M candidates, single match) [V hash]; the release build never raises it.
 - Engine (`Engine/runtime/messages.py`): drain until empty, resend to the handing-back listener only, 128-message cap (`QUEUE_CAP`), `test_m4_messages.py::test_bus_ring_cap_and_direct_resend`.
 
+## Extension points
+Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
+
+- **Message ids** (registry `messages`, key = StrCode32): vanilla ids, categories and argument values are registered; a mod's own ids are StrCode32 of `"<ns>.Name"` and may not collide with any registered id (M10 G4) [B M10 G1].
+- **SendCommand handlers** (registry `commands`, key `"<handler>:<Command>"`): `TypeManager.command` dispatches to registered handlers of the type (`handlers` by StrCode32) [B M10 G1]; chaining (`fn(next, ...)`) planned (M10 G3).
+- **Listeners**: `MessageBus.add_listener`; the mod-facing `ctx.listen` is planned (M10 G3).
+
 ## Open
 Where the frame calls this bucket's drain relative to the mission `OnUpdate` (called through the vtable; no static caller) [?]; full Msg name table per sender; when `0x140BF9A20` fires.
 

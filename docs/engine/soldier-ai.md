@@ -280,7 +280,7 @@ Forced2 ended at 244 s (reply lost on the pipe, driver now retries and always wr
 Seen in hand play only, not pinned: other CPs went to caution when this CP fell back (`m9_humanplay1_contaminated`) [?].
 
 ## Extension points
-Planned for the engine's Mod API (none built yet):
+Mod API: [`docs\engine\ModAPI.md`](mod-api.md). Built (M10 G1): phase rates, realize margins and route constants are `parameters`, the route step table, request ids and investigator counts are `ai_tables`, all registered by vanilla. Planned overrides and hooks:
 
 - **Radio types and priorities:** the per-type attribute (`GetRadioAttributeByRadioType`) and what each type's finish does (the per-phase callbacks) as a registry; a mod adds a type or changes which finish ends a phase.
 - **Member roles:** role kinds (none, investigate, radio, guard, mortar, turret, anti-sniper ...) registered with their process step, so a mod adds a role or changes how many members investigate (live: 3 at the alert front line, 2 in alert state 2, 4 in evasion; `cp_phase.INVESTIGATORS`).

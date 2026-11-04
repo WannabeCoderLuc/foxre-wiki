@@ -54,6 +54,12 @@ Per-frame update 0x1401611F0 → 0x140161500; parameters copied from `StageBlock
 
 Engine model (`Engine\world\stage_blocks.py`): `PositionSetter`, `StageBlockController` (index, hysteresis, list-B large blocks, messages), `StageBlocks` (host: controller per location `StageBlockControllerData`, `StageBlock` / `StageBlockCurrentPositionSetter` Lua libraries). Save images carry `vars.initialPlayerFlag / PosX / PosZ`. Verifier: `test_m6_world.py` (`test_small_block_index_formula`, `test_host_stage_block_messages_match_live`: host = live for f30010 and f30020).
 
+## Extension points
+Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
+
+- **Stage-block and identifier data** from mods (new block grids, locators): planned with MOD-D; block messages (`StageBlockCurrentSmallBlockIndexUpdated`, `OnChangeLargeBlockState`, `OnScriptBlockStateTransition`) are registered message ids [B M10 G1].
+- Stage-block natives are registered through the host's natives registry [B M10 G1].
+
 ## Open
 - Stage blocks: which slot set (A window / B margin) drives `OnChangeLargeBlockState`; FSTB record +0x04 and the LOD package lists; small-block / LOD streaming (`OnChangeSmallBlockState`) not modelled; real load latency of a large block.
 - Title menu and CONTINUE: done 2026-10-29 [V static + live order] (ScriptHost.md "Title menu and CONTINUE (M6)", `Engine/runtime/title.py`); the raisers of `UI.TitleMenuReady` / `RequestPlayRecordClearInfo` stay [?] (obfuscated code).

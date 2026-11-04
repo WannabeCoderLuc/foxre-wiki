@@ -38,7 +38,11 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
 -   **[Soldier AI](soldier-ai.md)**
 
-    Capture protocol, far mode, move speeds, route state, phases (M9, IN PROGRESS).
+    Capture protocol, far mode, move speeds, route state, phases (M9, PASS).
+
+-   **[Mod API](mod-api.md)**
+
+    Registries, manifest, loader, extension kinds, sandbox, determinism (M10, IN PROGRESS).
 
 -   **[World streaming and locators](world.md)**
 

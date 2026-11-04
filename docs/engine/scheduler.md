@@ -90,6 +90,13 @@ Named: 17 of 24 (15 [V], 2 [I]: prio 13 marker, prio 21 HighSpeedCamera functor 
 - Task-bucket listener `0x140BF9A20` [V]: reads the target id from a variant (`+0x20 & 7`: 1/2 integer, 3 double), `typeIndex = id >> 9` (< 128), calls **TypeManager vt+0x78(message)**.
 - SendCommand `0x140BFA380`, SendMessage `0x140BFA510`, MessageBus raise `0x140BF3A30` — verified, see Messages.md.
 
+## Extension points
+Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
+
+- **Updaters** (registry `updaters`, `UpdateService.register_from`): a mod adds a system with a priority; vanilla updaters (24, M3 live vector) are registered as descriptors (vtable, priority). Equal priorities keep registration order (insertion sort), so load order decides ties [B M10 G1].
+- **GameObject types** (registry `gameobject_types`, `GameObjectManager.register_from`): a mod registers a free type index (vanilla holds 0-91) with a manager factory and an update group [B M10 G1].
+- Lifecycle `OnAllocate / OnInitialize / OnUpdate / OnTerminate` and before / after hooks on the frame: planned (M10 G3).
+
 ## Open
 - Updater names still [?]: prio 0, 5, 6, 12, 16, 20, 22 (behaviour known, table above); which updater walks the 4 type groups.
 

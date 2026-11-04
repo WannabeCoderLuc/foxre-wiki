@@ -80,6 +80,12 @@ With the player far away, soldiers move exactly on `.frt` route edges: of 170 mo
 ## Engine module (`Engine\world\navigation.py`)
 `NavWorld.add_file`, `set_loaded`, `set_blocked`, `set_runtime`, `in_loaded`, `locate`, `find_path(start, goal, filter=, cost_mult=, cost_mask=)` (sets `status`), `subgoal_along`, `track_route`, `edge_speed_class`, `edge_move_family`. Vertices, node positions, g / h / f and relaxed points are float32; the ray's side tests compare float32 inputs in double [I: no difference at the gate margin, revisit for C++]. The obstacle / triangle overlap test is a separating-axis version of 0x1401A73F0 [I].
 
+## Extension points
+Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
+
+- **Nav worlds and path queries**: a mod world brings its own `.nav2` (MOD-D); the codec is the registered loader for `nav2` / `1.nav2` [B M10 G1].
+- Route step table and arrival distances are registry data (`ai_tables` `route.*`, `parameters` `route.*`) [B M10 G1]; overriding them is MOD-B / M10 G3.
+
 ## Open (E33)
 What creates the runtime state: block bits and obstacle activation, ring placement, off-mesh link sources (0x140502FC0 -> 0x141C7CE30), who adds blocked pairs; the engine replays them. Cluster-level dynamic links (`islandGraph...`) are not ported and no job needed them. Sneak-vs-alert comparison on the same jobs; other missions and locations; what starts a path request while on a route (`SoldierAI.md`, open).
 

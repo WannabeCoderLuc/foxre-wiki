@@ -181,6 +181,13 @@ Some chunks are loaded by natives, not by Lua: `TppSoundDaemon{…}` (constructo
 ## FoxTrace lesson: enable hooks together
 FoxTrace installs hooks on its own thread while the game keeps booting. With 16 hooks enabled one by one (each `MH_EnableHook` suspends all threads) the late hooks went live after the registrations they were meant to see (capture 3: `fox_class_add` 0 calls, early stock libs missing, runs disagreeing). Fixed 2026-10-22: create all hooks, then one `MH_EnableHook(MH_ALL_HOOKS)` → capture 4 complete and identical over 2 runs. New arg types for Fox strings: `S` (`char**`), `T` (`fox::String*`), `n`/`N` (`int*`/`double*`); per-hook `skip=<caller VAs>`.
 
+## Extension points
+Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
+
+- **Lua libraries** (registry `lua_libraries`): `ScriptHost.register_upto` installs only what the host's registry holds, in registration order; vanilla registers the 399 bound libraries of `m4_lua_bindings.json` [B M10 G1].
+- **Natives** (registry `natives`, `ScriptHost.natives` is a live view): vanilla registers the host's implementations and recorded answers; a mod or test overrides a key (layered, owner recorded) or adds `"<ns>.Func"` keys [B M10 G1].
+- **Lua mods**: `ScriptHost(mods=[...])` loads mods after vanilla; Lua mod sandbox planned (M10 G4, [`docs\engine\ModAPI.md`](mod-api.md) "Sandbox").
+
 ## Open [?]
 - Mission load: answered 2026-10-23 in `Resources.md` (location loader, mission block controller, script resources, `OnAllocate`/`OnInitialize` coroutines, pack-scoped VFS).
 - Class behind vtable 0x1422A9710: the mission block controller created by the `TppSimpleMissionBlockControllerData` DataBody (`Resources.md`) [V identity; class name "TppSimpleMissionBlockController" [I]].

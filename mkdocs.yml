@@ -133,6 +133,7 @@ nav:
       - "Resources and mission load": engine/resources.md
       - "Navigation and routes": engine/navigation.md
       - "Soldier AI": engine/soldier-ai.md
+      - "Mod API": engine/mod-api.md
       - "World streaming and locators": engine/world.md
       - "Claims ledger": engine/claims.md
       - "Claims: contradictions": engine/claims-contradictions.md

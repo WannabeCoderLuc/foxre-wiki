@@ -45,5 +45,11 @@ Lua access confirmed: Data properties are readable by name from Lua (`d.name`, `
 ## Physics data links (E7, 2026-10-29)
 `PhxAssociation.physicsData` (`.ph`) and `SimOnPhysics.physicsData` (`.sim`) are EntityLinks named `<owner name>_PhysicsData` [D]. Over all 393 `.ph` + 408 `.sim` DataSets: every file holds exactly one `PhObjectDesc` (bodies, constraints, bodyIndices) and one such link; the archive is the file itself (799) or, in 2 `.sim` copies, the MGO original; the link handle points into a hole in the file's entity address sequence (no entity has it), and `PhObjectDesc` sits in a separate address range [D]. Reading [I]: the editor's `<owner>_PhysicsData` entity is baked into `PhObjectDesc` at export; the plain exe has no `_PhysicsData` string [V], so the runtime creation path is not statically visible [?]. Engine rule (`Engine/core/entities.py`): an unresolved `*_PhysicsData` link resolves to the target file's single `PhObjectDesc` (stat `link.physics_desc`; s10151: 54 / 54). Formats: `.ph` / `.sim` / `.phsd` are FOX2 DataSets ([`docs/formats/FOX2.md`](../formats/fox2.md)), not `.geom`.
 
+## Extension points
+Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
+
+- **Reflection classes** (registry `reflection_classes`): every class of the type DB is registered by vanilla [B M10 G1]; a mod's new `.fox2` class from a mod DataSet is planned (M10 G3).
+- Entity build from `.fox2` reads classes through the type DB; mod classes join it through the registry.
+
 ---
 <small>Source: `docs/engine/Entities.md` in the project repository &middot; generated 2026-11-04.</small>

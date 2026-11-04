@@ -40,6 +40,11 @@ PropertyInfo (0x48 B): vtable (slot 1 = arraySize), name +0x10, offset +0x18, ar
 ## Engine API
 `TypeDB().classes[name]`, `.chain(name)`, `.is_a(name, base)`, `.properties(name)` (inherited, serialization order), `.property(name, name_or_hash)`, `.resolve(class_hash)`.
 
+## Extension points
+Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
+
+- **Classes** (registry `reflection_classes`, key = class name, value super / version / StrCode64 hash): vanilla = `fox_edb.json` [B M10 G1]; mod classes (namespaced) planned (M10 G3).
+
 ## Open
 Fx node classes' properties (from data only); dynamic properties (165 entities) — runtime-only, no registry entry.
 

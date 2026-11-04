@@ -72,4 +72,4 @@ node WaitIdle 0xAFC35AAB 58k, CautionWalkFire 0x4E92CA60, VehicleIdle 0x75ABAE82
 - no immediate in the plain exe: 0xA00447C1 (s10151) [?].
 
 ---
-<small>Source: `docs/formats/FRT.md` in the project repository &middot; generated 2026-11-01.</small>
+<small>Source: `docs/formats/FRT.md` in the project repository &middot; generated 2026-11-04.</small>

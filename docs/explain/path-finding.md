@@ -76,4 +76,4 @@ Three mistakes in our own logging looked like engine errors for a long time, and
 - All captures are Afghanistan, mission 30010, sneak phase. Alert, other missions, Africa and Mother Base are untested.
 
 ---
-<small>Hand-written article (`docs/site/explain/Path-Finding.md`) &middot; published 2026-11-01.</small>
+<small>Hand-written article (`docs/site/explain/Path-Finding.md`) &middot; published 2026-11-04.</small>

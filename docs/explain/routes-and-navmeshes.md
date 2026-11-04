@@ -32,4 +32,4 @@ FoxTrace logs every path job in the real game, with its inputs and the state of 
 - Other missions, Africa, Mother Base and alert phases are not tested yet.
 
 ---
-<small>Hand-written article (`docs/site/explain/Routes-And-Navmeshes.md`) &middot; published 2026-11-01.</small>
+<small>Hand-written article (`docs/site/explain/Routes-And-Navmeshes.md`) &middot; published 2026-11-04.</small>

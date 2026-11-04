@@ -4,7 +4,8 @@
 
 ## The findings
 - A CP has a phase: 0 sneak, 1 caution, 2 evasion, 3 alert. It falls by itself, one step at a time [V, D].
-- Each phase runs one 0-to-1 timer at its own rate: caution 36 minutes, evasion 2 minutes, alert 30 seconds, before multipliers [V, from code; not yet read live].
+- Each phase runs one 0-to-1 timer at its own rate: caution 36 minutes, evasion 2 minutes, alert 30 seconds, before multipliers [V, D: read live in every CP].
+- A phase ends when the CP's report request finishes, not when the timer hits 0 [V, D two runs].
 - `SetPhase` works per CP but takes effect later [D].
 - Only **18 soldiers** are fully simulated at once, chosen each frame [V, D].
 - Lowering sight distance to 0 does not stop a base noticing you [D, cause not known].
@@ -35,7 +36,7 @@ GameObject.SendCommand(cp, { id = "SetKeepCaution", enable = true })
 This sets a flag and, if the base is below evasion, also requests caution and fills the timer [V 0x140D63510]. Vanilla scripts use it: s10150, and s10070 together with `SetCpForceSiren`. Turn it off with `enable = false`. Whether the flag is what stops the timer draining is not checked [?].
 
 ## Changing how long phases last
-No vanilla Lua command sets the lengths; they are rates in memory. *Nothing in this section has been tested by us.*
+No vanilla Lua command sets the lengths; they are rates in memory. *The fields were read live by a log-only hook (2026-11-04); writing them has not been tested by us.*
 
 | Field (from the CP impl, `*(self + 0x70)`) | Meaning |
 |---|---|
@@ -46,9 +47,9 @@ No vanilla Lua command sets the lengths; they are rates in memory. *Nothing in t
 | `+0x30`, stride 0x60, `+0x48` / `+0x4C` | Current phase / requested phase |
 | `+0x158` | Frame time |
 
-Drains: caution `0x140D6E960`, evasion `0x140D6FD90`, alert `0x140D6B7E0`.
+Drains: caution `0x140D6E960`, evasion inside state `0x140D708F0`, alert `0x140D6B7E0`.
 
-A wanted length L in seconds means a rate of 1/L, for the base case. Alert and evasion also have multipliers, so a rate change there will not give an exact length. Before building on this, read the rates in the running game with a log-only hook. The community's V_Framework `SetCautionPhaseDuration` hooks the caution drain and replaces its amount. It is a community example of this approach; check its addresses in the [claims ledger](claims.md).
+A wanted length L in seconds means a rate of 1/L **for the timer only**. The phase then still waits for its reports: after alert's timer reaches 0 our runs needed about 31 s more (reports 0x3C and 0x3B), and evasion ended on report 0x3A at 61 s with its timer still at 0.67 [D]. So a faster evasion rate alone will not shorten evasion, and a longer alert rate adds to that 31 s. Requests finish in the callbacks `0x140D6BF00` (alert), `0x140D70370` (evasion), `0x140D6ECC0` (caution). The community's V_Framework `SetCautionPhaseDuration` hooks the caution drain and replaces its amount. It is a community example of this approach; check its addresses in the [claims ledger](claims.md).
 
 ## Choosing who is simulated
 Each frame the game picks **18** soldiers inside a 640 x 640 m window around the player, inset 32 m to enter and 28 m to stay [V, D]. Closest to the window's centre come first; height counts. So:
@@ -87,7 +88,7 @@ GameObject.SendCommand(cp, { id = "SetPhase", phase = TppGameObject.PHASE_SNEAK 
 
 4. Give guards a tighter route for caution in advance with `SetCautionRoute` ([Navmeshes and routes in a mod](navigation-and-routes.md)).
 
-This uses only Lua commands. Without it, caution would last far longer: up to 36 minutes by the timer's table [I]. So simply requesting sneak sooner is also a usable "shorter caution" mod.
+This uses only Lua commands. Without it, caution would last far longer: its timer alone runs 36 minutes [V, D rate and slope], before its closing report. So simply requesting sneak sooner is also a usable "shorter caution" mod.
 
 Things to check in such a mod: sneak forced after alert left one soldier standing still in our run, and other CPs follow this one's phases (8 other CPs went to caution about 21 s into evasion) [D].
 
@@ -98,4 +99,4 @@ Things to check in such a mod: sneak forced after alert left one soldier standin
 - The offsets above are for this build. Check before hooking.
 
 ---
-<small>Hand-written article (`docs/site/mods/Soldier-AI.md`) &middot; published 2026-11-01.</small>
+<small>Hand-written article (`docs/site/mods/Soldier-AI.md`) &middot; published 2026-11-04.</small>

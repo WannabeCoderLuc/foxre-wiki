@@ -1,6 +1,6 @@
 # Soldier AI
 
-Far mode, move speeds, route state and CP phase sequences of `TppSoldier2`, f30010. Engine: `Engine/world/realize.py`, `Engine/world/route_follow.py`. Tests: `Engine/tests/test_m9_soldier.py`, `test_m9_route.py`. Fixtures: `m9_soldier_free.json`, `m9_soldier_forced.json` (`Tools/m9_fixture.py`), `m9_route.json`, `m9_known.json` (`Tools/m9_route_fixture.py`). Tags: [V] static or exact, [D] measured live, [I] inferred, [?] open.
+Far mode, move speeds, route state and CP phase sequences of `TppSoldier2`, f30010. Engine: `Engine/world/realize.py`, `Engine/world/route_follow.py`. Tests: `Engine/tests/test_m9_soldier.py`, `test_m9_route.py`. Fixtures: `m9_soldier_free.json`, `m9_soldier_forced.json` (`Tools/m9_fixture.py`), `m9_route.json`, `m9_known.json` (`Tools/m9_route_fixture.py`), `m9_phase.json` (`Tools/m9_phase_fixture.py`); phase port `Engine/world/cp_phase.py`, test `test_m9_phase.py`. Tags: [V] static or exact, [D] measured live, [I] inferred, [?] open.
 
 ## Capture protocol
 Near soldiers the run must stay readable and the player must not die. `Tools/m9_run.py <name> <plan>` runs one capture end to end (deploy, boot, drive, stop, restore); the driver is `Tools/m9_drive.py`, plans in `Tools/m9_plans/`. Runs live in `Memory/research/m9_*`, apart from `m8_nav14`, `m8_nav15`.
@@ -26,6 +26,7 @@ Rules that came from mistakes:
 - The game keeps 60 fps without window focus [D], so focus is logged, not a stop; other use of the PC does not spoil a run unless it reaches the game.
 - Hits push the player: `m9_sb_forced1` stopped on a 4 m push at the end of the fire test, as it should. Its fixture part ends before that test.
 - Patrol trucks notice the player too: `m9_route2` stopped at 228 s when one drove past (Luc saw it); its fixture part ends there.
+- **The save and IH settings are part of the setup (2026-11-04).** A save that starts in the heli drops the warp and flies the player (stopped `m9_phase1` at 18 s); a night checkpoint gives night routes (soldier 81 stood on `rt_sovietBase_snp_0002n`); IH route-set randomisation, CP subtype and revenge options moved soldier 81 to a sniper route. Runs need `ih_save.lua` = `Backups\ih_save\20261101_opt_test` and the checkpoint at (1040, 322.5, 1214.5) at 12:00, written with `UpdateCheckPointAtCurrentPosition()` outside a run.
 - **Never save during a run.** Life, clock and weather live in `vars` and would go into the checkpoint. The driver watches the save file. A checkpoint written out of bounds put the player at y = -79.2 on every boot; repaired on 2026-11-01 with `TppMission.UpdateCheckPointAtCurrentPosition()` from solid ground with vanilla state (old save: `Backups\saves\20261101_before_spawnfix`). The likely source is the M7 warp drops of 2026-10-29: the save's date matches [I].
 
 ## Far mode is the unrealized state [V 0x141551820, D live]
@@ -100,10 +101,25 @@ The driver warps the player 20 m ahead of a walking soldier; no SetPhase. 61 s l
 - 8 other CPs go to caution together 21 and 22 s after this CP enters evasion.
 - The target: route state 3 from the alert until caution, route 7DA571CF still stored. At caution a new route E99EB6C3, state 0, then 2 and 1 in turn.
 
-**Not pinned, differs between runs:** alert lasted 58 and 180 s past the player's leaving; evasion 59 and 42 s (commanded evasion: about 26 s); the move bits during the fight.
+**Not pinned, differs between runs:** alert lasted 58 and 180 s past the player's leaving; evasion 59 and 42 s (commanded evasion: about 26 s); the move bits during the fight. `m9_phase1`, `m9_phase2` (same plan, request log) agree within 0.8 s: see "CP phase timers".
 
-## CP phase timers (static decode 2026-11-01, not yet logged live)
-Each CP has one **normalized timer, 1.0 down to 0**, not seconds. Offsets are from the CP impl (`*(state object +0x70)`). Nothing here has been read from a running game: the rule below predicts, the runs still have to confirm.
+## CP phase timers [V static, D live 2026-11-04: runs `m9_phase1`, `m9_phase2`, CP index 39 = afgh_sovietBase_cp]
+Each CP has one **normalized timer, 1.0 down to 0**, not seconds. Offsets are from the CP impl (`*(state object +0x70)`). FoxTrace `cpphase` hooks the state functions and polls the record; `notice` hooks AddNoticeInfo (FoxTrace 3.1).
+
+**The rule [V, D two runs]: a phase falls back when a CP request it sent has finished, not when its timer runs out.** Requests are sent by impl vt+0x30 (0x140D62660, returns a u16 handle) or `impl+0x18` vt+0x60 (0x140D733F0); on message 0xCE56A00E a per-phase callback switches on the finished id: alert 0x140D6BF00, caution 0x140D6ECC0, evasion 0x140D70370, a fourth 0x140D81CA0 (not identified [?]). The timer only decides when a phase starts asking. Request durations are radio and report lengths (not decoded [?]), which is why phase lengths differed between the older runs.
+
+| Step (player gone, multiplier 1) | Run 1 | Run 2 | Source |
+|---|---|---|---|
+| Alert: timer held at 1.0 while seen (+0x44 set) | 62 s | 62 s | [V 0x140D6CA20, D] |
+| Alert drain 1.0 -> 0 at 1/30 x dt, float32, stops at the first value <= 0 | 1798 frames | 1798 frames | [D bit-exact] |
+| State 1 sends 0x3C; finished -> state 2 (1 frame) | 4.5 s | 3.7 s | [V 0x140D6D240, D] |
+| State 2 waits while record +4 bit 7 is set, then sends 0x3B; 0x3B finished with timer < 0.8 -> +0x4C = 2 (1 frame) | 21.1 + 5.2 s | 21.2 + 5.2 s | [V 0x140D6D4D0, 0x140D6BF00 case 0x3B; D] |
+| Evasion: sends 0x51, its finish sends 0x53; 0x3A finished -> +0x4C = 1 (1 frame), timer still 0.67 | 3684 frames | 3684 frames | [V 0x140D70370 cases 0x51, 0x3A; D] |
+| Caution drain at 1/2160 x dt (36 min), then 0x39 | x1.003 slope | x1.003 | [V 0x140D6F480, D slope] |
+
+So alert past the player's leaving = 30 s + about 4 s + 21 s + 5 s = 60.8 s in both runs, the 58 s of `m9_known1`. Who sends 0x3A, what sets and clears record +4 bit 7 (21 s both runs; the 20 s countdown of 0x140D6DCF0 is a candidate [I]) and the 180 s alert of `m9_known2` (unlogged) are open [?]. Alert sends 0x3D on entry (finished 8.4 s later, no phase effect seen).
+
+Phase state tables [V static initialisers 0x142014A70 ...]: sneak 0x142C3E118 {0x140D68F80, 0x140D694D0, 0x140D69000}, alert 0x142C3E150 {0x140D6CA20, 0x140D6D240, 0x140D6D4D0}, caution 0x142C3E188 {0x140D6F210, 0x140D6F480}, evasion 0x142C3E1B8 {0x140D708F0, 0x140D70CC0}; entries are 16 bytes. 0x142C3E1F0 is not a state table (0x140D71900 takes 3 arguments). State record (argument 4): +0 u16 flags (evasion bits 6, 2), +4 u32 flags, +8 float time in state.
 
 | Impl field | Meaning [V unless tagged] |
 |---|---|
@@ -120,7 +136,7 @@ Each CP has one **normalized timer, 1.0 down to 0**, not seconds. Offsets are fr
 | Evasion (2) | 0x3C088889 = 1/120 | **120 s** | 0x140D6FD90 | 0x140D6FFD0 writes +0x4C = 1 |
 | Alert (3) | 0x3D088889 = 1/30 | **30 s** | 0x140D6B7E0 | 0x140D6BBA0 writes +0x4C = 2 |
 
-Caution's 36 minutes fits "caution held 214 s or more" [I: the timer's start value was not logged]. No script timer is involved. The retired V_Framework's `SetCautionPhaseDuration` hooks this same drain and replaces its amount.
+Live: every CP of both runs holds exactly these three rates [D]. Caution's timer starts at 1.0 and drains at x1 [D], so 36 minutes before it starts asking (0x39). No script timer is involved. The retired V_Framework's `SetCautionPhaseDuration` hooks this same drain and replaces its amount.
 
 **Alert drain 0x140D6B7E0** (runs only while +0x44 = 0; otherwise the state update holds the timer at 1.0, 0x140D6CA20). Rate x frame time, then:
 
@@ -130,9 +146,9 @@ Caution's 36 minutes fits "caution held 214 s or more" [I: the timer's start val
 - `vt+0x98` true: x 1.5.
 - State record +4 bit 0x20000 clear: timer goes straight to 0.
 
-**Why alert varies [I, not measured]:** alert past the player's leaving was 58 and 180 s. The band gives 27 + 30 = 57 s or 27 + 120 = 147 s plus the time +0x44 takes to clear. The first is close, the second needs a further 33 s. The run must log which multiplier applied.
+**Which multiplier applied [D]:** none. With the player 500 m away the slow band's 10 m test fails and the drain is plain 1/30 per second, bit-exact. The band and the x2 / x1.5 cases are still static only.
 
-**Evasion drain 0x140D6FD90:** state record bit 6 clear: timer 0 at once. Otherwise base rate; x 20 or x 10 by the member byte (impl +0x80, stride 0x1C, +0x16) and record bit 2; the same player state test x 3 (x 1.2 with +0x176 bit 0); +0x54 bit 18 back to base. So 6, 12 or 120 s from the table, none of which equals the measured 26, 42, 59 s. **Evasion is not explained** [?]: the evasion state's own writes (timer capped to 0.07, 0x140D709A6, with +0x54 bit 18) and its start value need the live log.
+**Evasion drain 0x140D6FD90:** state record bit 6 clear: timer 0 at once. Otherwise base rate; x 20 or x 10 by the member byte (impl +0x80, stride 0x1C, +0x16) and record bit 2; the same player state test x 3 (x 1.2 with +0x176 bit 0); +0x54 bit 18 back to base. The drain runs inside evasion state 0's update (0x140D708F0 op 2): x 20 unless the member byte has bit 0x40, else x 10 unless record +0 bit 2 is set, else x 1. Live record +0 = 0xEF (bits 6 and 2 set): **x 1, 120 s** [D]. **Evasion is explained by the request rule above** (61.4 s, ended at timer 0.67); the 26 s of commanded evasion and the 59 / 42 s of `m9_known` came without a request log [?].
 
 **Caution drain 0x140D6E960:** runs only if state record +4 bit 31 is set, else timer 0 at once. Skipped while `vt+0xE8` answers true. A true answer from system `Quark +0x98 +0xF8` (query 8) makes it skip one update and set record bit 0x20.
 
@@ -146,7 +162,7 @@ Caution's 36 minutes fits "caution held 214 s or more" [I: the timer's start val
 
 **0x140D6DCF0 (180 s and 20 s)** is not the phase timer. It runs a separate countdown at state object +0x78, stride 0x30, +0x20, tied to reinforcement: 180 s, or 20 s if the +0x2A count is nonzero; 5 s and 30 s on its other paths.
 
-**Live logging plan:** hook the state functions above for the impl pointer and state changes, poll the phase record each frame in `h_FrameJob`, hook `AddNoticeInfo` 0x1414DBA80 for who noticed.
+**Who noticed [D run 1, I names]:** AddNoticeInfo 0x1414DBA80 (self, soldier, info[16]) -> 1 if stored; info[0] = kind. Only soldier 81 noticed: kind 0 from 0x1414E1F27, inside `CheckSightNoticePlayer` (0x1414E0FC0, name from the V_Framework hook list [I]), stored at f5972; alert 251 frames (4.2 s) later. Kind 55 (0x37, from 0x1414DF08C) followed. FoxTrace keeps one row per change, and two alternating kinds give a row each frame (578 rows). The sight-scale runs were not repeated with this log.
 
 ## Phases [D, forced, soldier 78, afgh_sovietBase_cp, player 120 m away]
 - Sneak: route 1E072FB4, state 2 at the node.
@@ -161,10 +177,10 @@ Seen in hand play only, not pinned: other CPs went to caution when this CP fell 
 
 ## Open
 - The move table of unrealized soldiers; bits 0x30.
-- Phase lengths: base rates and alert multipliers decoded statically; not read live, not ported. Evasion's measured lengths do not fit the table. Who noticed; whether `SetKeepCaution` feeds `vt+0xE8`.
+- Phase lengths: the request rule is pinned over two runs (`test_m9_phase.py`); request durations (radio), the 0x3A sender, record +4 bit 7, the slow band live, commanded evasion's 26 s; whether `SetKeepCaution` feeds `vt+0xE8`.
 - Node waits longer than `time`; steps 4, 5, 0x10; the same-spot test; arrival tests in the port.
-- Sight scale at 0 with who noticed logged; hearing, which needs a noise source; the hit-push path of the driver.
+- Sight scale 0 and 100 with the notice log (one run each); hearing, which needs a noise source; the hit-push path of the driver.
 - A second base and Africa; the +0x1A0 byte (0 on all soldiers in the last 20 samples of `m9_route1`), the view test and the slot swaps in the port.
 
 ---
-<small>Source: `docs/engine/SoldierAI.md` in the project repository &middot; generated 2026-11-01.</small>
+<small>Source: `docs/engine/SoldierAI.md` in the project repository &middot; generated 2026-11-04.</small>

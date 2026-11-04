@@ -130,4 +130,4 @@
 - **Render:** `navmesh_tool.py tris <tile> --out f.png [--mesh N|all]`. Outputs: `navmesh/sahelan_arena_tris.png`, `navmesh/afgh_113_120_tris.png`.
 
 ---
-<small>Source: `docs/NAVMESH.md` in the project repository &middot; generated 2026-11-01.</small>
+<small>Source: `docs/NAVMESH.md` in the project repository &middot; generated 2026-11-04.</small>

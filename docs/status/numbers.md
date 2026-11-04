@@ -4,7 +4,7 @@ Counted from the project repository at build time.
 
 - Milestones passed: **8 of 15**
 - Verified engine modules: **17** (table on the home page)
-- Test files: **27**, ground-truth fixtures: **17**
+- Test files: **28**, ground-truth fixtures: **18**
 
 | Milestone | Status |
 |---|:-:|
@@ -25,4 +25,4 @@ Counted from the project repository at build time.
 | M14 Playable slice | <span class="status planned">PLANNED</span> |
 
 ---
-<small>Generated 2026-11-01 from the project repository.</small>
+<small>Generated 2026-11-04 from the project repository.</small>

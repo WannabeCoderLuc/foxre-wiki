@@ -107,8 +107,8 @@ Handler families: the owner column of `cmd_handlers.tsv` is approximate (`~`); t
 ```
 
 - `namespace`: `[a-z][a-z0-9_]{1,31}`, unique; `vanilla` and `engine` reserved.
-- `api`: `major.minor` of the Mod API it was written for; accepted when major equals and minor <= the engine's (0.x: minor must be equal, no compatibility promise before 1.0).
-- `kind`: `python` (prototype mods, trusted, same process) or `lua` (sandboxed, below).
+- `api`: `major.minor` of the Mod API it was written for. **Strict during 0.x (D2, Luc 2026-11-04):** the minor must equal the engine's, otherwise the mod is refused with a message naming both versions; from 1.0 a mod loads when the major equals and its minor <= the engine's.
+- `kind`: `python` or `lua`. **Python mods are trusted (D1, Luc 2026-11-04):** they run in the engine process with full access, for prototypes you write or have read yourself; never load a Python mod from an unknown source. Mods meant for sharing are Lua (sandboxed, below).
 - `depends`: hard dependencies (missing -> refused); `after` / `before`: soft order constraints.
 
 ## Loader [B G1 order, P G4 / G5]
@@ -117,7 +117,7 @@ Handler families: the owner column of `cmd_handlers.tsv` is approximate (`~`); t
 1. Validate every manifest (namespace, API version, entry).
 2. Resolve order: `vanilla` first; then a topological sort over `depends` + `after` + `before`, ties broken by namespace (stable, independent of the filesystem). Missing dependency or a cycle refuses the whole set with a precise error.
 3. For each mod in order: build a `ModContext(registries, manifest)` and call the mod's `register(ctx)`.
-4. Conflicts: registering a key that exists raises `Conflict` (owner of the existing entry and the new one named). New string keys of non-vanilla mods must be namespaced (`<ns>.Name`, message names hashed as StrCode32 of `"<ns>.Name"`); a new message id equal to an existing one is a collision (G4).
+4. Conflicts: registering a key that exists raises `Conflict` (owner of the existing entry and the new one named). New string keys of non-vanilla mods must be namespaced (**D3, Luc 2026-11-04**: `<ns>.Name`, message names hashed as StrCode32 of `"<ns>.Name"`; an unprefixed key is refused); a new message id equal to an existing one is a collision (G4).
 5. `ModLoader.order` and `Registries.dump_json()` are the load report.
 
 ## Extension kinds [P G3 reference mods, one each]
@@ -159,7 +159,7 @@ This document is the extension-point index; each subsystem spec names its own:
 - Vanilla tables registered from: `Engine\tests\fixtures\m4_lua_bindings.json` (Lua libraries), `m3_frame_trace.json` (updater vector, type update groups), `mgsv_unified_server\data\re\gameobject_type_index.tsv` and `cmd_handlers.tsv` (copied into `Engine\mods\vanilla\*.json`), `fox_edb.json` (reflection), constants of `Engine\runtime\*` and `Engine\world\*`.
 - `Engine\tests\test_m10_registry.py` (G1): every registry dump equals the table it came from; two builds give byte-identical dumps; the script host installs Lua libraries and natives only through the registry; M0-M9 gate test files unchanged against `verifiers.lock.json`.
 
-## Open (OPEN_QUESTIONS.md E42-E45, decisions D1-D3)
+## Open (OPEN_QUESTIONS.md E42-E45; decisions D1-D3 confirmed by Luc 2026-11-04)
 - Hook sites (G3): which engine functions expose before / after hooks, and the blackboard view types.
 - Lua mod sandbox and the instruction budget value (G4).
 - Overhead budget (G6): registry lookups are dict lookups at registration time; per-frame dispatch is unchanged until hooks exist.

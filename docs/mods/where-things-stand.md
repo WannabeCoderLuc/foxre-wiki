@@ -1,6 +1,6 @@
 # Where things stand for modders
 
-*Hand-written overview, as of 2026-11-04 (M9 IN PROGRESS). What is decoded, what the new engine already runs, and what the planned Mod API will offer. Order and gates: [Roadmap](../status/roadmap.md). Counts: [Numbers at a glance](../status/numbers.md).*
+*Hand-written overview, as of 2026-11-04 (M9 PASS, M10 next). What is decoded, what the new engine already runs, and what the planned Mod API will offer. Order and gates: [Roadmap](../status/roadmap.md). Counts: [Numbers at a glance](../status/numbers.md).*
 
 ## Three levels
 Every topic on this site sits at one of three levels:
@@ -26,7 +26,7 @@ Nothing is at the third level yet. The engine's own repository is private for no
 | Mission load, packages, script blocks, iDroid reload | yes | yes, the live script order | [Add a package to a mission](add-a-package.md), [Side content with script blocks](script-blocks.md) |
 | Locators and map blocks | yes | yes, live messages for both free-roam maps | [Locators and map blocks in a mod](locators-and-blocks.md) |
 | Path finding | yes, six stages | 948 of 948 live jobs within 0.1 m; obstacles replayed from recordings | [Navmeshes and routes in a mod](navigation-and-routes.md) |
-| Soldiers: far mode, route steps, CP phases, reports | partly (IN PROGRESS) | realize budget, route steps, phase timers and reports | [Soldiers and alert phases in a mod](soldier-ai.md) |
+| Soldiers: far mode, route steps, CP phases, reports, alert slow band | yes (M9 PASS) | realize budget, route steps, phase timers and reports, front point and slow band | [Soldiers and alert phases in a mod](soldier-ai.md) |
 | Damage, combat, weapons, animation, physics, sound, UI drawing, rendering | no | no | PLANNED (M12 to M21) |
 
 "Natives answered from recordings" means: when the game's Lua calls a native function the engine does not implement yet, the engine returns what the real game returned in a recorded session. From M10 on, each native gets an owning milestone that must implement it; the M17 headless slice runs with none recorded.

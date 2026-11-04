@@ -1,6 +1,6 @@
 # How soldiers think
 
-*M9, IN PROGRESS: this page describes findings so far and will change. Exact details: [Soldier AI](../engine/soldier-ai.md). Modding: [Soldiers and alert phases in a mod](../mods/soldier-ai.md). Tags: [V] read in the game's code, [D] measured live, [I] inferred, [?] open.*
+*M9, PASS (2026-11-04): the milestone gate passed; open points below may still change details. Exact details: [Soldier AI](../engine/soldier-ai.md). Modding: [Soldiers and alert phases in a mod](../mods/soldier-ai.md). Tags: [V] read in the game's code, [D] measured live, [I] inferred, [?] open.*
 
 ## What it is
 A base in the game is two layers. Each **soldier** walks, stops and reacts. Above them, a **command post (CP)** holds the base's shared state: its **phase**.

@@ -1,6 +1,6 @@
 # Soldiers and alert phases in a mod
 
-*Based on: [How soldiers think](../explain/soldier-ai.md). Exact details: [Soldier AI](../engine/soldier-ai.md). M9 is IN PROGRESS, so this guide will change. Addresses are for 1.0.15.4 EN. Live data comes from `afgh_sovietBase_cp`, with the same chain checked at a second base, `afgh_enemyBase_cp`. Tags: [V] read in code, [D] measured live, [I] inferred, [?] open.*
+*Based on: [How soldiers think](../explain/soldier-ai.md). Exact details: [Soldier AI](../engine/soldier-ai.md). M9 PASS (2026-11-04); open points may still change details. Addresses are for 1.0.15.4 EN. Live data comes from `afgh_sovietBase_cp`, with the same chain checked at a second base, `afgh_enemyBase_cp`. Tags: [V] read in code, [D] measured live, [I] inferred, [?] open.*
 
 ## The findings
 - A CP has a phase: 0 sneak, 1 caution, 2 evasion, 3 alert.

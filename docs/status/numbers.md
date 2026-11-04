@@ -17,8 +17,8 @@ Counted from the project repository at build time.
 | M6 World streaming & locators | <span class="status pass">PASS</span> |
 | M7 Terrain & collision formats [PASS 2026-10-29] — `.htre`/`.tre2`, `.geom` | <span class="status planned">PLANNED</span> |
 | M8 Navigation & routes | <span class="status pass">PASS</span> |
-| M9 Gameplay core | <span class="status in-progress">IN PROGRESS</span> |
-| M10 Mod API core [PLANNED, next after M9] — registries, manifest, loader, hooks (headless) | <span class="status planned">PLANNED</span> |
+| M9 Gameplay core [PASS, Luc 2026-11-04] — Soldier AI, CP / notice, damage, SendCommand handlers (headless) | <span class="status planned">PLANNED</span> |
+| M10 Mod API core [PLANNED, next] — registries, manifest, loader, hooks (headless) | <span class="status planned">PLANNED</span> |
 | M11 Asset formats | <span class="status planned">PLANNED</span> |
 | M12 Sound & UI logic | <span class="status planned">PLANNED</span> |
 | M13 Open world complete | <span class="status planned">PLANNED</span> |

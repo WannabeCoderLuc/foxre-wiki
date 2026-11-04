@@ -118,8 +118,8 @@ We imported 3,084 facts from IHHook, Infinite Heaven, V_Framework and the commun
 
 **Use it for.** Writing patrols that behave, and understanding why far soldiers ignore walls. See [Navmeshes and routes in a mod](navigation-and-routes.md).
 
-## 11. Soldiers and alert phases (M9, IN PROGRESS)
-**What we found.** Only 18 soldiers are fully simulated at once; the rest move on simplified speeds [V, D]. A CP's phase timer drains at 36 minutes for caution, 2 minutes for evasion and 30 seconds for alert, before multipliers [V, D read live]. But **a phase ends when the CP's radio report finishes, not when the timer runs out**, and the reports wait for the soldiers sent to investigate: 3, then 2, then 4 of them, until one marks the search point done [V, D at two bases]. A report lasts as long as its voice line. See [How soldiers think](../explain/soldier-ai.md).
+## 11. Soldiers and alert phases (M9, PASS)
+**What we found.** Only 18 soldiers are fully simulated at once; the rest move on simplified speeds [V, D]. A CP's phase timer drains at 36 minutes for caution, 2 minutes for evasion and 30 seconds for alert, before multipliers [V, D read live]. But **a phase ends when the CP's radio report finishes, not when the timer runs out**, and the reports wait for the soldiers sent to investigate: 3, then 2, then 4 of them, until one marks the search point done [V, D at two bases]. A report lasts as long as its voice line. The alert lingers while the player stays within 10 m of where a soldier last saw them: the last tenth of its timer then runs 100 times slower [V, D]. See [How soldiers think](../explain/soldier-ai.md).
 
 **Use it for.** Controlling phases from Lua, judging which changes really shorten or lengthen an alert, and setting up tests near soldiers that survive and can be repeated. See [Soldiers and alert phases in a mod](soldier-ai.md).
 

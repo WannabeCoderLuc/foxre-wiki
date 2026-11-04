@@ -87,7 +87,7 @@ Supersedes the M10-M14 rows above. M9 is unchanged (in progress). Three changes:
 
 | Order | Milestone | Depends on | Why here (feasibility) |
 |---|---|---|---|
-| M9 | Gameplay core (headless) | M3-M8 | IN PROGRESS, unchanged. |
+| M9 | Gameplay core (headless) | M3-M8 | PASS (Luc, 2026-11-04). |
 | **M10** | Mod API core (headless) | M2-M9 | No new RE and no live captures: registries, manifest, loader, sandbox and hooks over nine passed milestones. Fixes the extension points before more systems are built. |
 | M11 | Asset formats (+ sound containers) | M1, M10 | Offline, the proven M1 / M7 pattern (census → spec → byte-identical codec); community templates exist (FtexTool, `fmdl.bt`, `frig.bt`). Writers feed the mod importers. |
 | M12 | Sound & UI logic (headless) | M4, M5, M9, M11 | Both live at the Lua / native boundary M4 already records (`TppSoundDaemon.PostEvent`, `TppUiCommand`, popups, title flow). Events and states only; playback is M21, drawing M20. |
@@ -162,7 +162,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 - Moved to M9 (Luc, 2026-11-01): state sequence near the player, far-mode switch, run and dash speeds. Getting close needs protection and belongs with the AI behaviour captures.
 - **Gate (not met):** path queries equal live `RequestMove` results (fixtures); a soldier's route-following state sequence matches live.
 
-## M9 Gameplay core [IN PROGRESS] — Soldier AI, CP / notice, damage, SendCommand handlers (headless)
+## M9 Gameplay core [PASS, Luc 2026-11-04] — Soldier AI, CP / notice, damage, SendCommand handlers (headless)
 - GameObject families Soldier2 and Player2 (state, not animation), AI framework (node tables, blackboard), CP phase and notice, damage, SendCommand handlers. Evidence: `BATTLEFIELD.md`, `SAHELAN.md` §9–§10, `structs_soldier\`, the knowledge DB's command handlers.
 - **Live capture protocol first (Luc, 2026-11-01):** near soldiers the player must not die and runs must stay readable: unlimited health, recorded phase control, other measures confirmed to work, driver without combat input, unplanned events logged and the run marked. Clamped and free runs are never mixed in a fixture.
 - [x] Capture protocol written and proven (2026-11-01, `engine\SoldierAI.md`): 45 hits under alert with life unchanged, driver stops on hand input, phase rise, damage in free runs. Sight and hearing scale not confirmed, so not used.
@@ -173,7 +173,8 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 - [x] Third step, rest (2026-11-04, `test_m9_radio.py`, runs `m9_phase3`, `m9_phase4`, FoxTrace 3.2; names from the dev-build map `GeminiWork\decomp\mgsv.db`, bodies read): request ids are radio types spoken by members; the alert 21 s = soldier 81's investigate role (1264 frames both runs, record +4 bit 7 = `CheckActiveMember`), 0x3A = the investigator's own report (`InvestigateAiImpl` step 10, literal 0x3A), so evasion lasts as long as the investigation. Unrealized speeds decoded (`GetMoveVelocityForUnreal` 0x14139D600, port `realize.unreal_move_speed`). Sight scale 0: no notice at 3.5 m; 100: soldier 81 by sight 0.52 s, alert 4.6 s (one run each).
 - [x] G5 second base (2026-11-04, `test_m9_g5.py`, runs `m9_eb1`, `m9_eb2` at afgh_enemyBase_cp, lone patrol soldier 6, FoxTrace 3.3): alert -> evasion -> caution with the same radio chain; investigators given by `UpdateFrontLineInAlert` (3), alert state 2 (2), evasion (4); **the investigate role ends when the CP's search point is completed** (`Controller_CompleteInvestigation_` 0x140D57260 clears point bit 0x40; role update 0x140D7BBE0 drops the role, 0x3B the same frame); radio length = voice line playback (`RadioControllerImpl::StepRadio` waits on the voice player), measured per type (0x3C / 0x3B 147, 0x51 ~687, 0x53 ~622, 0x3A 95 to 178 frames by speaker). Port `cp_phase.role_holds`, `complete_investigation`.
 - [x] **G6 alert slow band point (2026-11-04):** impl +0x5D8 is the alert's front point, written by `UpdateCpAtHost` 0x140D65850: a seen player's position when it is more than 10 m from the point (1 s linger after sight is lost); the band applies while the player stays within 10 m of it. Ported (`cp_phase.front_point_update`, `linger`, `near_point`, `alert_drain_step`), pinned on runs `m9_g6d`, `m9_g6f` (band on by the 10 m test alone, x0.01), `m9_g6e` (band on, bit 7 also set) and `m9_g6b`, `m9_g6c` (no band); gate M9 6/6 PASS, for Luc's review, `test_m9_g6.py`.
-- [ ] Not done: evasion x0.025 stretch; flag bits -> unrealized (phase, speed) live; +0x1A0 byte, view test, slot swaps in the realize port; hearing.
+- **Gate accepted by Luc (2026-11-04): G1-G6 PASS.** Damage and SendCommand handlers beyond phase control were not gate items: damage moves to M15 Combat, the handler set to the M10 registries.
+- [ ] Leftovers (not gate items): evasion x0.025 stretch; flag bits -> unrealized (phase, speed) live; +0x1A0 byte, view test, slot swaps in the realize port; hearing.
 - [x] Far-mode switch decoded (2026-11-01): realize budget 18 inside the stage window, 32 m in / 28 m out, 0x141551820; `Engine\world\realize.py`, 159 of 181 live lists equal, the rest within sample age.
 - [x] Run and dash speeds measured (2026-11-01): realized 2.50, 4.01, 6.43; unrealized 2.00, 2.75, 4.00.
 - [x] Route state decoded (2026-11-01): impl +0xE8 route + state; 3 -> 2 <-> 1, 3 -> 0 -> 1 pinned.
@@ -182,7 +183,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 - [x] Soldier behaviour by phase: evasion, alert with a known target as state sequences; a second base (G5, 2026-11-04).
 - **Gate:** per system, behaviour fixtures (state sequences) reproduced.
 
-## M10 Mod API core [PLANNED, next after M9] — registries, manifest, loader, hooks (headless)
+## M10 Mod API core [PLANNED, next] — registries, manifest, loader, hooks (headless)
 - Data-driven registries for everything M2-M9 built: GameObject types, SendCommand handlers, message ids, updaters (phase + priority), AI node tables, resource loaders, reflection classes, Lua libraries. Vanilla registered through the same path.
 - Mod manifest (namespace, API version 0.x, dependencies, load order); loader with conflict detection; Lua mods in the `lua51_run` sandbox pattern; Python mods for prototypes.
 - Extension kinds: new system (updater + lifecycle `OnAllocate / OnInitialize / OnUpdate / OnTerminate`), message listeners and own message ids (namespaced StrCode32), new GameObject types with handlers, new `.fox2` classes, parameter overrides (layered by load order), before / after hooks (observe, change, cancel), SendCommand handler chaining, AI node insert / replace, blackboard access, Lua libraries.

@@ -40,7 +40,7 @@ Every milestone ends on a test a computer decides: pass or fail. A file reader o
 | M6 World streaming and locators | the blocks of the map that load around the player, how scripts find named places, the title screen | <span class="status pass">PASS</span> |
 | M7 Terrain and collision | read the ground height maps and collision shapes, answer the ground height anywhere | <span class="status pass">PASS</span> |
 | M8 Navigation and routes | path finding on the navmesh, far soldiers walking their routes | <span class="status pass">PASS</span> |
-| M9 Gameplay core | soldiers, alert phases, noticing, damage, commands (no graphics), soldiers following routes near the player | <span class="status in-progress">IN PROGRESS</span> |
+| M9 Gameplay core | soldiers, alert phases, noticing, soldiers following routes near the player (no graphics) | <span class="status pass">PASS</span> |
 | M10 Mod API core | the engine's own systems opened up for mods: register new systems, hook and extend existing ones | <span class="status planned">PLANNED</span> |
 | M11 Asset formats | textures, models, skeletons, outfit, language and sound container files | <span class="status planned">PLANNED</span> |
 | M12 Sound and UI logic | which sounds and music the game asks for, menus, the iDroid and the HUD (no playback or drawing yet) | <span class="status planned">PLANNED</span> |
@@ -63,7 +63,9 @@ M8 passed on 2026-11-01: the engine plans the same paths as the real game on 948
 
 The milestones from M6 on were re-ordered on 2026-10-29 so that each one only needs what came before it, and the next one is always the most doable.
 
-**Now in progress: M9 Gameplay core** (as of 2026-11-04, 5 of 6 gate items PASS). Done: which 18 soldiers are fully simulated, how they follow routes far from and near the player (including why some idle waits run long), the alert phase timers, and what really ends a phase: the base's radio reports, which wait for the soldiers it sent to investigate. Checked at two bases. Still open: the alert timer's slow band (G6). See [How soldiers think](../explain/soldier-ai.md).
+M9 passed on 2026-11-04, with all six gate items checked against the real game: which 18 soldiers are fully simulated, how they follow routes far from and near the player (including why some idle waits run long), the alert phase timers, what really ends a phase (the base's radio reports, which wait for the soldiers it sent to investigate), the same chain at a second base, and why an alert lingers: while the player stays within 10 m of where a soldier last saw them, the last tenth of the alert timer runs 100 times slower. Damage and most script commands were not part of M9; they come with M15 (combat) and the M10 registries. See [How soldiers think](../explain/soldier-ai.md).
+
+**Next: M10 Mod API core**: the systems built so far get opened up for mods (registries, a mod manifest and loader, hooks), with no new reverse engineering and no live captures.
 
 On 2026-11-04 the order from M10 on was cut again, for two reasons. First, the engine should become something modders can build on, so the mod interface comes right after M9, while the engine's systems are still few and easy to open up. Second, the order follows what is most doable: work on what already exists first, then file formats, then systems the game already reveals through its scripts, then new runtime work, and the outputs (graphics, sound, the playable game) last. Every milestone still ends on a pass-or-fail test against the real game, now listed item by item.
 

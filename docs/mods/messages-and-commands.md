@@ -72,4 +72,4 @@ Points the example relies on: timer names arrive hashed [V]; `Stop` sends no mes
 Message ids, command handlers and updaters become registries in M10: a mod can add its own message ids (namespaced StrCode32, collisions refused), listen to any category, chain a command handler and add an updater with its own priority ([Where things stand for modders](where-things-stand.md)).
 
 ---
-<small>Hand-written article (`docs/site/mods/Messages-And-Commands.md`) &middot; published 2026-11-04.</small>
+<small>Hand-written article (`docs/site/mods/Messages-And-Commands.md`) &middot; published 2026-11-05.</small>

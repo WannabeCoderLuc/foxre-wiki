@@ -56,8 +56,12 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 - **SendCommand handlers** (registry `commands`, key `"<handler>:<Command>"`): `TypeManager.command` dispatches to registered handlers of the type (`handlers` by StrCode32) [B M10 G1]; chaining (`fn(next, ...)`) planned (M10 G3).
 - **Listeners**: `MessageBus.add_listener`; the mod-facing `ctx.listen` is planned (M10 G3).
 
+## Evidence
+- Verifiers: `test_m4_messages.py` (message delivery against live), `test_m3_runtime.py` (bus and dispatch on fixture `m3_frame_trace.json`).
+- RE: GameObject ids, MessageBus, SendCommand / SendMessage and the bucket manager, tagged [V] / [V static] above against the retail exe.
+
 ## Open
 Where the frame calls this bucket's drain relative to the mission `OnUpdate` (called through the vtable; no static caller) [?]; full Msg name table per sender; when `0x140BF9A20` fires.
 
 ---
-<small>Source: `docs/engine/Messages.md` in the project repository &middot; generated 2026-11-04.</small>
+<small>Source: `docs/engine/Messages.md` in the project repository &middot; generated 2026-11-05.</small>

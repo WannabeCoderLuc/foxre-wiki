@@ -57,7 +57,7 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 | M7 | Terrain & collision formats [PASS 2026-10-29] — `.htre`/`.tre2`, `.geom` | `.htre`/`.tre2`, `.geom` | <span class="status planned">PLANNED</span> |
 | M8 | Navigation & routes | nav2 runtime, path queries (Luc, 2026-11-01) | <span class="status pass">PASS</span> |
 | M9 | Gameplay core [PASS, Luc 2026-11-04] — Soldier AI, CP phases and notice, route following (headless) | Soldier AI, CP phases and notice, route following (headless) | <span class="status planned">PLANNED</span> |
-| M10 | Mod API core [IN PROGRESS: G1, G7 PASS 2026-11-04] — registries, manifest, loader, hooks (headless) | registries, manifest, loader, hooks (headless) | <span class="status planned">PLANNED</span> |
+| M10 | Mod API core [IN PROGRESS: G1, G2, G4, G7 PASS 2026-11-04] — registries, manifest, loader, hooks (headless) | registries, manifest, loader, hooks (headless) | <span class="status planned">PLANNED</span> |
 | M11 | Asset formats | textures, models, rigs, fova, parts, language, sound containers | <span class="status planned">PLANNED</span> |
 | M12 | Sound & UI logic | sound events, music states, menus, iDroid, HUD (headless) | <span class="status planned">PLANNED</span> |
 | M13 | Open world complete | both maps, every block level, clock, weather, random numbers (headless) | <span class="status planned">PLANNED</span> |

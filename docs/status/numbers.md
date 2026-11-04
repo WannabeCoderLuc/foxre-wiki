@@ -4,7 +4,7 @@ Counted from the project repository at build time.
 
 - Milestones passed: **8 of 25**
 - Verified engine modules: **18** (table on the home page)
-- Test files: **35**, ground-truth fixtures: **24**
+- Test files: **40**, ground-truth fixtures: **24**
 
 | Milestone | Status |
 |---|:-:|
@@ -18,7 +18,7 @@ Counted from the project repository at build time.
 | M7 Terrain & collision formats [PASS 2026-10-29] — `.htre`/`.tre2`, `.geom` | <span class="status planned">PLANNED</span> |
 | M8 Navigation & routes | <span class="status pass">PASS</span> |
 | M9 Gameplay core [PASS, Luc 2026-11-04] — Soldier AI, CP phases and notice, route following (headless) | <span class="status planned">PLANNED</span> |
-| M10 Mod API core [IN PROGRESS: G1, G7 PASS 2026-11-04] — registries, manifest, loader, hooks (headless) | <span class="status planned">PLANNED</span> |
+| M10 Mod API core [IN PROGRESS: G1, G2, G4, G7 PASS 2026-11-04] — registries, manifest, loader, hooks (headless) | <span class="status planned">PLANNED</span> |
 | M11 Asset formats | <span class="status planned">PLANNED</span> |
 | M12 Sound & UI logic | <span class="status planned">PLANNED</span> |
 | M13 Open world complete | <span class="status planned">PLANNED</span> |
@@ -35,4 +35,4 @@ Counted from the project repository at build time.
 | M24 Mod platform 1.0 | <span class="status planned">PLANNED</span> |
 
 ---
-<small>Generated 2026-11-04 from the project repository.</small>
+<small>Generated 2026-11-05 from the project repository.</small>

@@ -172,4 +172,4 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 | `m4_lua_boot.json` chunks 112–169 vs package entry order | script resource order | [V] |
 
 ---
-<small>Source: `docs/engine/Resources.md` in the project repository &middot; generated 2026-11-04.</small>
+<small>Source: `docs/engine/Resources.md` in the project repository &middot; generated 2026-11-05.</small>

@@ -68,4 +68,4 @@ esearch\m7_ground_20261029_182058`): f30010, IH pipe `TppPlayer.Warp` to (x, gro
 - Open (E32) [?]: the 0.798 m player offset and the ±5 mm scatter (likely the physics heightfield's quantisation), patch +0x3C, the extra LOD slot.
 
 ---
-<small>Source: `docs/formats/HTRE.md` in the project repository &middot; generated 2026-11-04.</small>
+<small>Source: `docs/formats/HTRE.md` in the project repository &middot; generated 2026-11-05.</small>

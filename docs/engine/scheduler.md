@@ -54,8 +54,7 @@ Shutdown `FUN_140BF5290` [V static, 2026-10-29]: calls every **updater's vt+0x10
 - `0x140BF5770` (was listed as removal) is a **one-time job setup** (flag +0xD0): it builds three job objects (vtables 0x142306450 / 0x142306480 / 0x1423064B0) from two null-terminated object lists and stores them at +0x80 / +0x88 / +0x90. `0x140BF5630` detaches a job handle (+0x28) after spinning on its lock.
 
 ## Updater identities (2026-10-29, E9)
-No RTTI in the build (`Tools
-table_rtti.py --updaters`). Identities come from the owner: most updaters are a sub-object of a Quark system registered by a static initializer `{vtable, StrCode64(name), 0}` → `0x140BFF070` (the name hash is the system's lookup key, e.g. `TppGame` init 0x140991BF0 fetches them by hash with 0x140BF1650); names of hashes not in the dictionary were brute-forced (`Tools\strcode_brute`, recorded in `strcode_bruteforced.tsv`). "Owner vt" = vtable written next to the updater vtable by the owner's destructor (the only code ref of most updater vtables).
+No RTTI in the build (`Tools\vtable_rtti.py --updaters`). Identities come from the owner: most updaters are a sub-object of a Quark system registered by a static initializer `{vtable, StrCode64(name), 0}` → `0x140BFF070` (the name hash is the system's lookup key, e.g. `TppGame` init 0x140991BF0 fetches them by hash with 0x140BF1650); names of hashes not in the dictionary were brute-forced (`Tools\strcode_brute`, recorded in `strcode_bruteforced.tsv`). "Owner vt" = vtable written next to the updater vtable by the owner's destructor (the only code ref of most updater vtables).
 
 | Prio | Updater vtable | Update | Owner (vt / registration) | Identity | Tag |
 |---|---|---|---|---|---|
@@ -97,8 +96,12 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 - **GameObject types** (registry `gameobject_types`, `GameObjectManager.register_from`): a mod registers a free type index (vanilla holds 0-91) with a manager factory and an update group [B M10 G1].
 - Lifecycle `OnAllocate / OnInitialize / OnUpdate / OnTerminate` and before / after hooks on the frame: planned (M10 G3).
 
+## Evidence
+- Verifiers: `test_m3_runtime.py` (GOM tick, update groups, updater vector on fixture `m3_frame_trace.json`); `test_m10_registry.py` (updaters and type groups through the registry).
+- RE: GOM, TypeSlot, tick 0x140BF9AC0 and update job 0x140BF5350 tagged [V] above; FoxTrace live capture 2026-10-22.
+
 ## Open
 - Updater names still [?]: prio 0, 5, 6, 12, 16, 20, 22 (behaviour known, table above); which updater walks the 4 type groups.
 
 ---
-<small>Source: `docs/engine/Scheduler.md` in the project repository &middot; generated 2026-11-04.</small>
+<small>Source: `docs/engine/Scheduler.md` in the project repository &middot; generated 2026-11-05.</small>

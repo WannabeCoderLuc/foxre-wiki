@@ -23,4 +23,4 @@
 Not covered yet (PLANNED): models, textures and animation (M11, M16), sound and UI logic (M12), physics (M14), combat and equipment (M15), missions and saves (M19), rendering and audio output (M20, M21).
 
 ---
-<small>Hand-written article (`docs/site/library/Topics.md`) &middot; published 2026-11-04.</small>
+<small>Hand-written article (`docs/site/library/Topics.md`) &middot; published 2026-11-05.</small>

@@ -86,8 +86,12 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 - **Nav worlds and path queries**: a mod world brings its own `.nav2` (MOD-D); the codec is the registered loader for `nav2` / `1.nav2` [B M10 G1].
 - Route step table and arrival distances are registry data (`ai_tables` `route.*`, `parameters` `route.*`) [B M10 G1]; overriding them is MOD-B / M10 G3.
 
+## Evidence
+- Verifiers: `test_m8_nav.py` (fixtures `m8_nav_jobs.json`, `m8_nav_paths.json`), `test_nav2_roundtrip.py`, `test_nav2_all.py` (format, slow).
+- Live runs: `Memory\research\m8_nav*_<timestamp>\` (FoxTrace nav captures, runs named in the sections above).
+
 ## Open (E33)
 What creates the runtime state: block bits and obstacle activation, ring placement, off-mesh link sources (0x140502FC0 -> 0x141C7CE30), who adds blocked pairs; the engine replays them. Cluster-level dynamic links (`islandGraph...`) are not ported and no job needed them. Sneak-vs-alert comparison on the same jobs; other missions and locations; what starts a path request while on a route (`SoldierAI.md`, open).
 
 ---
-<small>Source: `docs/engine/Navigation.md` in the project repository &middot; generated 2026-11-04.</small>
+<small>Source: `docs/engine/Navigation.md` in the project repository &middot; generated 2026-11-05.</small>

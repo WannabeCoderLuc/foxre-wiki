@@ -51,4 +51,4 @@ This project does not ship a mod tool for the original game. It gives you **chec
 - What exists today and what is planned: [Where things stand for modders](../mods/where-things-stand.md).
 
 ---
-<small>Hand-written article (`docs/site/start/Modder-Start.md`) &middot; published 2026-11-04.</small>
+<small>Hand-written article (`docs/site/start/Modder-Start.md`) &middot; published 2026-11-05.</small>

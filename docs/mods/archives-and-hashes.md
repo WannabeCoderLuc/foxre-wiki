@@ -50,4 +50,4 @@ The last line is the project's own rule for any codec: if read-then-write change
 - The executable never checks the `foxfpk` magic [V: the string does not exist in it]. A broken package may load further than you expect and fail later.
 
 ---
-<small>Hand-written article (`docs/site/mods/Archives-And-Hashes.md`) &middot; published 2026-11-04.</small>
+<small>Hand-written article (`docs/site/mods/Archives-And-Hashes.md`) &middot; published 2026-11-05.</small>

@@ -51,4 +51,4 @@ The same check works for your own finds: an address you found by searching memor
 - A verified address says what the function **is**, not what its arguments are. Read the reference page for the calling convention before hooking.
 
 ---
-<small>Hand-written article (`docs/site/mods/Claims.md`) &middot; published 2026-11-04.</small>
+<small>Hand-written article (`docs/site/mods/Claims.md`) &middot; published 2026-11-05.</small>

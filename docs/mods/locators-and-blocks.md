@@ -63,4 +63,4 @@ What it relies on: the message fires only for registered names [V]; the identifi
 - On CONTINUE the position comes from the checkpoint save (`vars.initialPlayerPos*`), not from `gvars` mission start values [V live].
 
 ---
-<small>Hand-written article (`docs/site/mods/Locators-And-Blocks.md`) &middot; published 2026-11-04.</small>
+<small>Hand-written article (`docs/site/mods/Locators-And-Blocks.md`) &middot; published 2026-11-05.</small>

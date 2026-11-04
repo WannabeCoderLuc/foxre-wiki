@@ -60,4 +60,4 @@ Some entities are **DataIdentifiers**: tables of names linked to other entities.
 - Planned: mods register new DataSet classes through the Mod API (M10), loaded by the same path as vanilla classes ([Where things stand for modders](../mods/where-things-stand.md)).
 
 ---
-<small>Hand-written article (`docs/site/explain/Classes-And-Entities.md`) &middot; published 2026-11-04.</small>
+<small>Hand-written article (`docs/site/explain/Classes-And-Entities.md`) &middot; published 2026-11-05.</small>

@@ -39,4 +39,4 @@ If a new engine runs the game's own Lua and answers its native calls the way the
 - Testing Lua offline: the host runs the game's own boot, so a mod's Lua can be run in the same order without the game (inside the project for now; a sandboxed Lua mod loader is planned for M10).
 
 ---
-<small>Hand-written article (`docs/site/explain/Script-Host.md`) &middot; published 2026-11-04.</small>
+<small>Hand-written article (`docs/site/explain/Script-Host.md`) &middot; published 2026-11-05.</small>

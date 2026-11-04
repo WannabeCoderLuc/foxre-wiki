@@ -71,6 +71,17 @@ Gotchas behind it:
 - **`text_imm.db` small values:** kind `s` (new) = `mov`/`cmp` immediates 2..0xFF (`mov r8d, 0x3b` was missing: `w` starts at 0x100). 0 and 1 are not indexed; `imm 0`/`imm 1` and other mnemonics (`add`, `and`, ... below 0x100) scan live.
 - `fast_xrefs.py build` / `text_scan.py build` rebuild their tables in place when the MCP server holds the DB open (Windows can't delete it).
 
+## Reading captures: `trace_read` (2026-11-04)
+FoxTrace writes raw JSONL (float32 bits as hex, StrCode32 hashes, positional soldier rows; a 10 min run is about 20 MB / 42k lines).
+`Tools\FoxTrace\schema.json` names and types every field of every event kind; `Tools\FoxTrace\decode.py` (CLI) and MCP `trace_read`
+decode a run folder: floats, denormal words as hex flags, route / message hashes via the knowledge DB, VAs via `symbol_map.tsv`,
+phases and radio request ids named, `sol` / `solr` rows per soldier, `drive.jsonl` (driver steps, IH log lines) placed on the frame
+axis by tick. Default output is change-only: CP phase and soldier samples become segments "frames A-B, moving fields first -> last".
+`action=summary` (or `decode.py <run> --summary --write`): CP phase chains (CPs with the same chain grouped), CP requests and
+finishes, notices, route steps per soldier, driver steps, anomalies (unreadable lines, hooks not installed, stalls, frame resets).
+`test_foxtrace_schema.py` checks the decoder and (slow) that every field of every stored run is in the schema: a new FoxTrace
+event or field goes into the schema in the same change.
+
 ## Game boot profiles
 Manifest `Tools\game_baseline.json` (switch with `game_plugin`; `game_status` shows which one matches):
 
@@ -95,4 +106,4 @@ e\devmap_folded.tsv`: **166 of 34,547** EXACT names sit on folded bodies (10 to 
 - **Selftest:** `_devmap_checks` (in `--selftest`): build guard accepts the retail exe and refuses a foreign one; the hand-confirmed EXACT pairs of 2026-11-04 come back unchanged (0x140D69FB0 `AlertAiImpl::CheckActiveMember`, 0x140D63550 `CommandPost2Impl::SetMemberRole_`, 0x14139D600 `UnrealBasicAction2Impl::GetMoveVelocityForUnreal`, 0x140D5AAA0 `CommandPost2Impl::DoRequestRadio`) with dev decompile and `verify` rows; AUTO is labelled `[hint AUTO]`, never `[dev]`; the folded 0x1400FE390 prints `[hint folded x2]`, and no hand-confirmed pair is in the folded list; annotation leaves call-site addresses alone.
 
 ---
-<small>Source: `docs/TOOLING.md` in the project repository &middot; generated 2026-11-04.</small>
+<small>Source: `docs/TOOLING.md` in the project repository &middot; generated 2026-11-05.</small>

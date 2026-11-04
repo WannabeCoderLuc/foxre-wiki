@@ -30,4 +30,4 @@ Ground truth the engine tests (`Engine/tests/`) compare against. Each comes from
 | `natives_owner.json` | 594 KB | see the test that loads it |
 
 ---
-<small>Generated 2026-11-04 from the project repository.</small>
+<small>Generated 2026-11-05 from the project repository.</small>

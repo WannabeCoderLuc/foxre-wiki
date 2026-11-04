@@ -51,5 +51,9 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 - **Reflection classes** (registry `reflection_classes`): every class of the type DB is registered by vanilla [B M10 G1]; a mod's new `.fox2` class from a mod DataSet is planned (M10 G3).
 - Entity build from `.fox2` reads classes through the type DB; mod classes join it through the registry.
 
+## Evidence
+- Verifiers: `test_entities_s10151.py` (s10151 entity graph, reference semantics), `test_live_f30010_identifiers.py` (live identifiers, fixture `f30010_identifiers.json`).
+- RE: runtime instantiation and the live gate above, tagged [V] / [V static] against the retail exe.
+
 ---
-<small>Source: `docs/engine/Entities.md` in the project repository &middot; generated 2026-11-04.</small>
+<small>Source: `docs/engine/Entities.md` in the project repository &middot; generated 2026-11-05.</small>

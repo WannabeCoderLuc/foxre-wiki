@@ -44,4 +44,4 @@ The gate scenario is the live boot: cold start, title screen, Continue, free roa
 - Content that loads with an area instead of the mission: [Side content with script blocks](../mods/script-blocks.md).
 
 ---
-<small>Hand-written article (`docs/site/explain/Mission-Load.md`) &middot; published 2026-11-04.</small>
+<small>Hand-written article (`docs/site/explain/Mission-Load.md`) &middot; published 2026-11-05.</small>

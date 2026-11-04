@@ -57,7 +57,7 @@ Every milestone ends on a test a computer decides: pass or fail. A file reader o
 | M23 Standalone runtime | a fast native engine that installs against your own copy of the game | <span class="status planned">PLANNED</span> |
 | M24 Mod platform 1.0 | a frozen, documented mod interface, asset packs and native plugins | <span class="status planned">PLANNED</span> |
 
-Alongside these runs a mod track (MOD-A to MOD-E): editors and checkers for game files, an AI sandbox, importers for models and animations, world and navmesh authoring, and an enhanced renderer. Tools whose output is tested in the original game (MOD-A) are not planned for now.
+Alongside these runs a mod track (MOD-A to MOD-E): editors and checkers for game files, an AI sandbox, importers for models and animations, world and navmesh authoring, and an enhanced renderer. Tools whose output is tested in the original game (MOD-A) are planned: checked offline first, then in the game.
 
 M8 passed on 2026-11-01: the engine plans the same paths as the real game on 948 of 948 recorded path jobs, within 10 cm, in Afghanistan free roam (see [Routes and navmeshes](../explain/routes-and-navmeshes.md)). Obstacles and ladders are replayed from recordings for now, because what creates them in the game is not decoded yet.
 
@@ -77,4 +77,4 @@ On 2026-11-04 the order from M10 on was cut again, for two reasons. First, the e
 - Sources, tools, test fixtures and captures: [Library](../library/sources.md).
 
 ---
-<small>Hand-written article (`docs/site/start/Overview.md`) &middot; published 2026-11-04.</small>
+<small>Hand-written article (`docs/site/start/Overview.md`) &middot; published 2026-11-05.</small>

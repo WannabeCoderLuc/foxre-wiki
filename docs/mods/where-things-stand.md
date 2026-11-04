@@ -60,7 +60,7 @@ How M10 will be tested (gate items, abbreviated):
 | MOD-E Enhanced renderer (after M20) | modern lighting and effects as a separate mode |
 | M24 Mod platform 1.0 | frozen, versioned API; asset packs; native plugins through a C interface; a mod manager; one example mod per area |
 
-MOD-A, tools whose output is tested in the original game (a route editor, a navmesh baker, a mod-Lua test harness), is **not planned for now**.
+MOD-A, tools whose output is tested in the original game (a route editor, a navmesh baker, a mod-Lua test harness), is **planned**: each tool is checked offline against the engine first, then in the game.
 
 ## Promises the engine makes
 - **Compat mode**: with no mods loaded, every test against the original game still passes. Enhanced features are separate modes.
@@ -73,4 +73,4 @@ MOD-A, tools whose output is tested in the original game (a route editor, a navm
 - The **claims ledger**, to check community addresses before hooking them.
 
 ---
-<small>Hand-written article (`docs/site/mods/Where-Things-Stand.md`) &middot; published 2026-11-04.</small>
+<small>Hand-written article (`docs/site/mods/Where-Things-Stand.md`) &middot; published 2026-11-05.</small>

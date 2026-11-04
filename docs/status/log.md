@@ -140,4 +140,4 @@ One line per session. STATUS.md keeps only the last few; this file keeps everyth
 - 2026-10-14: Option A t1d/t1e working (free-roam boss).
 
 ---
-<small>Source: `docs/LOG.md` in the project repository &middot; generated 2026-11-04.</small>
+<small>Source: `docs/LOG.md` in the project repository &middot; generated 2026-11-05.</small>

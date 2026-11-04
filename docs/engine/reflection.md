@@ -45,8 +45,12 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 
 - **Classes** (registry `reflection_classes`, key = class name, value super / version / StrCode64 hash): vanilla = `fox_edb.json` [B M10 G1]; mod classes (namespaced) planned (M10 G3).
 
+## Evidence
+- Verifiers: `test_typedb.py` (type database from `fox_edb.json`).
+- RE: class layouts and registration tagged [V] above against the retail exe.
+
 ## Open
 Fx node classes' properties (from data only); dynamic properties (165 entities) — runtime-only, no registry entry.
 
 ---
-<small>Source: `docs/engine/Reflection.md` in the project repository &middot; generated 2026-11-04.</small>
+<small>Source: `docs/engine/Reflection.md` in the project repository &middot; generated 2026-11-05.</small>

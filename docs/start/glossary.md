@@ -88,4 +88,4 @@
 | **Compat mode** | the engine with no mods loaded; it must behave exactly like the original game |
 
 ---
-<small>Hand-written article (`docs/site/start/Glossary.md`) &middot; published 2026-11-04.</small>
+<small>Hand-written article (`docs/site/start/Glossary.md`) &middot; published 2026-11-05.</small>

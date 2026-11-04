@@ -291,6 +291,10 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md). Built (M10 G1): phase rates, rea
 - **Unrealized speeds:** the (phase, speed, flag) table and crouch scale as data.
 - **Realize budget and window inset** (18 soldiers, 32 / 28 m) as settings.
 
+## Evidence
+- Verifiers: `test_m9_soldier.py`, `test_m9_route.py`, `test_m9_phase.py`, `test_m9_radio.py`, `test_m9_g4.py`, `test_m9_g5.py`, `test_m9_g6.py` (fixtures `m9_*.json`).
+- Live runs: `Memory\research\m9_*_<timestamp>\` (route, known target, phase, radio, enemyBase, G4 and G6 runs named in the sections above) and `m8_nav14` / `m8_nav15`.
+
 ## Open
 - G6 leftovers (not gate items): why the seen player's position stayed at the pre-warp spot for 81 frames after the warp in `m9_g6b`, `m9_g6d` (PlayerInfo vt+0x88 vs vt+0xB8 under status 0x11), so the village case is [I]; the 0.25 timer floor in alert while a member byte has 0x40 (0x140D65850); what (impl+0x18) vt+0xA8 counts (x0.025 at the village, x0.01 at enemyBase).
 - Which flag-word bits give the unrealized (phase, speed) pair (task +0xC2 not logged live); crouch case.
@@ -300,4 +304,4 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md). Built (M10 G1): phase rates, rea
 - Africa (afgh second base done: G5); the +0x1A0 byte (0 on all soldiers in the last 20 samples of `m9_route1`), the view test and the slot swaps in the port.
 
 ---
-<small>Source: `docs/engine/SoldierAI.md` in the project repository &middot; generated 2026-11-04.</small>
+<small>Source: `docs/engine/SoldierAI.md` in the project repository &middot; generated 2026-11-05.</small>

@@ -49,4 +49,4 @@ flowchart LR
 Look up named places and react when an area is loaded: [Locators and map blocks in a mod](../mods/locators-and-blocks.md).
 
 ---
-<small>Hand-written article (`docs/site/explain/World-Streaming.md`) &middot; published 2026-11-04.</small>
+<small>Hand-written article (`docs/site/explain/World-Streaming.md`) &middot; published 2026-11-05.</small>

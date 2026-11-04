@@ -99,7 +99,7 @@ The old M6 World bundled three different kinds of work (world streaming, two fil
 Old → new numbers (older docs, the log and test names keep the old ones): M6 World → **M6** streaming & locators + **M7** terrain & collision + **M8** navigation & routes · M7 Animation → **M11** · M8 Gameplay core → **M9** · M9 Gameplay extended → **M12** · M10 Assets & rendering → **M10** asset formats + **M13** rendering · M11 Playable slice → **M14**.
 
 ## Order from M10 on (re-cut 2026-11-04, Luc: engine as mod platform, ordered by feasibility)
-Supersedes the M10-M14 rows above. M9 is unchanged (in progress). Three changes: (1) the engine becomes a **mod platform** (in-engine Mod API; mod tooling for the original game is the separate, scope-gated MOD-A); (2) gaps closed: **physics / character controller** (no milestone had it) and **real native implementations** (M4 passed on recorded natives); (3) the path from one area to the whole offline game.
+Supersedes the M10-M14 rows above. M9 is unchanged (in progress). Three changes: (1) the engine becomes a **mod platform** (in-engine Mod API; mod tooling for the original game is MOD-A); (2) gaps closed: **physics / character controller** (no milestone had it) and **real native implementations** (M4 passed on recorded natives); (3) the path from one area to the whole offline game.
 
 **Feasibility rule:** next is always the milestone with the least new RE risk given what exists. Engineering on passed milestones first (M10), offline format work next (M11), then systems that sit on the already-recorded Lua / native boundary (M12, M13), then new runtime RE (M14-M16), integration headless (M17), content breadth (M18-M19), and the outputs last: drawing (M20), sound playback (M21), playable game (M22), standalone runtime (M23), API freeze (M24). Each milestone depends only on milestones before it.
 
@@ -134,7 +134,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 
 ## Common gate (every milestone from M10 on, in addition to its own items)
 - **C1 Suite:** full `engine_verify` (slow verifiers included) PASS; verifier lock unchanged or relocked after review.
-- **C2 Specs:** every system / format the milestone touches has a spec with "Extension points" and "Evidence" sections (`test_docs_contract.py`).
+- **C2 Specs:** every system / format the milestone touches has a spec with "Extension points" and "Evidence" sections; the touched specs are listed as `"specs"` of the milestone in `gates.json`; the same test lints all docs (no control characters, current milestone numbers outside ROADMAP / LOG / STATUS) (`test_docs_contract.py`).
 - **C3 Natives:** every binding and SendCommand handler the milestone owns is implemented, not answered from a recording, and its call log equals live (`test_natives_owned.py`).
 - **C4 Determinism:** the milestone's scenario run twice with the same seed gives byte-identical traces.
 - **C5 Fixtures:** each live fixture comes from at least two runs that agree, or the varying values are pinned as ranges with the reason in the spec; clamped and free runs never mixed (M9 capture protocol).
@@ -214,17 +214,17 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
   - G5 Soldier behaviour by phase, second base: the same chain at afgh_enemyBase_cp (`test_m9_g5.py`).
   - G6 Alert slow band: the front point and the 10 m band (`test_m9_g6.py`).
 
-## M10 Mod API core [IN PROGRESS: G1, G7 PASS 2026-11-04] — registries, manifest, loader, hooks (headless)
+## M10 Mod API core [IN PROGRESS: G1, G2, G4, G7 PASS 2026-11-04] — registries, manifest, loader, hooks (headless)
 - Data-driven registries for everything M2-M9 built: GameObject types, SendCommand handlers, message ids, updaters (phase + priority), AI node tables, resource loaders, reflection classes, Lua libraries. Vanilla registered through the same path.
 - Mod manifest (namespace, API version 0.x, dependencies, load order); loader with conflict detection; Lua mods in the `lua51_run` sandbox pattern; Python mods for prototypes.
 - Extension kinds: new system (updater + lifecycle `OnAllocate / OnInitialize / OnUpdate / OnTerminate`), message listeners and own message ids (namespaced StrCode32), new GameObject types with handlers, new `.fox2` classes, parameter overrides (layered by load order), before / after hooks (observe, change, cancel), SendCommand handler chaining, AI node insert / replace, blackboard access, Lua libraries.
 - `natives_owner.json`: every binding from `m4_lua_bindings.json` assigned to its owning milestone; `commands_owner.json`: every vanilla SendCommand handler (knowledge DB `cmd_handlers.tsv`) assigned the same way.
 - "Extension points" back-filled into `Entities.md`, `Scheduler.md`, `Messages.md`, `ScriptHost.md`, `Resources.md`, `World.md`, `Navigation.md`, `SoldierAI.md`. Spec [`docs\engine\ModAPI.md`](../engine/mod-api.md), module `Engine\mods\`.
 - **Gate:**
-  - G1 Registries: every type, handler, message, updater and Lua library the engine implements is registered through the registry; the registry dump equals the previous hardcoded tables; every M0-M9 gate test passes unchanged (`test_m10_registry.py`).
-  - G2 Null mod: full suite with the null mod loaded gives byte-identical traces to no mod (`test_m10_null_mod.py`).
+  - G1 Registries: every type, handler, message, updater and Lua library the engine implements is registered through the registry; the registry dump equals the previous hardcoded tables; every M0-M9 gate test passes unchanged; cp_phase, realize and route_follow read their constants through the registry (`test_m10_registry.py`, `test_m10_consumers.py`).
+  - G2 Null mod: the M3 / M4 / M9 scenario traces with the null mod loaded are byte-identical to no mod (`test_m10_null_mod.py`).
   - G3 Reference mods, one per extension kind, each with a fixture (`test_m10_ref_mods.py`): morale system as a new updater on CP phases; message listener; new GameObject type + SendCommand handler; new `.fox2` class loaded from a mod DataSet; CP phase rate override changes the `m9_phase` trace by exactly the predicted amount; hook that cancels a route switch; chained handler; AI node insert; Lua library.
-  - G4 Rejections (`test_m10_rejects.py`): StrCode32 id collision with vanilla or another mod; API version mismatch; missing dependency; load-order cycle; sandbox escapes (`os` / `io` / `debug` / `require` / binary chunks); nondeterminism (unseeded random, wall clock) caught by a double run.
+  - G4 Rejections (`test_m10_rejects.py`): StrCode32 id collision with vanilla or another mod; API version mismatch; missing dependency; load-order cycle; sandbox escapes (`os` / `io` / `debug` / `require` / binary chunks); nondeterminism (unseeded random, wall clock) caught by a double run; each refused with an error naming the mod(s).
   - G5 Load order: two mods overriding one parameter resolve in documented order, same result on every run (`test_m10_load_order.py`).
   - G6 Overhead: registry dispatch costs at most 5 % frame time on the M3 and M9 scenarios against the pre-registry baseline (`test_m10_perf.py`).
   - G7 Ownership: `natives_owner.json` covers 100 % of the bindings in `m4_lua_bindings.json` and `commands_owner.json` 100 % of the vanilla SendCommand handlers, each with an owning milestone from `gates.json` by the rules in `ModAPI.md` "Ownership"; natives the engine implements are marked implemented and not answered from a recording; owners are in the registry (`owner_milestone`) (`test_natives_owned.py`).
@@ -313,6 +313,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 
 ## M17 Headless slice [PLANNED] — one free-roam area, player + one AI type, input replay, zero recorded natives
 - One Afghanistan base, Player2 + Soldier2, every system from M3-M16 together; input recorder (live KB+M) and replay into the engine.
+- **Native backlog (from M10 G7, 2026-11-04):** M17 owns 308 bindings (`natives_owner.json`, rule N17: Player, Soldier2, CP, nav, GameObject dispatch, Fox core) and 149 SendCommand handler entries (`commands_owner.json`, H1-H3: Soldier2, CommandPost2, Player2 core plugin); each is implemented with its recording switched off before G3.
 - **Gate:**
   - G1 Replays: 5 recorded 60 s runs (sneak, alert, combat, CQC, Fulton): full state trace (player, soldiers, CP phase, damage, blocks, sound events, UI) equals live within each system's tolerance (`test_m17_slice.py`).
   - G2 Drift: one 10 min replay stays within tolerance (`test_m17_slice.py`).
@@ -324,6 +325,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 
 ## M18 Full cast [PLANNED] — every soldier type, animals, buddies, heli, vehicles, bosses
 - Every Soldier2 variant, animals, buddies (D-Horse, D-Dog, Quiet, D-Walker), support heli, vehicles (light vehicle, truck, APC, tank, walker gear), bosses (TppSahelan2: `SAHELAN.md`; others), each a content pack on the Mod API.
+- **Handler families first (from M10 G7):** decode the owner types of the two unidentified SendCommand handlers 0x1417A47A4 (anti-heli / landing routes) and 0x141816239 (Mother Base mode, InitiateCombat), and replace the approximate (`~`) owners in `cmd_handlers.tsv` with the decoded GameObject types; then re-cut rules H4-H14 in `ModAPI.md` "Ownership".
 - **Gate:**
   - G1 Behaviour: per family, state sequences from at least 2 live runs reproduced (`test_m18_family_<name>.py`, one per family).
   - G2 Vehicles and heli: driving and support-heli flight replays: position within 10 cm over 30 s, state sequence exact (`test_m18_vehicles.py`).
@@ -398,11 +400,11 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
   - Common gate C1-C8.
 
 ## Mod track [parallel] — tools and authoring for modders
-Each item starts when its dependencies pass. **MOD-A is out of scope for now (Luc, 2026-11-04):** its output is deployed to and tested in the real game, which the 2026-10-28 rule (engine and RE only, no mod deploys or playtests) excludes. The in-engine Mod API (M10, M24) is engine work and in scope.
+Each item starts when its dependencies pass. **MOD-A is in scope (Luc, 2026-11-05; out of scope 2026-11-04 to 2026-11-05):** offline gates G1-G3 first; G4 deploys MOD-A output to the live game and tests it there under the hard rules (allowed install paths, mod-baseline restored and MATCH after every run, never the exe). The in-engine Mod API (M10, M24) is engine work and in scope.
 
 | Item | Builds on | Delivers | Gate |
 |---|---|---|---|
-| MOD-A Toolkit for the original game [OUT OF SCOPE for now] | M1, M7, M8 (passed) | Validated writers, route editor (`.frt`), navmesh baker (geometry → `.nav2`), headless mod-Lua harness on the M4 / M5 host | G1 every edited file round-trips and loads in the engine's own loader; G2 baker: navmeshes baked from vanilla geometry answer at least 1,000 path queries within 0.1 m of the vanilla `.nav2` (M8 oracle, offline); G3 harness reports the same Lua errors as the live game for 10 seeded broken modules; G4 (live, needs scope) baked navmesh and edited route load in the game and soldiers follow them |
+| MOD-A Toolkit for the original game [IN SCOPE 2026-11-05] | M1, M7, M8 (passed) | Validated writers, route editor (`.frt`), navmesh baker (geometry → `.nav2`), headless mod-Lua harness on the M4 / M5 host | G1 every edited file round-trips and loads in the engine's own loader; G2 baker: navmeshes baked from vanilla geometry answer at least 1,000 path queries within 0.1 m of the vanilla `.nav2` (M8 oracle, offline); G3 harness reports the same Lua errors as the live game for 10 seeded broken modules; G4 (live) baked navmesh and edited route load in the game and soldiers follow them |
 | MOD-B AI sandbox | M9, M10 | Behaviour and route changes predicted by the engine before testing in game | G1 an override (phase rate, route switch) produces the predicted trace; G2 (live, needs scope) the same change in game matches |
 | MOD-C Content importers | M11, M16, M24 | glTF → `.fmdl` / rig, PNG → `.ftex`, glTF animation → `.gani` | G1 imports decode with the M11 / M16 readers; G2 vanilla export → import keeps mesh, rig and clip data equal; G3 after M20, imported models render |
 | MOD-D World authoring | M8, M13, M14 | New terrain, nav worlds, stage-block grids, locators, routes | G1 a new 1 km² world streams, has collision and paths (M8 oracle on its baked navmesh), and hosts a soldier passing the M9 behaviour checks; G2 editing and reverting a vanilla block gives byte-identical files |
@@ -416,4 +418,4 @@ Each item starts when its dependencies pass. **MOD-A is out of scope for now (Lu
 - **Mod checkpoint and Option B mod (Sahelanthropus pilot)**, dropped 2026-10-28 (Luc): no mod work, deliverables or playtests. History in [`docs\LOG.md`](log.md); the verified RE (`docs\SAHELAN.md`, `docs\PROBES.md`, `docs\BATTLEFIELD.md`) is evidence for M8, M9 and M12.
 
 ---
-<small>Source: `docs/ROADMAP.md` in the project repository &middot; generated 2026-11-04.</small>
+<small>Source: `docs/ROADMAP.md` in the project repository &middot; generated 2026-11-05.</small>

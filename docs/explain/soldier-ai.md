@@ -137,4 +137,4 @@ Each statement here says how it was checked. Things that differ between two runs
 - Planned extension points (radio types, member roles, search-point completion, phase rates, realize budget): [Soldier AI, "Extension points"](../engine/soldier-ai.md) and [Where things stand for modders](../mods/where-things-stand.md).
 
 ---
-<small>Hand-written article (`docs/site/explain/Soldier-AI.md`) &middot; published 2026-11-04.</small>
+<small>Hand-written article (`docs/site/explain/Soldier-AI.md`) &middot; published 2026-11-05.</small>

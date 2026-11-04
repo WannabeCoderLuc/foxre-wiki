@@ -63,7 +63,7 @@ M8 passed on 2026-11-01: the engine plans the same paths as the real game on 948
 
 The milestones from M6 on were re-ordered on 2026-10-29 so that each one only needs what came before it, and the next one is always the most doable.
 
-**Now in progress: M9 Gameplay core** (as of 2026-11-04, 4 of 6 gate items PASS). Done: which 18 soldiers are fully simulated, how they step along routes far from the player, the alert phase timers, and what really ends a phase: the base's radio reports, which wait for the soldiers it sent to investigate. Checked at two bases. Still open: route following near the player (G4) and the alert timer's slow band (G6). See [How soldiers think](../explain/soldier-ai.md).
+**Now in progress: M9 Gameplay core** (as of 2026-11-04, 5 of 6 gate items PASS). Done: which 18 soldiers are fully simulated, how they follow routes far from and near the player (including why some idle waits run long), the alert phase timers, and what really ends a phase: the base's radio reports, which wait for the soldiers it sent to investigate. Checked at two bases. Still open: the alert timer's slow band (G6). See [How soldiers think](../explain/soldier-ai.md).
 
 On 2026-11-04 the order from M10 on was cut again, for two reasons. First, the engine should become something modders can build on, so the mod interface comes right after M9, while the engine's systems are still few and easy to open up. Second, the order follows what is most doable: work on what already exists first, then file formats, then systems the game already reveals through its scripts, then new runtime work, and the outputs (graphics, sound, the playable game) last. Every milestone still ends on a pass-or-fail test against the real game, now listed item by item.
 

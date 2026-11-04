@@ -177,7 +177,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 - [x] Far-mode switch decoded (2026-11-01): realize budget 18 inside the stage window, 32 m in / 28 m out, 0x141551820; `Engine\world\realize.py`, 159 of 181 live lists equal, the rest within sample age.
 - [x] Run and dash speeds measured (2026-11-01): realized 2.50, 4.01, 6.43; unrealized 2.00, 2.75, 4.00.
 - [x] Route state decoded (2026-11-01): impl +0xE8 route + state; 3 -> 2 <-> 1, 3 -> 0 -> 1 pinned.
-- [ ] Route following near the player: what starts a path request, node events and waits by event type (E33).
+- [x] **G4 route following near the player (E33)** (2026-11-04, `route_follow.py`, `test_m9_g4.py`, runs `m9_g4b`, `m9_g4c`, FoxTrace 3.4 `idleact`): steps 4 / 5 = board / leave vehicle or walker gear, 0x10 = route ended [V]; foot arrival = remaining path < 0.25 m, walker gear < 1.0 m [V]; same spot = |soldier - next node|^2 < 1.0 after the last event [V 0x14156B120]; order equals live on 945 / 947 changes. Long waits explained: action-mode events end when `IdleActingActionImpl` ends; its time counts only in StandIdle and freezes during random single actions (up to 18 s), so wait = time + single actions [V, D on 173 events].
 - [x] First behaviour fixture (2026-11-01): caution route switch, evasion fallback after about 26 s (`m9_soldier_forced.json`, two runs).
 - [x] Soldier behaviour by phase: evasion, alert with a known target as state sequences; a second base (G5, 2026-11-04).
 - **Gate:** per system, behaviour fixtures (state sequences) reproduced.

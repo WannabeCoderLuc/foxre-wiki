@@ -47,9 +47,12 @@ A small step machine runs for each soldier [V]:
 
 - **Leg:** walk to the next node. Starting a leg sends one path request.
 - **Node events:** do that node's events in order, such as an idle. `SwitchRoute` and one other event run without stopping.
-- **Next node:** wrap round at the end of the route and count a lap. A next node at the same spot skips the walk.
+- **Next node:** wrap round at the end of the route and count a lap. If the soldier already stands within 1 m of the next node, its events start with no walk [V].
+- **Arriving:** a walk ends when less than 0.25 m of path is left (1 m for a walker gear) [V]. Two more steps get on and off a truck or walker gear, and one waits at the end of a route until the base hands out a new one [V].
 
-Our model of this order equals the game on **all 1,662 changes in two runs** [D]. An event's `time` field is its wait in frames. Most waits match it closely (median 1.07 times the value), but some last far longer for reasons not yet decoded [?].
+Our model of this order equals the game on **all 1,662 changes in two runs** far from the player, and on **all 945 and 947 changes** with the player standing 30 m from a patrol [D]. An event's `time` field is its wait in frames.
+
+**Why some waits run long.** Most idle events hand the soldier to an "idle acting" action. That action counts the event's time only while the soldier stands idle. Now and then, at a random moment, it plays a short idle animation instead (up to 18 s). The clock stops while the animation plays [V]. So a wait is its time plus the animations played on the way. This held on all 173 such events in two runs [D]. The animation lengths are animation data (M16), so the engine pins the rule, not each wait's exact length.
 
 ### When a soldier sees you
 With the player placed 20 m in front of a walking soldier, in two runs [D]:
@@ -121,7 +124,7 @@ Each statement here says how it was checked. Things that differ between two runs
 - The slow band of the alert timer applied at the village with the player 490 m away; which point it compares is not read yet [?].
 - Repeat the sight-scale runs once more each (one run each so far) [?].
 - Which movement bits pick the unrealized (phase, speed) pair, read live [I].
-- Route steps 4, 5 and 0x10, the same-spot test, and waits longer than their time [?].
+- Which idle animation is picked and when (a random draw), and the truck's own arrival test [?].
 - Hearing, combat AI and damage have not been studied here yet. Data comes from three Afghan bases (Central Base Camp, Wakh Sind Barracks, Da Wialo Kallai); none from Africa yet.
 
 ## For modders

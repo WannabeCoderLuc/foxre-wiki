@@ -4,6 +4,7 @@ Ground truth the engine tests (`Engine/tests/`) compare against. Each comes from
 
 | Fixture | Size | What it holds |
 |---|---|---|
+| `commands_owner.json` | 43 KB | see the test that loads it |
 | `f30010_identifiers.json` | 5 KB | M2: names, classes and world positions of 17 objects asked from the running game. |
 | `m3_frame_trace.json` | 18 KB | M3: updater-vector changes and the 43 bus messages from boot to free roam (2 identical boots). |
 | `m4_api_calllog.json` | 829 KB | see the test that loads it |
@@ -26,6 +27,7 @@ Ground truth the engine tests (`Engine/tests/`) compare against. Each comes from
 | `m9_route.json` | 142 KB | see the test that loads it |
 | `m9_soldier_forced.json` | 3 KB | see the test that loads it |
 | `m9_soldier_free.json` | 451 KB | see the test that loads it |
+| `natives_owner.json` | 594 KB | see the test that loads it |
 
 ---
 <small>Generated 2026-11-04 from the project repository.</small>

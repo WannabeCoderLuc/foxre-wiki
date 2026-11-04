@@ -85,6 +85,8 @@ nav:
       - start/index.md
       - "What this project is": start/overview.md
       - "How to use this site": start/how-to-read.md
+      - "Getting started as a modder": start/modder-start.md
+      - "Addresses, hashes and tags": start/conventions.md
       - "Glossary": start/glossary.md
   - "Explanations":
       - explain/index.md
@@ -104,14 +106,19 @@ nav:
   - "Modding guides":
       - mods/index.md
       - "For modders: findings at a glance": mods/for-modders.md
+      - "Where things stand for modders": mods/where-things-stand.md
+      - "Archives, packages and hashes": mods/archives-and-hashes.md
       - "Add a package to a mission": mods/add-a-package.md
       - "Run your own Lua from a package": mods/lua-from-packages.md
       - "Find and call Lua natives": mods/lua-natives.md
+      - "Messages and commands in a mod": mods/messages-and-commands.md
       - "Side content with script blocks": mods/script-blocks.md
+      - "Locators and map blocks in a mod": mods/locators-and-blocks.md
       - "Patching the iDroid tables": mods/idroid-tables.md
       - "Editing fox2 DataSets": mods/editing-datasets.md
       - "Tracing the game with FoxTrace": mods/foxtrace.md
       - "Ground height at any point": mods/ground-height.md
+      - "Terrain and collision files in a mod": mods/collision-files.md
       - "Navmeshes and routes in a mod": mods/navigation-and-routes.md
       - "Soldiers and alert phases in a mod": mods/soldier-ai.md
       - "Checking community addresses": mods/claims.md
@@ -147,6 +154,7 @@ nav:
       - "Session log": status/log.md
   - "Library":
       - library/index.md
+      - "Topic index": library/topics.md
       - "Sources": library/sources.md
       - "Tools": library/tools.md
       - "Test fixtures": library/fixtures.md

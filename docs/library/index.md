@@ -4,6 +4,10 @@ Everything the work is built on and produces: sources, tools, test fixtures, liv
 
 <div class="grid cards" markdown>
 
+-   **[Topic index](topics.md)**
+
+    Every topic with its explanation, guide, reference page and milestone.
+
 -   **[Sources](sources.md)**
 
     The executable, the data, the running game, community projects, name dictionaries.

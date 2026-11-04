@@ -33,5 +33,10 @@ If a new engine runs the game's own Lua and answers its native calls the way the
 - When a script adds keys to a table while looping over it, the real game does not visit the new keys but the host's Lua does; harmless today, tracked as E29.
 - Class-instance calls for graphics and UI (`UiDaemon:`, `PhDaemon:` ...) are still answered by empty stubs.
 
+## For modders
+- Which natives exist and what they return: [Find and call Lua natives](../mods/lua-natives.md).
+- Messages, timers and commands: [Messages and commands in a mod](../mods/messages-and-commands.md).
+- Testing Lua offline: the host runs the game's own boot, so a mod's Lua can be run in the same order without the game (inside the project for now; a sandboxed Lua mod loader is planned for M10).
+
 ---
 <small>Hand-written article (`docs/site/explain/Script-Host.md`) &middot; published 2026-11-04.</small>

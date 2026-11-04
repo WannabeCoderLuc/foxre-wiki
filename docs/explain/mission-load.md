@@ -36,7 +36,12 @@ The gate scenario is the live boot: cold start, title screen, Continue, free roa
 ## Still open
 - The location loader's own per-frame order against the mission block.
 - `Mission.RequestToReload` (reload without a location change).
-- The title-screen flow itself runs at a boundary for now (see [The Lua script host](script-host.md)).
+- Since M6 the title script's own Continue reaches free roam ([World streaming and the title screen](world-streaming.md)); a few title messages come from protected code and are raised where the recordings show them.
+
+## For modders
+- Add your package to a mission: [Add a package to a mission](../mods/add-a-package.md).
+- Run your own Lua on load, in a known order: [Run your own Lua from a package](../mods/lua-from-packages.md).
+- Content that loads with an area instead of the mission: [Side content with script blocks](../mods/script-blocks.md).
 
 ---
 <small>Hand-written article (`docs/site/explain/Mission-Load.md`) &middot; published 2026-11-04.</small>

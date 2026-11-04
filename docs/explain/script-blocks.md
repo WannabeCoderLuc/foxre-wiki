@@ -24,7 +24,10 @@ In the live boot three blocks load after Continue: the saved quest (`quest_q5201
 The gate test checks the slot order, the three `ScriptBlock.Load` calls and their packages, the final states (reinforce loaded, animal active, quest loaded) and the chunk order, all against two live captures and a Lua trace of the real game.
 
 ## Still open
-Who calls the slot update each frame relative to the mission controller, and how the transition message is delivered (the engine logs it; there is no message delivery to scripts yet).
+The slot update runs every frame after the mission controller (updater priority 4) [V live]; still open are who calls its wrapper, the countdown trigger, and the order in which slots are walked.
+
+## For modders
+Load and unload your own side content with the area: [Side content with script blocks](../mods/script-blocks.md). The block's transitions reach Lua as `Block.OnScriptBlockStateTransition(blockName, state)` ([Messages and commands in a mod](../mods/messages-and-commands.md)).
 
 ---
 <small>Hand-written article (`docs/site/explain/Script-Blocks.md`) &middot; published 2026-11-04.</small>

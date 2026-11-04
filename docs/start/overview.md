@@ -61,13 +61,16 @@ Alongside these runs a mod track (MOD-A to MOD-E): editors and checkers for game
 
 M8 passed on 2026-11-01: the engine plans the same paths as the real game on 948 of 948 recorded path jobs, within 10 cm, in Afghanistan free roam (see [Routes and navmeshes](../explain/routes-and-navmeshes.md)). Obstacles and ladders are replayed from recordings for now, because what creates them in the game is not decoded yet.
 
-The milestones from M6 on were re-ordered on 2026-10-29 so that each one only needs what came before it, and the next one is always the most doable. Now in progress is M9: soldiers, alert phases and noticing, starting with how soldiers behave and follow routes near the player.
+The milestones from M6 on were re-ordered on 2026-10-29 so that each one only needs what came before it, and the next one is always the most doable.
+
+**Now in progress: M9 Gameplay core** (as of 2026-11-04, 4 of 6 gate items PASS). Done: which 18 soldiers are fully simulated, how they step along routes far from the player, the alert phase timers, and what really ends a phase: the base's radio reports, which wait for the soldiers it sent to investigate. Checked at two bases. Still open: route following near the player (G4) and the alert timer's slow band (G6). See [How soldiers think](../explain/soldier-ai.md).
 
 On 2026-11-04 the order from M10 on was cut again, for two reasons. First, the engine should become something modders can build on, so the mod interface comes right after M9, while the engine's systems are still few and easy to open up. Second, the order follows what is most doable: work on what already exists first, then file formats, then systems the game already reveals through its scripts, then new runtime work, and the outputs (graphics, sound, the playable game) last. Every milestone still ends on a pass-or-fail test against the real game, now listed item by item.
 
 ## Where to go next
 - New here: [How to use this site](how-to-read.md), then the [Explanations](../explain/game-data.md) in order.
-- Modding: [Modding guides](../mods/for-modders.md).
+- Modding: [Getting started as a modder](modder-start.md), [Where things stand for modders](../mods/where-things-stand.md), then the [Modding guides](../mods/for-modders.md).
+- Reading addresses, hashes and tags: [Addresses, hashes and tags](conventions.md).
 - Exact details (addresses, layouts, evidence): the Reference sections ([engine](../engine/modules.md), [file formats](../formats/qar.md)).
 - Sources, tools, test fixtures and captures: [Library](../library/sources.md).
 

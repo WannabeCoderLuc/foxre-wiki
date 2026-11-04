@@ -9,23 +9,30 @@
 - **Which packages a mission loads is decided in Lua** (`TppMissionList` / `TppPackList`), not in the executable. You can add or swap packages without touching the exe.
 - We have a **list of every native Lua function the game registers** (5,532 of them, with their addresses), plus recorded examples of what many of them return in a real session.
 
-## Where this is heading (planned, 2026-11-04)
-The new engine is being built so modders can rely on it. Planned, none of it exists yet: a **Mod API** (milestone M10) that lets a mod register new systems, add game object types and commands, override values, hook events and extend the soldier AI, with tests that check a mod changes only what it says it changes; later **importers** for models, textures and animations, **world and navmesh authoring**, and an **enhanced renderer** that stays separate from the faithful one. With no mods loaded the engine must behave exactly like the original game. See the [Roadmap](../status/roadmap.md) for the order and the test each step must pass.
+## Where this is heading (planned)
+The new engine is being built so modders can rely on it. Planned, none of it exists yet: a **Mod API** (milestone M10, right after M9) that lets a mod register new systems, add game object types and commands, override values, hook events and extend the soldier AI, with tests that check a mod changes only what it says it changes; later **importers** for models, textures and animations, **world and navmesh authoring**, and an **enhanced renderer** that stays separate from the faithful one. With no mods loaded the engine must behave exactly like the original game. Area by area: [Where things stand for modders](where-things-stand.md). Order and gates: [Roadmap](../status/roadmap.md).
+
+New here? [Getting started as a modder](../start/modder-start.md) and [Addresses, hashes and tags](../start/conventions.md) explain how to read the rest.
 
 ## Step-by-step guides
 | Guide | Finding it builds on |
 |---|---|
+| [Where things stand for modders](where-things-stand.md) | what is decoded, ported and planned, per area |
+| [Archives, packages and hashes](archives-and-hashes.md) | byte-exact QAR / FPK codecs, PathCode64, the name gap |
 | [Add a package to a mission](add-a-package.md) | mission package lists are decided in Lua |
 | [Run your own Lua from a package](lua-from-packages.md) | package scripts run on load, in path order |
 | [Find and call Lua natives](lua-natives.md) | binding map of 5,532 natives, recorded return values |
+| [Messages and commands in a mod](messages-and-commands.md) | `SendCommand`, `OnMessage`, hand-back, timers, the 128-message queue |
 | [Side content with script blocks](script-blocks.md) | 8 script-block slots with their own lifecycle |
+| [Locators and map blocks in a mod](locators-and-blocks.md) | DataIdentifier lookups, the 128 m block window, large-block messages |
 | [Patching the iDroid tables](idroid-tables.md) | the iDroid reloads its tables on every language change |
 | [Editing fox2 DataSets](editing-datasets.md) | the engine's type registry, byte-exact DataSet codec |
 | [Tracing the game with FoxTrace](foxtrace.md) | log-only hooks and native return recording |
 | [Ground height at any point](ground-height.md) | terrain block placement, tiling and the game's triangle rule |
+| [Terrain and collision files in a mod](collision-files.md) | the FoxData container shared by terrain and collision |
 | [Navmeshes and routes in a mod](navigation-and-routes.md) | path jobs, loaded blocks, route legs, node waits, edge speeds |
-| [Soldiers and alert phases in a mod](soldier-ai.md) | CP phases and timers, realize budget, safe test setup |
-| [Checking community addresses](claims.md) | 3,018 community facts checked against the executable |
+| [Soldiers and alert phases in a mod](soldier-ai.md) | CP phases, reports, investigators, realize budget, safe test setup |
+| [Checking community addresses](claims.md) | 3,084 community facts checked against the executable |
 
 ## 1. Files and packages
 **What we found.** The game stores files in `.dat` archives (QAR), which hold packages (`.fpk` for assets, `.fpkd` for data and scripts), which hold DataSets (`.fox2`), routes (`.frt`), navmeshes (`.nav2`) and scripts (`.lua`). Our readers and writers reproduce all 134,241 archive entries, 16,354 packages, 44,994 DataSets, 307 route files and 840 navmeshes exactly [V]. Details: [Game data](../explain/game-data.md), [QAR](../formats/qar.md), [FPK](../formats/fpk.md), [FOX2](../formats/fox2.md), [FRT](../formats/frt.md), [NAV2](../formats/nav2.md).
@@ -99,7 +106,7 @@ The new engine is being built so modders can rely on it. Planned, none of it exi
 - Two practical lessons from building it: enable all MinHook hooks in one call (enabling them one by one while the game boots misses early calls), and keep hook names short in config files.
 
 ## 8. Community addresses, checked
-We imported 3,018 facts from IHHook, Infinite Heaven, V_Framework and the community wiki and checked them against the executable: 1,071 confirmed, 5 contradicted, the rest not checkable yet. See [Claims ledger](../engine/claims.md) and [Contradictions](../engine/claims-contradictions.md). In short: four IHHook address-table entries (three of them commented out in IHHook) and one wiki address point into the middle of other functions in 1.0.15.4 EN. Use commented-out IHHook entries as hints only.
+We imported 3,084 facts from IHHook, Infinite Heaven, V_Framework and the community wiki and checked them against the executable: 1,109 confirmed, 5 contradicted, 1,970 not checkable yet. See [Claims ledger](../engine/claims.md) and [Contradictions](../engine/claims-contradictions.md). In short: four IHHook address-table entries (most of them commented out in IHHook) and one wiki address point into the middle of other functions in 1.0.15.4 EN. Use commented-out IHHook entries as hints only.
 
 ## 9. Terrain: ground height without a game function
 **What we found.** No script function returns the ground height, but the `.htre` block files do, exactly: block `<loc>_<bx>_<bz>` starts at ((bx − 133) × 128, (bz − 133) × 128), its heights are stored as 32 × 32 tiles, and the ground between samples is two triangles per 2 m square [V live, within 5 mm]. A player standing on flat ground has `vars.playerPosY` = ground + 0.798 m.
@@ -111,14 +118,19 @@ We imported 3,018 facts from IHHook, Infinite Heaven, V_Framework and the commun
 
 **Use it for.** Writing patrols that behave, and understanding why far soldiers ignore walls. See [Navmeshes and routes in a mod](navigation-and-routes.md).
 
-## 11. Soldiers and alert phases (work in progress)
-**What we found.** Only 18 soldiers are fully simulated at once. A CP's phase falls by itself, one step at a time, on a 0-to-1 timer with rates of 36 minutes for caution, 2 minutes for evasion and 30 seconds for alert, before multipliers [V from code, not yet read live]. See [How soldiers think](../explain/soldier-ai.md).
+## 11. Soldiers and alert phases (M9, IN PROGRESS)
+**What we found.** Only 18 soldiers are fully simulated at once; the rest move on simplified speeds [V, D]. A CP's phase timer drains at 36 minutes for caution, 2 minutes for evasion and 30 seconds for alert, before multipliers [V, D read live]. But **a phase ends when the CP's radio report finishes, not when the timer runs out**, and the reports wait for the soldiers sent to investigate: 3, then 2, then 4 of them, until one marks the search point done [V, D at two bases]. A report lasts as long as its voice line. See [How soldiers think](../explain/soldier-ai.md).
 
-**Use it for.** Controlling phases from Lua, and setting up tests near soldiers that survive and can be repeated. See [Soldiers and alert phases in a mod](soldier-ai.md).
+**Use it for.** Controlling phases from Lua, judging which changes really shorten or lengthen an alert, and setting up tests near soldiers that survive and can be repeated. See [Soldiers and alert phases in a mod](soldier-ai.md).
 
-## 12. Limits
+## 12. Messages, timers and map blocks
+**What we found.** Scripts hear about the world through a message bus with four tagged arguments per message and a 128-message queue; `OnMessage` returning 1 hands a message back for a second delivery [V]. Event timers raise `Timer.Start` and `Timer.Finish` with the timer name hashed [V live]. The map loads in 128 m blocks around one position, and bases ("large blocks") announce themselves only to scripts that registered their names [V].
+
+**Use it for.** Reacting to events without polling, and loading or placing content when an area is really loaded. See [Messages and commands in a mod](messages-and-commands.md) and [Locators and map blocks in a mod](locators-and-blocks.md).
+
+## 13. Limits
 - Addresses are for **1.0.15.4 EN**; other builds differ.
-- Our engine host runs scripts **without rendering, physics or AI**; it answers engine calls from recordings or simple models. It shows script behaviour and load order, not gameplay.
+- Our engine host runs scripts **without rendering, physics or combat**; soldier AI is partly ported (M9). It answers engine calls it does not implement from recordings. It shows script behaviour and load order, not gameplay.
 - Statements tagged [I] or [?] are not proven; check the reference page before building on them.
 
 ## Where to look next

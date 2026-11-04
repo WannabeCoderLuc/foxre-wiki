@@ -86,7 +86,11 @@ Route action plugin (vtables 0x142418930 and siblings; +0x1B0 soldier impl, +0x1
 | 1 | 0 | 0x14157A130 | first leg to the route: as step 2, with record +0x66 bit 0x20 set |
 | 2 | 1 | 0x141578E30 | leg to the node |
 | 3 | 2 | 0x141574B90 | node event |
-| 4, 5, 0x10 | 1 | | seen rarely, meaning not decoded [?] |
+| 4 | 1 | 0x1415784E0 | board the soldier's vehicle (object type 50) or walker gear (type 45): action command 0x19 / 0x1C, record +0x66 kind bits 1 / 2 set [V] |
+| 5 | 1 | 0x141578830 | leave it: clears kind bits (+0x66 & 3) [V] |
+| 0x10 | 1 | 0x1415784A0 `StepFinishTravel` [dev EXACT] | the route ended (record +0x24 bit 1): idle until the travel plan changes (0x1415707A0), then step 0x12 [V] |
+
+**Step table [V static init 0x142042D60]:** 0 and 0x12 empty; 1 MoveToRoute, 2 MoveToNextNode, 3 Event, 4 / 5 above, 6 BringPlayerWarning, 7 WaitHostage, 8 0x14157A240, 9 0x141579C80, 0xA 0x14157ADA0, 0xB OutOfRain, 0xC 0x141578C20, 0xD PickUpHoneyBee, 0xE MoveToParkWalkerGear, 0xF GetOutWalkerGear, 0x10 FinishTravel, 0x11 NoticeTurn (names [dev], 8 / 9 / 0xA / 0xC unnamed). Steps 4 and 5 are entered from the leg (0x141578E30, ride state 3 and no seat: 5) and from the node handling 0x14156C2A0 (ride interface vt+0xF8 says board: 4); both return to the previous step (+0x27) once the action record's +0x19E bit 0x10 is clear.
 
 State 3 never appears in these rows: the update does not run then. It holds from boot and through alert and evasion (see Known target), so it means the route action is not active [I], not "starting a route" as written before. `IsOnRoute` = state not 0 and not 3 [V 0x141356170].
 
@@ -96,7 +100,9 @@ State 3 never appears in these rows: the update does not run then. It holds from
 - +0x80 mask 8, +0x84 multiplier 2.0 only with +0x66 bit 0x20 (first legs). The same 94 first-leg requests came at boot in both runs.
 - +0x88 5.0 if action +0x3E is -1, else 0; +0x8C 10.0.
 
-A leg ends by the kind's arrival test (0x14156CBD0, 0x14156CF30, 0x14156D1E0); kind 0 reads remaining path length under 5 m [I, the decompile loses the return]. Not ported.
+A leg ends by the kind's arrival test, table 0x142C62BF0 by record +0x66 & 3 (static init 0x142042C30) [V]: **kind 0 (foot) 0x14156CBD0 = remaining path length (path follower vt+0xB0) < 0.25 m** (0x1420F8278); with a target object in record +0xC (soldier or hostage types) and remaining < 5 m (0x142106D34), min(remaining, |target - soldier|) < 0.25 [V, disassembly; the 5 m is only this gate]. Kind 2 (walker gear) 0x14156D1E0 = remaining < 1.0 m. Kind 1 (vehicle) 0x14156CF30 is a distance test with seat states, not ported [?]. Port `route_follow.arrived`.
+
+**Same spot [V 0x14156B120 `CheckAlreadyReachRouteNode` hint]:** after the last node event, the node advances (0x141571270); if the route ended (+0x24 bit 1) step 0x10, else the next node's events run with no leg when the squared 3D distance **from the soldier's current position** to that node is < 1.0 (float32, 0x1420A72CC). Pass-through, vehicle and walker-gear get-in, hostage put-in / take-out and bed nodes always get a leg; soldiers with flag bit 15 of the +0x110 word test the event instead (hash 0x4A6C45E5). After a leg the test is not made. Port `route_follow.already_at`.
 
 **Order [D]:** `route_follow.step_after` equals every change between steps 2 and 3 of every soldier: 962 and 700 of 700 in the two runs. Leg to a node; its node events in order, except `SwitchRoute` and 0x8706030D, which run without a stop [V 0x14156FDC0]; then the next node, wrapping, laps + 1. A next node at the same spot runs its events with no leg (136 cases at 0 m, legs from 1.64 m; the exact test is not decoded [?]). Record +0x66 bit 0x40 reverses the direction [V 0x141571270], no reversed route was seen live.
 

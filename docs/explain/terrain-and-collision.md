@@ -39,8 +39,12 @@ flowchart LR
 
 ## Still open
 - Why the player rests 0.798 m above the ground, and where the ±5 mm scatter comes from (probably the physics engine storing heights with less precision).
-- The shapes inside `.geom` files (only their container is decoded so far) — needed for collision in M9.
+- The shapes inside `.geom` files (only their container is decoded so far) — needed for collision queries (M14 Collision and physics, or earlier if M9 needs them).
 - Two small terrain fields (a 0/1 flag in the patch header, one extra level-of-detail slot).
+
+## For modders
+- Heights at any point: [Ground height at any point](../mods/ground-height.md).
+- Working with the files themselves: [Terrain and collision files in a mod](../mods/collision-files.md).
 
 ---
 <small>Hand-written article (`docs/site/explain/Terrain-And-Collision.md`) &middot; published 2026-11-04.</small>

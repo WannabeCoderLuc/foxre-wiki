@@ -12,8 +12,16 @@ What the project is, how this site is organised, and the words it uses. Hand-wri
 
     Hand-written vs generated pages, confidence tags, statuses.
 
+-   **[Getting started as a modder](modder-start.md)**
+
+    What the site gives modders, which guide to read first, five things to know.
+
+-   **[Addresses, hashes and tags](conventions.md)**
+
+    How addresses, offsets, hashes, ids, units and confidence tags are written.
+
 -   **[Glossary](glossary.md)**
 
-    Short definitions of the terms used on this site.
+    Short definitions of the terms used on this site, by topic.
 
 </div>

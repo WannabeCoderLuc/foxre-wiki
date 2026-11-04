@@ -1,6 +1,6 @@
 # Navmeshes and routes in a mod
 
-*Based on: [How soldiers find their way](../explain/path-finding.md), [Routes and navmeshes](../explain/routes-and-navmeshes.md). Exact details: Navigation and routes, [FRT route sets](../formats/frt.md), [NAV2 navmeshes](../formats/nav2.md). Addresses are for 1.0.15.4 EN. All live numbers come from Afghanistan free roam, sneak phase.*
+*Based on: [How soldiers find their way](../explain/path-finding.md), [Routes and navmeshes](../explain/routes-and-navmeshes.md). Exact details: [Navigation and routes](../engine/navigation.md), [FRT route sets](../formats/frt.md), [NAV2 navmeshes](../formats/nav2.md). Addresses are for 1.0.15.4 EN. All live numbers come from Afghanistan free roam, sneak phase.*
 
 ## The findings
 - A route is **authored data**. A soldier's patrol comes from a `.frt` route set, and scripts choose between routes by name [V].

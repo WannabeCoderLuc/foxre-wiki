@@ -8,6 +8,14 @@ What each finding means for a mod, with a worked (hypothetical) example of how i
 
     Every finding that matters for modding, in one page.
 
+-   **[Where things stand for modders](where-things-stand.md)**
+
+    What is decoded, what the engine runs, what the planned Mod API (M10, M24) will offer.
+
+-   **[Archives, packages and hashes](archives-and-hashes.md)**
+
+    PathCode64, the name gap, package contents, checks for file tools.
+
 -   **[Add a package to a mission](add-a-package.md)**
 
     Mission package lists are Lua: wrap the package-path function.
@@ -20,9 +28,17 @@ What each finding means for a mod, with a worked (hypothetical) example of how i
 
     The binding map, stripped functions, recorded return values.
 
+-   **[Messages and commands in a mod](messages-and-commands.md)**
+
+    SendCommand, OnMessage and hand-back, timers, the 128-message queue, update order.
+
 -   **[Side content with script blocks](script-blocks.md)**
 
     Load and unload your own content with the area.
+
+-   **[Locators and map blocks in a mod](locators-and-blocks.md)**
+
+    DataIdentifier lookups, the 128 m block window, large-block messages.
 
 -   **[Patching the iDroid tables](idroid-tables.md)**
 
@@ -40,13 +56,17 @@ What each finding means for a mod, with a worked (hypothetical) example of how i
 
     Terrain blocks, tiling and the triangle rule: place things on the ground.
 
+-   **[Terrain and collision files in a mod](collision-files.md)**
+
+    The FoxData container, what is decoded, what you can safely do today.
+
 -   **[Navmeshes and routes in a mod](navigation-and-routes.md)**
 
     Route commands, writing patrols, why far soldiers ignore walls, tracing paths.
 
 -   **[Soldiers and alert phases in a mod](soldier-ai.md)**
 
-    Phase commands, timers, the realize budget, safe tests near soldiers (IN PROGRESS).
+    Phase commands, reports, investigators, the realize budget, safe tests near soldiers (IN PROGRESS).
 
 -   **[Checking community addresses](claims.md)**
 

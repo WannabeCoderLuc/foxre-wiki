@@ -50,7 +50,7 @@ One topic per page, in plain language: what it is, why it matters, how the origi
 
 -   **[How soldiers think](soldier-ai.md)**
 
-    Realized soldiers, route steps, phases and their timers (M9, IN PROGRESS).
+    Realized soldiers, route steps, phase timers, reports and investigators (M9, IN PROGRESS).
 
 -   **[How we verify](verification.md)**
 

@@ -8,6 +8,7 @@
 | `mgsvtpp.exe`, PC Steam 1.0.15.4 EN | the engine and game code | static reading only (Ghidra, capstone), never modified; single functions run in an emulator as oracles |
 | The game's data (`master\*.dat`) | every file the game loads | read-only; formats verified on every file; nothing published |
 | The running game, offline single player | live behaviour | Lua through IHHook's pipe, log-only FoxTrace hooks; captures run twice and archived |
+| A development-build symbol map of the same executable | function names as hints | a name counts only after the retail function body was read and matches ([How we verify](../explain/verification.md)) |
 | `Fox.ExportSerializeInfo()` | the engine's own class registry (1,153 classes) | exported from the game itself, see [Reflection](../engine/reflection.md) |
 
 ## Community projects

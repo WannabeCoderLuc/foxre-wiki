@@ -16,8 +16,21 @@ The site has **hand-written** pages and **generated reference** pages, and they 
 
 If an Explanation and a Reference page ever disagree, the Reference page is newer: it is regenerated from the working documents every time the site is built, while Explanations are rewritten by hand at milestone ends.
 
+## Reading order
+| You are | Read |
+|---|---|
+| curious about the project | [What this project is](overview.md), then the Explanations in menu order |
+| a modder | [Getting started as a modder](modder-start.md), [Where things stand for modders](../mods/where-things-stand.md), then the guide for your topic |
+| writing a tool or an engine | the Explanation for the topic, then its Reference page |
+| checking a claim | the Reference page and its evidence table, then [How we verify](../explain/verification.md) |
+
+## How each page is built
+- **Explanations** follow the same order: what it is, why it matters, how the original does it, how our engine does it, how we know, what is still open, and a short "For modders" pointer.
+- **Modding guides** start with the findings (tagged), then how it works, then a **"How this would be used in a mod"** example and the pitfalls. Every example is **hypothetical**: it shows how a finding would be applied and has not been built or tested by this project. Lua in the examples follows vanilla script patterns, but treat it as a sketch.
+- **Reference pages** are the project's working documents: dense, with addresses and evidence tables.
+
 ## Confidence tags
-Statements on Reference pages carry tags: **[V]** verified in the program or the running game, **[D]** holds for every relevant game file, **[I]** inferred, **[?]** open, **[x]** an earlier claim found wrong. Explanations only state [V] / [D] facts as facts and say so when something is not proven yet. Details: [How we verify](../explain/verification.md).
+Statements on Reference pages carry tags: **[V]** verified in the program or the running game, **[D]** holds for every relevant game file, **[I]** inferred, **[?]** open, **[x]** an earlier claim found wrong. Explanations only state [V] / [D] facts as facts and say so when something is not proven yet. Details: [How we verify](../explain/verification.md). Notation for addresses, offsets and hashes: [Addresses, hashes and tags](conventions.md).
 
 ## Statuses
 Milestones and modules are marked **PASS** (its automated gate passes), **IN PROGRESS** or **PLANNED**.

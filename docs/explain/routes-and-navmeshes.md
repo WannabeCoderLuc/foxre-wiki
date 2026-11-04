@@ -1,6 +1,6 @@
 # Routes and navmeshes
 
-*Formats decoded in M1, path finding in M8 (PASS 2026-11-01). In depth: [How soldiers find their way](path-finding.md), [How soldiers think](soldier-ai.md). References: [FRT route sets](../formats/frt.md), [NAV2 navmeshes](../formats/nav2.md), Navigation and routes.*
+*Formats decoded in M1, path finding in M8 (PASS 2026-11-01). In depth: [How soldiers find their way](path-finding.md), [How soldiers think](soldier-ai.md). References: [FRT route sets](../formats/frt.md), [NAV2 navmeshes](../formats/nav2.md), [Navigation and routes](../engine/navigation.md).*
 
 ## What they are
 Two kinds of data tell characters where they can and should go:
@@ -30,6 +30,10 @@ FoxTrace logs every path job in the real game, with its inputs and the state of 
 - What creates the temporary state. The engine replays recorded obstacles and links; it cannot make them yet.
 - How soldiers follow routes close to the player. Far away they slide exactly along the route at 0.80 m/s; close up they walk at about 1.0 m/s and stray from it. This moved to M9 together with soldier behaviour.
 - Other missions, Africa, Mother Base and alert phases are not tested yet.
+
+## For modders
+- Route commands, writing routes, why far soldiers ignore walls: [Navmeshes and routes in a mod](../mods/navigation-and-routes.md).
+- Reading and writing `.frt` and `.nav2` files byte-exactly: [FRT route sets](../formats/frt.md), [NAV2 navmeshes](../formats/nav2.md). A navmesh baker and route editor for the original game (MOD-A) are not planned for now; world and navmesh authoring for the new engine is MOD-D ([Where things stand for modders](../mods/where-things-stand.md)).
 
 ---
 <small>Hand-written article (`docs/site/explain/Routes-And-Navmeshes.md`) &middot; published 2026-11-04.</small>

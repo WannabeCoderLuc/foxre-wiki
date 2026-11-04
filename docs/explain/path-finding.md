@@ -1,6 +1,6 @@
 # How soldiers find their way
 
-*M8, PASS on 2026-11-01. Background: [Routes and navmeshes](routes-and-navmeshes.md). Exact details: Navigation and routes, [NAV2 navmeshes](../formats/nav2.md), [FRT route sets](../formats/frt.md). Modding: [Navmeshes and routes in a mod](../mods/navigation-and-routes.md).*
+*M8, PASS on 2026-11-01. Background: [Routes and navmeshes](routes-and-navmeshes.md). Exact details: [Navigation and routes](../engine/navigation.md), [NAV2 navmeshes](../formats/nav2.md), [FRT route sets](../formats/frt.md). Modding: [Navmeshes and routes in a mod](../mods/navigation-and-routes.md).*
 
 ## What it is
 When a soldier has to walk somewhere, the game answers one question: which line through the world gets there without walking through a wall? That answer is a **path job**. It takes a start, a goal and some rules, and it returns a short list of points. This page follows one job from request to result, then looks at what can change the answer.
@@ -74,6 +74,9 @@ Three mistakes in our own logging looked like engine errors for a long time, and
 - What creates blocked triangles, obstacle rings and off-mesh links; who adds the blocked link pairs [?].
 - Cluster-level dynamic links are not ported; no recorded job needed them.
 - All captures are Afghanistan, mission 30010, sneak phase. Alert, other missions, Africa and Mother Base are untested.
+
+## For modders
+Write patrols that behave, and trace path jobs: [Navmeshes and routes in a mod](../mods/navigation-and-routes.md).
 
 ---
 <small>Hand-written article (`docs/site/explain/Path-Finding.md`) &middot; published 2026-11-04.</small>

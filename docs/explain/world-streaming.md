@@ -45,5 +45,8 @@ flowchart LR
 - Which of two block lists drives the large-block message, the level-of-detail package lists, small-block streaming and real load times.
 - How the button press reaches the title machine (input is not modelled yet; the scenario presses for the player).
 
+## For modders
+Look up named places and react when an area is loaded: [Locators and map blocks in a mod](../mods/locators-and-blocks.md).
+
 ---
 <small>Hand-written article (`docs/site/explain/World-Streaming.md`) &middot; published 2026-11-04.</small>

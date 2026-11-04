@@ -1,6 +1,6 @@
 # How soldiers think
 
-*M9, IN PROGRESS: this page describes findings so far and will change. Exact details: Soldier AI. Modding: [Soldiers and alert phases in a mod](../mods/soldier-ai.md). Tags: [V] read in the game's code, [D] measured live, [I] inferred, [?] open.*
+*M9, IN PROGRESS: this page describes findings so far and will change. Exact details: [Soldier AI](../engine/soldier-ai.md). Modding: [Soldiers and alert phases in a mod](../mods/soldier-ai.md). Tags: [V] read in the game's code, [D] measured live, [I] inferred, [?] open.*
 
 ## What it is
 A base in the game is two layers. Each **soldier** walks, stops and reacts. Above them, a **command post (CP)** holds the base's shared state: its **phase**.
@@ -30,7 +30,7 @@ This is not a distance check, as earlier notes assumed. Each frame the game does
 4. Sorts them and realizes the first 18.
 
 ### Walking speeds
-Realized soldiers move by animation; unrealized ones use what look like fixed values [D, I].
+Realized soldiers move by animation. Unrealized ones use fixed values picked by phase and speed class [V, D].
 
 | Movement | Realized (m/s) | Unrealized (m/s) |
 |---|---|---|
@@ -40,7 +40,7 @@ Realized soldiers move by animation; unrealized ones use what look like fixed va
 | Caution run | 4.01 | 2.75 |
 | Dash | 6.43 | 4.00 |
 
-Where the unrealized values are stored is not decoded [?]. Unrealized soldiers stay on the route's line (99 % within 0.21 m). Realized ones stray a little more (99 % within 1.98 m).
+The unrealized values are not a table: one function holds them as separate constants and picks one by phase (sneak or caution), speed class (walk, run, dash) and a flag; a further factor of 0.772 applies to one kind of move [V]. Every measured unrealized speed is among them. Which bits of a soldier's movement word select which pair is not read live yet [I]. Unrealized soldiers stay on the route's line (99 % within 0.21 m). Realized ones stray a little more (99 % within 1.98 m).
 
 ### Following a route
 A small step machine runs for each soldier [V]:
@@ -119,10 +119,15 @@ Each statement here says how it was checked. Things that differ between two runs
 ## Still open
 - How long an investigator searches before it marks the point done; why evasion's timer runs 40 times slower for most of evasion at the second base [?].
 - The slow band of the alert timer applied at the village with the player 490 m away; which point it compares is not read yet [?].
-- Re-run the sight test with the notice log [?].
-- The unrealized speed table and the movement bits 0x30 [?].
+- Repeat the sight-scale runs once more each (one run each so far) [?].
+- Which movement bits pick the unrealized (phase, speed) pair, read live [I].
 - Route steps 4, 5 and 0x10, the same-spot test, and waits longer than their time [?].
 - Hearing, combat AI and damage have not been studied here yet. Data comes from three Afghan bases (Central Base Camp, Wakh Sind Barracks, Da Wialo Kallai); none from Africa yet.
+
+## For modders
+- Phase commands, timers, investigators and a safe test setup: [Soldiers and alert phases in a mod](../mods/soldier-ai.md).
+- Routes and path requests: [Navmeshes and routes in a mod](../mods/navigation-and-routes.md).
+- Planned extension points (radio types, member roles, search-point completion, phase rates, realize budget): [Soldier AI, "Extension points"](../engine/soldier-ai.md) and [Where things stand for modders](../mods/where-things-stand.md).
 
 ---
 <small>Hand-written article (`docs/site/explain/Soldier-AI.md`) &middot; published 2026-11-04.</small>

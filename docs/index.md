@@ -56,7 +56,7 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 | M6 | World streaming & locators | stage blocks, location loader, locators | <span class="status pass">PASS</span> |
 | M7 | Terrain & collision formats [PASS 2026-10-29] — `.htre`/`.tre2`, `.geom` | `.htre`/`.tre2`, `.geom` | <span class="status planned">PLANNED</span> |
 | M8 | Navigation & routes | nav2 runtime, path queries (Luc, 2026-11-01) | <span class="status pass">PASS</span> |
-| M9 | Gameplay core [PASS, Luc 2026-11-04] — Soldier AI, CP / notice, damage, SendCommand handlers (headless) | Soldier AI, CP / notice, damage, SendCommand handlers (headless) | <span class="status planned">PLANNED</span> |
+| M9 | Gameplay core [PASS, Luc 2026-11-04] — Soldier AI, CP phases and notice, route following (headless) | Soldier AI, CP phases and notice, route following (headless) | <span class="status planned">PLANNED</span> |
 | M10 | Mod API core [PLANNED, next] — registries, manifest, loader, hooks (headless) | registries, manifest, loader, hooks (headless) | <span class="status planned">PLANNED</span> |
 | M11 | Asset formats | textures, models, rigs, fova, parts, language, sound containers | <span class="status planned">PLANNED</span> |
 | M12 | Sound & UI logic | sound events, music states, menus, iDroid, HUD (headless) | <span class="status planned">PLANNED</span> |
@@ -97,10 +97,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-11-04: **Gates aligned**: every milestone M0-M24 has numbered gate items matching its name and goal in ROADMAP.md; gates.json generated from it (`Tools/gates_sync.py`), checked by `test_gates_roadmap.py`.
 - 2026-11-04: **M9 Gameplay core PASS** (Luc accepted the gate, G1-G6); milestone-end site pages rewritten.
 - 2026-11-04: **M9 G6 alert slow band point**: front point written by UpdateCpAtHost 0x140D65850 (seen player > 10 m away); FoxTrace 3.5; runs `m9_g6b`-`m9_g6f` clean, `m9_g6a` contaminated; `test_m9_g6.py` 7/7, gate M9 6/6 PASS; quick suite 167/167, baseline MATCH after every run.
 - 2026-11-04: **M9 G4 route following near the player**: steps 4/5/0x10, arrival tests, same-spot test decoded; node waits = idle-acting action (time frozen during single actions); runs `m9_g4b`, `m9_g4c` clean, FoxTrace 3.4; `test_m9_g4.py` 10/10, gate M9 5/6; quick suite 160/160, baseline MATCH.
 - 2026-11-04: **M9 G5 second base**: enemyBase runs `m9_eb1`, `m9_eb2` clean; investigate role ends on search-point completion; radio length = voice line; `test_m9_g5.py` 10/10, gate G5 PASS; FoxTrace 3.3; save repaired after a checkpoint-trap write; quick suite 150/150, baseline MATCH.
-- 2026-11-04: **M9 third step, rest**: 0x3A = investigator's report, alert 21 s = investigate role (two runs), unrealized speed function decoded and ported, sight 0 / 100 read; FoxTrace 3.2; 4 game runs, baseline MATCH; quick suite 140/140.
 
 [Full session log](status/log.md)

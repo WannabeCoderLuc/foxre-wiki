@@ -11,6 +11,8 @@ Status keys: PASS = gate passed · IN PROGRESS · NEXT (the milestone to start n
 - Oracles: `re_emulate` (exe function in unicorn), `engine_verify` (pytest + verifier lock), `lua51_run` (Lua 5.1 sandbox).
 - StrCode32/64 verified vs the exe (`Tools\foxhash.py`, incl. > 64-byte CityHash 1.1 body). `.nav2` codec byte-identical on 853 files.
 - **Gate passed:** `engine_verify` 9/9.
+  - G1 StrCode32/64 equal the exe (`test_strcode64_oracle.py`).
+  - G2 .nav2 codec byte-identical (`test_nav2_roundtrip.py`).
 
 ## M1 Data layer [PASS] (gates passed 2026-10-21) — read every file container and the core data formats
 | Item | Prior work | Gate |
@@ -23,6 +25,12 @@ Status keys: PASS = gate passed · IN PROGRESS · NEXT (the milestone to start n
 | `.sdf`/`.sbp` sound packages (container only) | — | listed + byte-extract — moved to M12 (sound) |
 
 Remaining M1 polish: texture name gap (FOX2 name resolution reported 2026-10-29: 100 % of classes and properties, 293,035/293,036 values from the files' own string tables) (22.8k unnamed `.ftexs`), exe-side parser VAs (all [?]).
+
+- **Gate (passed 2026-10-21):**
+  - G1 QAR entries MD5-verified (`test_qar_all.py`).
+  - G2 FPK byte-identical (`test_fpk_roundtrip.py`).
+  - G3 FOX2 byte-identical (`test_fox2_roundtrip.py`).
+  - G4 FRT and NAV2 byte-identical (`test_frt_roundtrip.py`, `test_nav2_all.py`).
 Output: `Engine\formats\` (ported from ATOMIZER/Tools into one package), `docs\formats\{QAR,FPK,FOX2,FRT,NAV2}.md`. Skill: `fox-format`.
 
 ## M2 Entity & reflection core [PASS] (gates passed 2026-10-21) — fox2 → live typed entity graph
@@ -30,6 +38,9 @@ Output: `Engine\formats\` (ported from ATOMIZER/Tools into one package), `docs\f
 - PASS: Entity graph (static, 2026-10-21): `Engine/core/entities.py`, [`docs/engine/Entities.md`](../engine/entities.md) — s10151 + link closure: 8,669 entities 100 % typed, 7,728/7,728 EntityPtr, all handles/links resolved or in named categories.
 - PASS: Runtime instantiation decoded (format select 0x1400ED040, binary reader state machine 0x1400EDE50, arena allocation, writer 0x1400EF290) → [`docs/engine/Entities.md`](../engine/entities.md); live gate: 17/17 f30010 DataIdentifier targets (name, class, world translation) match the running game (`test_live_f30010_identifiers.py`).
 - **Gate:** load all DataSets of one mission (e.g. s10151) into typed entities; 100 % classes and properties typed; references resolve; live fixture (entity counts/values after load) matches.
+  - G1 Type DB matches every DataSet (`test_typedb.py`).
+  - G2 s10151 entity graph typed and resolved (`test_entities_s10151.py`).
+  - G3 f30010 DataIdentifier targets equal live (`test_live_f30010_identifiers.py`).
 Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 
 ## M3 Runtime core [PASS] (gate passed 2026-10-22) — scheduler, messages, GameObjects
@@ -40,6 +51,7 @@ Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 - PASS: `Engine/runtime/` (gameobjects, scheduler, messages); `test_m3_runtime.py` 9/9, full suite 28/28.
 - Open (not gate-blocking): updater identities, who walks the 4 type groups, when the GameObject listener fires, updater removal path, >32-updater sort.
 - **Gate passed:** live fixtures for the tick order (every captured updater-vector change, ties included) and the boot → free-roam message sequence reproduced by the engine's scheduler/bus model.
+  - G1 Tick order and message sequence equal live (`test_m3_runtime.py`).
 
 ## M4 Script host [PASS] (gate passed 2026-10-29, accepted by Luc) — Lua 5.1 + Fox/Tpp API
 - Spec [`docs\engine\ScriptHost.md`](../engine/script-host.md) (2026-10-22): Lua runtime = stock 5.1 except TString chars behind a pointer [V]; live boot capture (FoxTrace 2): 170-chunk boot order, 147 library registrations, identical over 2 runs → `Engine\tests\fixtures\m4_lua_boot.json`.
@@ -53,6 +65,11 @@ Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 - [x] Login, DLC, pre-title (2026-10-28, gate a part 3): Konami login decoded (StartLogin command 0x1407D74A0, state machine 0x1407DEE70, Network.StartLogin/EndLogin raisers 0x14091C470/0x1407D50A0, live popups = `system_3200_all` ×2 / `system_3201_all`), pre-title UI 0x14085C8C0 state 4 → Lua `TppVarInit.StartTitle` [V static] (`Engine/runtime/online.py`). Host walks the 24 live transitions to `Seq_Demo_ShowKonamiAndFoxLogo` and loads title 40010 itself; m5 test hand-driven only from title CONTINUE (58/58 kept). Open: title-menu messages — blocked by 40010's DataIdentifier locator (M6).
 - [x] Gate b call-log comparison (2026-10-29): FoxTrace logs table results (Lua 5.1 Table layout [V]); capture `trace_m4b_luaret_f30020_20261029_002259` (574 hooks = every binding the host calls); the host follows the live save (title 40020 → f30020), runs free roam with message delivery to `Seq_Game_FreePlay` against recorded natives (only error: M6 locator); call log vs live: 548 functions both sides, 517 same argument lists, first-call order 0.947, every one-sided function explained (`test_m4_gate_b.py`, ScriptHost.md "M4 gate b"). Open: 31 argument-list differences (save / IH quest pick / title boundary), E29 `pairs` insertion order, title menu (M6).
 - **Gate (re-agreed 2026-10-22):** init + f30010 mission scripts run against **recorded** native return values (record/replay fixture from a live capture); chunk order and API call log match the live capture. (Dropped: "no unstubbed API calls"; natives are answered from the replay fixture.)
+  - G1 Boot chunk order (`test_m4_script_host.py`).
+  - G2 Native binding map (`test_m4_bindings.py`).
+  - G3 Record / replay of natives (`test_m4_replay.py`).
+  - G4 Timers, messages, popups, title flow (`test_m4_messages.py`).
+  - G5 Gate b: API call log vs live (`test_m4_gate_b.py`).
 - **State (2026-10-29):** met for the init mission and free roam (f30010 and f30020 saves) up to the differences listed in `ScriptHost.md` "M4 gate b". The title menu belongs to M6 (it waits for the locator lookup) and moved into M6's gate. **Gate passed (Luc, 2026-10-29)** with those differences recorded as open items (E14, E29).
 
 ## M5 Resources & mission load [PASS] — packs, blocks, async resources, mission start
@@ -62,6 +79,7 @@ Skills: `fox-system`, `fox-ground-truth`, `fox-engine-module`.
 - [x] Script blocks (2026-10-23): 8-slot system decoded (`ScriptBlock.*`, slot update 0x140184340, OnAllocate/OnInitialize/OnUpdate/OnTerminate) → `Engine\resources\blocks.py`; svars change log → `OnChangeSVars`, mission `OnUpdate`, save boundary `LoadVarsFromSlot` (live save image), 2nd luaret capture (663 natives) + IH Lua trace. Host loads **49/49 chunks from live 112 to the end of the boot** (UI tables excluded), script blocks quest / reinforce / animal in vanilla order, slots and `ScriptBlock.Load` calls as live (`test_m5_mission_load.py`, `test_m5_script_blocks.py`). Live tail order differs only by IH's patched `f30010.fpkd` [V].
 - [x] UI parameter tables (2026-10-24): the `mbdvc_*` tables are `mb_dvc_top.fpk` scripts, reloaded by the iDroid on every `TppUiCommand.ChangeLanguage()` (3 per boot: TppUiBootInit, init_sequence SetSavedLanguage, CreateOrLoadSaveData), `emblem_list.lua` from the emblem setup 0x1405CF950 [V static + live capture `trace_m5_lang`] → `Engine\resources\ui.py` (`IDroid`). Host boot: 112/112 live chunks (boot UI load asserted as an async group: live order varies between runs); M5 scenario: **58/58 live chunks from 112** (the title flow's language changes and loads at the native boundary).
 - **Gate passed (2026-10-24):** chunk + block event order from live chunk 112 to the end of the boot (`m4_lua_boot.json` chunks 112–169) reproduced by the host.
+  - G1 Chunk + block event order from live chunk 112 (`test_m5_mission_load.py`, `test_m5_script_blocks.py`).
 
 ## Order from M6 on (re-cut 2026-10-29)
 The old M6 World bundled three different kinds of work (world streaming, two file formats, the navigation runtime) and the old M10 bundled offline asset decoding with the renderer. From M6 on, the milestones are cut so that each one depends only on milestones before it, and the next one is always the most feasible with what exists:
@@ -112,12 +130,12 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 - **Data-driven registries.** GameObject types, SendCommand handlers, message ids, updaters, AI node tables, resource loaders, reflection classes and Lua libraries are registered, never hardcoded; vanilla registers through the same path as mods and behaves exactly like the original.
 - **Determinism.** Randomness only from the engine's seeded generator (the game's own generator once M13 decodes it); fixed frame order from the scheduler.
 - **Compat mode.** With no mods loaded every vanilla gate passes; enhanced features are separate modes and never weaken a vanilla gate.
-- **Gate registry.** Every gate item is listed in `Engine\tests\gates.json` with the tests that decide it; `engine_verify(gate="M10")` reports each item PASS / FAIL / NOT BUILT. A milestone passes when every item is PASS and Luc accepts it.
+- **Gate registry.** Each milestone section here lists its numbered gate items ("Gn Name: ... (test file)"), the source of truth; `python Tools\gates_sync.py` copies names and items into `Engine\tests\gates.json`, and `test_gates_roadmap.py` fails when the two differ or a milestone has no items. Every gate item is listed in `Engine\tests\gates.json` with the tests that decide it; `engine_verify(gate="M10")` reports each item PASS / FAIL / NOT BUILT. A milestone passes when every item is PASS and Luc accepts it.
 
 ## Common gate (every milestone from M10 on, in addition to its own items)
 - **C1 Suite:** full `engine_verify` (slow verifiers included) PASS; verifier lock unchanged or relocked after review.
 - **C2 Specs:** every system / format the milestone touches has a spec with "Extension points" and "Evidence" sections (`test_docs_contract.py`).
-- **C3 Natives:** every binding the milestone owns is implemented, not answered from a recording, and its call log equals live (`test_natives_owned.py`).
+- **C3 Natives:** every binding and SendCommand handler the milestone owns is implemented, not answered from a recording, and its call log equals live (`test_natives_owned.py`).
 - **C4 Determinism:** the milestone's scenario run twice with the same seed gives byte-identical traces.
 - **C5 Fixtures:** each live fixture comes from at least two runs that agree, or the varying values are pinned as ranges with the reason in the spec; clamped and free runs never mixed (M9 capture protocol).
 - **C6 Mods:** each new extension point has a reference mod under `Engine\mods\reference\` passing its own fixtures; all vanilla items pass with no mod and with the null mod loaded.
@@ -137,7 +155,10 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 - [x] Locators (2026-10-29): DataIdentifier registry + lookup decoded (0x14017F170 / 0x14017EDD0, registry 0x142B72A88) and implemented over the mounted DataSets (`Engine/world/identifiers.py`); the title's `HelispaceLocatorIdentifier` lookups match live for both saves, 40010 / 40020 finish OnAllocate + OnInitialize with no Lua error (`test_m6_world.py`). `World.md` first draft.
 - [x] Stage blocks (2026-10-29): controller decoded (update 0x1401611F0 / 0x140161500, raisers 0x140161816 / 0x140177870, position provider `StageBlockCurrentPositionSetter` fed from `vars.initialPlayerPos*`, window centre = centerIndex + floor(p / 128), sentinels ±1,000,000 = 7945 / 57857, large blocks from the FSTB small-block lists in the 5×5 window ± largeBlockLoadingMargin) and implemented (`Engine/world/stage_blocks.py`); host stage-block messages = live for f30010 and f30020 (`test_m6_world.py`).
 - [x] Title menu + the game's own CONTINUE (2026-10-29): raisers decoded (pre-title / title-menu sequence 0x14085C8C0 states 6-14 raise `UI.TitleMenu`, fade-end raiser 0x14092CC60 raises `EndFadeIn` / `EndFadeOut` after FoxFadeIo's timed fade, splash screens 0x14090E690 ff., loading-tips end 0x14089A700) and implemented (`Engine/runtime/title.py`); `scenario.py` reaches free roam for f30010 and f30020 through the title script's own `OnEndFadeOutSelectContinue`; title-menu messages = live order (`test_m6_world.py`). Open: TitleMenuReady / RequestPlayRecordClearInfo raisers (obfuscated code) [?].
-- **Gate:** for both recorded saves (f30010 afgh, f30020 mafr) the host's stage-block messages match a live fixture for the boot → free-roam span; the title's locator lookups resolve; the title menu runs and `Engine\script\scenario.py` reaches free roam through the game's own CONTINUE (no hand-driven load).
+- **Gate:** for both recorded saves (f30010 afgh, f30020 mafr):
+  - G1 Stage blocks: the host's stage-block messages match a live fixture for the boot → free-roam span (`test_m6_world.py`).
+  - G2 Locators: the title's locator lookups resolve and equal live (`test_m6_world.py`).
+  - G3 Title menu and CONTINUE: the title menu runs and `Engine\script\scenario.py` reaches free roam through the game's own CONTINUE, no hand-driven load (`test_m6_world.py`).
 - **State (2026-10-29):** all three gate items met for both saves (`test_m6_world.py`, quick suite 81/81); **Gate passed (Luc, 2026-10-29).** Open items stay recorded (E20-E22, TitleMenuReady raiser).
 
 ## M7 Terrain & collision formats [PASS 2026-10-29] — `.htre`/`.tre2`, `.geom`
@@ -148,6 +169,8 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 - [x] E7 answered (2026-10-29): `*_PhysicsData` links live in `.ph` / `.sim` FOX2 DataSets, not `.geom`; resolved to the file's single `PhObjectDesc` (s10151 54 / 54, Entities.md "Physics data links").
 - [x] Live ground-height fixture (2026-10-29, IH pipe warp-drops in f30010, `Memory/research/m7_ground_20261029_182058`): cluster-tiled heightMap, block origin ((b - 133) * 128), rows = z / columns = x, triangle pair split (x0,z0)-(x1,z1) [V live]; `HeightField.from_blocks` / `from_tre2`; 24 terrain points over 6 blocks = live within 5 mm (`test_m7_ground.py`, E31 answered).
 - **Gate:** every terrain and collision file round-trips byte-identical (**met 2026-10-29**); heightmap samples equal live ground heights at recorded points (fixture from the IH pipe) (**met 2026-10-29**, `m7_ground_heights.json`). **Gate passed (Luc, 2026-10-29).** Open items stay recorded (E30, E32).
+  - G1 Terrain and collision files byte-identical (`test_foxdata_all.py`, `test_terrain_all.py`, `test_m7_formats.py`).
+  - G2 Ground heights equal live (`test_m7_ground.py`).
 
 ## M8 Navigation & routes [PASS] — nav2 runtime, path queries (Luc, 2026-11-01)
 - Portal-graph path search over `.nav2`, `TppNavigationController` snap / plan, nav worlds; `.frt` route following and route events (E6: 35 unnamed event types). Evidence: `BATTLEFIELD.md` §4, `SAHELAN.md` (navigation), probe goal logs.
@@ -160,10 +183,12 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 - [x] Edge events → speed class decoded and ported (2026-11-01, 0x140ED4C10); far soldiers 0.80 m/s on all walk events.
 - [x] Far route following: far soldiers stay on route edges in node order (97 of 170 fit one route) at 0.80 m/s.
 - Moved to M9 (Luc, 2026-11-01): state sequence near the player, far-mode switch, run and dash speeds. Getting close needs protection and belongs with the AI behaviour captures.
-- **Gate (not met):** path queries equal live `RequestMove` results (fixtures); a soldier's route-following state sequence matches live.
+- **Gate passed (Luc, 2026-11-01):**
+  - G1 Path jobs: path queries equal live `RequestMove` results within 0.1 m, 948 of 948 jobs (`test_m8_nav.py`).
+  - The route-following state sequence near the player moved to M9 (G2, G4).
 
-## M9 Gameplay core [PASS, Luc 2026-11-04] — Soldier AI, CP / notice, damage, SendCommand handlers (headless)
-- GameObject families Soldier2 and Player2 (state, not animation), AI framework (node tables, blackboard), CP phase and notice, damage, SendCommand handlers. Evidence: `BATTLEFIELD.md`, `SAHELAN.md` §9–§10, `structs_soldier\`, the knowledge DB's command handlers.
+## M9 Gameplay core [PASS, Luc 2026-11-04] — Soldier AI, CP phases and notice, route following (headless)
+- GameObject families Soldier2 and Player2 (state, not animation), AI framework (node tables, blackboard), CP phase and notice, route following. Damage moved to M15, the SendCommand handler set to M10 G7 (ownership) and the milestones that own each handler (accepted scope, Luc 2026-11-04). Evidence: `BATTLEFIELD.md`, `SAHELAN.md` §9–§10, `structs_soldier\`, the knowledge DB's command handlers.
 - **Live capture protocol first (Luc, 2026-11-01):** near soldiers the player must not die and runs must stay readable: unlimited health, recorded phase control, other measures confirmed to work, driver without combat input, unplanned events logged and the run marked. Clamped and free runs are never mixed in a fixture.
 - [x] Capture protocol written and proven (2026-11-01, `engine\SoldierAI.md`): 45 hits under alert with life unchanged, driver stops on hand input, phase rise, damage in free runs. Sight and hearing scale not confirmed, so not used.
 - [x] Route step machine (2026-11-01, `route_follow.py`, `test_m9_route.py`, runs `m9_route1`, `m9_route2`): one `RequestMove` per leg start (0x1415713C0), slot = soldier index [V]; leg and node event order equals live on all 1,662 changes of both runs; waits = event time in frames.
@@ -181,13 +206,19 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 - [x] **G4 route following near the player (E33)** (2026-11-04, `route_follow.py`, `test_m9_g4.py`, runs `m9_g4b`, `m9_g4c`, FoxTrace 3.4 `idleact`): steps 4 / 5 = board / leave vehicle or walker gear, 0x10 = route ended [V]; foot arrival = remaining path < 0.25 m, walker gear < 1.0 m [V]; same spot = |soldier - next node|^2 < 1.0 after the last event [V 0x14156B120]; order equals live on 945 / 947 changes. Long waits explained: action-mode events end when `IdleActingActionImpl` ends; its time counts only in StandIdle and freezes during random single actions (up to 18 s), so wait = time + single actions [V, D on 173 events].
 - [x] First behaviour fixture (2026-11-01): caution route switch, evasion fallback after about 26 s (`m9_soldier_forced.json`, two runs).
 - [x] Soldier behaviour by phase: evasion, alert with a known target as state sequences; a second base (G5, 2026-11-04).
-- **Gate:** per system, behaviour fixtures (state sequences) reproduced.
+- **Gate (passed, Luc 2026-11-04):**
+  - G1 Far mode / realize lists: realize budget and lists equal live (`test_m9_soldier.py`).
+  - G2 Route step machine and notice: leg and node event order equal live; known-target notice, then alert, evasion, caution in order (`test_m9_route.py`).
+  - G3 CP phase lengths: drain bit-exact, a phase ends when its request finishes, investigate role and reports (`test_m9_phase.py`, `test_m9_radio.py`).
+  - G4 Route following near the player: arrival and same-spot tests, node waits (`test_m9_g4.py`).
+  - G5 Soldier behaviour by phase, second base: the same chain at afgh_enemyBase_cp (`test_m9_g5.py`).
+  - G6 Alert slow band: the front point and the 10 m band (`test_m9_g6.py`).
 
 ## M10 Mod API core [PLANNED, next] — registries, manifest, loader, hooks (headless)
 - Data-driven registries for everything M2-M9 built: GameObject types, SendCommand handlers, message ids, updaters (phase + priority), AI node tables, resource loaders, reflection classes, Lua libraries. Vanilla registered through the same path.
 - Mod manifest (namespace, API version 0.x, dependencies, load order); loader with conflict detection; Lua mods in the `lua51_run` sandbox pattern; Python mods for prototypes.
 - Extension kinds: new system (updater + lifecycle `OnAllocate / OnInitialize / OnUpdate / OnTerminate`), message listeners and own message ids (namespaced StrCode32), new GameObject types with handlers, new `.fox2` classes, parameter overrides (layered by load order), before / after hooks (observe, change, cancel), SendCommand handler chaining, AI node insert / replace, blackboard access, Lua libraries.
-- `natives_owner.json`: every binding from `m4_lua_bindings.json` assigned to its owning milestone.
+- `natives_owner.json`: every binding from `m4_lua_bindings.json` assigned to its owning milestone; `commands_owner.json`: every vanilla SendCommand handler (knowledge DB `cmd_handlers.tsv`) assigned the same way.
 - "Extension points" back-filled into `Entities.md`, `Scheduler.md`, `Messages.md`, `ScriptHost.md`, `Resources.md`, `World.md`, `Navigation.md`, `SoldierAI.md`. Spec `docs\engine\ModAPI.md`, module `Engine\mods\`.
 - **Gate:**
   - G1 Registries: every type, handler, message, updater and Lua library the engine implements is registered through the registry; the registry dump equals the previous hardcoded tables; every M0-M9 gate test passes unchanged (`test_m10_registry.py`).
@@ -196,7 +227,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
   - G4 Rejections (`test_m10_rejects.py`): StrCode32 id collision with vanilla or another mod; API version mismatch; missing dependency; load-order cycle; sandbox escapes (`os` / `io` / `debug` / `require` / binary chunks); nondeterminism (unseeded random, wall clock) caught by a double run.
   - G5 Load order: two mods overriding one parameter resolve in documented order, same result on every run (`test_m10_load_order.py`).
   - G6 Overhead: registry dispatch costs at most 5 % frame time on the M3 and M9 scenarios against the pre-registry baseline (`test_m10_perf.py`).
-  - G7 `natives_owner.json` covers 100 % of the bindings in `m4_lua_bindings.json` (`test_natives_owned.py`).
+  - G7 Ownership: `natives_owner.json` covers 100 % of the bindings in `m4_lua_bindings.json` and `commands_owner.json` 100 % of the vanilla SendCommand handlers, each with an owning milestone (`test_natives_owned.py`).
   - Common gate C1-C8.
 
 ## M11 Asset formats [PLANNED] — textures, models, rigs, fova, parts, language, sound containers
@@ -211,19 +242,21 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
   - G7 Outfits: every fova / parts combination in vanilla data resolves its referenced files in the QAR inventory, 100 % (`test_m11_fova.py`).
   - G8 Language: every `.lng` entry decodes; every lang id used in vanilla Lua resolves in every language file; 20 ids equal the live game's own lookup (`test_m11_lang.py`).
   - G9 E2: every texture referenced by an `.fmdl` resolves to a QAR entry, 100 %; newly named textures reported (`test_m11_textures.py`).
-  - G10 Sound containers: every `.sdf/.sbp` lists, extracts and rebuilds byte-identical; every `.bnk` section tree parses with object counts reported (`test_m11_sound_containers.py`).
+  - G10 Sound containers: every `.sdf/.sbp` lists, extracts and rebuilds byte-identical; every `.bnk` section tree parses with object counts reported; every `.wem` header and chunk list parses, no audio decode (`test_m11_sound_containers.py`).
   - G11 Live load list: the assets the engine says f30010 loads equal the live resource request trace (FoxTrace) (`test_m11_load_list.py`).
+  - G12 Mod: every reader / writer is registered through the M10 loader registry; a mod adds a texture and a model that load like vanilla files (`test_m11_mod.py`).
   - Common gate C1-C8.
 
 ## M12 Sound & UI logic [PLANNED] — sound events, music states, menus, iDroid, HUD (headless)
 - Sound event layer (`TppSoundDaemon`, posted events, emitters, switches / states / RTPCs driven by gameplay, bank load with blocks); UI logic (title, pause, iDroid tabs, mission prepare, HUD state, popups beyond M4 / M5, loading tips). No playback (M21), no drawing (M20).
 - **Gate:**
   - G1 Sound events: for 3 recorded scenarios (boot → title, free-roam sneak, base alert), the posted events (event id, emitter, frame) equal live, order exact, frame ±1 (`test_m12_sound_events.py`).
-  - G2 Music: phase-music switch / state changes equal live on the `m9_phase1` / `m9_phase2` runs (`test_m12_music.py`).
+  - G2 Music and sound states: phase-music, switch, state and RTPC changes driven by gameplay equal live on the `m9_phase1` / `m9_phase2` runs and the base-alert scenario (`test_m12_music.py`).
   - G3 Banks: bank load / unload follows block loads exactly as live on both maps (`test_m12_banks.py`).
-  - G4 Menus: title, pause, iDroid (map, missions, Mother Base tabs), mission prepare: state sequence for a scripted input replay equals live, at least 5 menus, every captured transition covered (`test_m12_ui.py`).
+  - G4 Menus: title, pause, iDroid (map, missions, Mother Base tabs), mission prepare, popups beyond M4 / M5, loading tips: state sequence for a scripted input replay equals live, at least 5 menus, every captured transition covered (`test_m12_ui.py`).
   - G5 HUD: HUD state flags (phase indicator, reflex, weapon / item selector, markers) equal live per frame over a 60 s run (`test_m12_hud.py`).
   - G6 Residue: M4 / M6 open raisers (`TitleMenuReady`, `RequestPlayRecordClearInfo`) decoded or recorded as [?] with evidence (`test_m12_ui.py`).
+  - G7 Mod: a new sound event mapping and a new iDroid / HUD element through the API (`test_m12_mod.py`).
   - Common gate C1-C8.
 
 ## M13 Open world complete [PLANNED] — both maps, every block level, clock, weather, random numbers (headless)
@@ -242,7 +275,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 ## M14 Collision & physics [PLANNED] — shape trees, queries, character controller, rigid bodies
 - Typed `.geom` shape trees (E30), `.ph` / `.sim` `PhObjectDesc`; raycast, shape cast, overlap; character controller for Player2 and Soldier2 (slopes, steps, ledges, stance capsules) fed with recorded root motion until M16; rigid bodies (props, barrels). Hot paths in C++ behind `pybind11`.
 - **Gate:**
-  - G1 Shapes: every `.geom/.geoms` shape tree typed with zero undecoded bytes; shape counts equal the exe reader under `re_emulate` on a 200-file sample (`test_m14_shapes.py`).
+  - G1 Shapes: every `.geom/.geoms` shape tree and every `.ph` / `.sim` `PhObjectDesc` typed with zero undecoded bytes; shape counts equal the exe reader under `re_emulate` on a 200-file sample (`test_m14_shapes.py`).
   - G2 Raycasts: at least 5,000 of the game's own captured queries (sight, bullets, ground probes): hit / miss equal 100 %, hit point within 1 cm, normal within 1°, material equal (`test_m14_raycast.py`).
   - G3 Consistency: downward raycasts on terrain equal M7 height queries within 5 mm (`test_m14_raycast.py`).
   - G4 Character controller: recorded input runs (walk, run, crouch, prone, slopes, stairs, ledges, 20 min total) with recorded root motion: position within 2 cm per step, under 10 cm drift per 60 s window, grounded / falling sequence equal (`test_m14_controller.py`).
@@ -255,14 +288,15 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 ## M15 Combat & equipment [PLANNED] — weapons, ballistics, hits, damage, CQC logic, items, Fulton (headless)
 - Equip / weapon tables, ammo, firing, projectiles, hit detection on M14, damage model (body parts, lethal / non-lethal, armour), explosives, CQC state logic, items (decoy, supply drop), Fulton, inventory and loadouts; soldier reactions through M9.
 - **Gate:**
-  - G1 Parameters: every equip table decodes; values equal live `TppEquip` queries for every exposed equip id (`test_m15_equip.py`).
+  - G1 Parameters: every equip table decodes; values equal live `TppEquip` queries for every exposed equip id; fire rate, magazine and reload times equal live on recorded firing runs (`test_m15_equip.py`).
   - G2 Ballistics: at least 1,000 recorded shots: impact point within 2 cm up to 100 m, time to impact within 1 frame (`test_m15_ballistics.py`).
   - G3 Hits: body part and damage equal live on at least 500 hits (lethal, non-lethal, armoured) (`test_m15_damage.py`).
   - G4 Explosives: who is hit and the damage equal live on at least 50 explosions (`test_m15_damage.py`).
   - G5 Fulton: success / failure equals live given the M13 generator state on at least 100 extractions (`test_m15_fulton.py`).
   - G6 CQC: grab, choke, throw, interrogate state sequences equal live (timings from recordings until M16) (`test_m15_cqc.py`).
   - G7 Reactions: soldier state sequences in combat runs equal live (M9 capture protocol, free runs) (`test_m15_reactions.py`).
-  - G8 Mod: a new weapon (parameters + projectile) and a new item through the API (`test_m15_mod.py`).
+  - G8 Items and loadouts: decoy, supply drop and the other usable items act as live; inventory and loadout state after a recorded sequence equals the live svars (`test_m15_items.py`).
+  - G9 Mod: a new weapon (parameters + projectile) and a new item through the API (`test_m15_mod.py`).
   - Common gate C1-C8.
 
 ## M16 Animation [PLANNED] — clips, motion graphs, motion events, root motion, ragdoll
@@ -292,7 +326,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 - Every Soldier2 variant, animals, buddies (D-Horse, D-Dog, Quiet, D-Walker), support heli, vehicles (light vehicle, truck, APC, tank, walker gear), bosses (TppSahelan2: `SAHELAN.md`; others), each a content pack on the Mod API.
 - **Gate:**
   - G1 Behaviour: per family, state sequences from at least 2 live runs reproduced (`test_m18_family_<name>.py`, one per family).
-  - G2 Vehicles: driving replays: position within 10 cm over 30 s, state sequence exact (`test_m18_vehicles.py`).
+  - G2 Vehicles and heli: driving and support-heli flight replays: position within 10 cm over 30 s, state sequence exact (`test_m18_vehicles.py`).
   - G3 Buddies: command responses (mark, cover, call, ride) equal live (`test_m18_buddies.py`).
   - G4 Bosses: fight phase sequences equal live, at least 2 recorded fights per boss (`test_m18_bosses.py`).
   - G5 Packs: every family loads and unloads as a pack; with all packs removed, M17 still passes (`test_m18_packs.py`).
@@ -303,7 +337,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 - Main and side missions, objectives, checkpoints, results and ranking, demos (cutscene logic and timing), offline Mother Base (staff, development, GMP, base building), save read / write.
 - **Gate:**
   - G1 Saves: every save field decoded; load + resave byte-identical for 10 recorded saves; an original save loads and continues (`test_m19_saves.py`).
-  - G2 Main missions: recorded playthrough replays of every main mission end with svars and save image equal live (`test_m19_missions.py`; milestone checkpoint at 5 missions).
+  - G2 Main missions: recorded playthrough replays of every main mission: objective and checkpoint events in live order, and the run ends with svars and save image equal live (`test_m19_missions.py`; milestone checkpoint at 5 missions).
   - G3 Side ops: at least 20 side ops, same check (`test_m19_missions.py`).
   - G4 Demos: event timelines equal live, order exact, timing ±1 frame (`test_m19_demos.py`).
   - G5 Mother Base: staff / development / GMP state after a scripted action sequence equals the live save (`test_m19_mb.py`).
@@ -315,10 +349,11 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 - Materials / shaders (specified from captures, no copied shader code), terrain, models, lighting, shadows, post, effects (E8), UI drawing, camera; viewer (D3D11 or Vulkan, ImGui via vcpkg). Enhanced rendering is MOD-E, a separate mode.
 - **Gate:**
   - G1 Capture: RenderDoc capture of the live game works with plugins removed; procedure written (risk item, may be done any time) (`test_m20_capture.py` checks the stored capture set).
-  - G2 Passes: at least 20 reference frames (day, night, both maps, interior, weather, UI): per-pass mean absolute error at most 2/255, 99th percentile at most 8/255 (`test_m20_frames.py`).
+  - G2 Passes: at least 20 reference frames (day, night, both maps, interior, weather, effects (E8), UI drawing): per-pass mean absolute error at most 2/255, 99th percentile at most 8/255 (`test_m20_frames.py`).
   - G3 Draw set: meshes and LODs drawn per frame equal live, 100 % (`test_m20_frames.py`).
   - G4 Camera: matrices equal live within float32 epsilon on replay runs (`test_m20_camera.py`).
   - G5 Speed: reference scenes at 60 fps, 1080p, on the reference PC (`test_m20_perf.py`).
+  - G6 Mod: a mod model with its own material renders within the G2 tolerances in compat mode (`test_m20_mod.py`).
   - Common gate C1-C8.
 
 ## M21 Audio output [PLANNED] — Wwise-compatible playback
@@ -328,6 +363,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
   - G2 Voices: for the M12 G1 runs, voices started per event (sound ids, container choices given the M13 generator) equal live (`test_m21_voices.py`).
   - G3 Levels: emitter level by distance and RTPC equals live within 1 dB on test scenes (`test_m21_levels.py`).
   - G4 Output: loopback recordings of live and engine audio correlate at least 0.9 per 1 s spectrogram window on the M17 replays (`test_m21_output.py`).
+  - G5 Mod: a mod sound bank and event play through the API and pass the G2 / G3 checks (`test_m21_mod.py`).
   - Common gate C1-C8.
 
 ## M22 Playable game [PLANNED] — rendering + audio + input on the verified headless game
@@ -356,6 +392,9 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
   - G4 Isolation: a failing Lua mod is unloaded without stopping the game; a native plugin crash is reported with the mod named (`test_m24_isolation.py`).
   - G5 Examples: one example mod per area (buddy, vehicle, soldier, world, nav world, AI behaviour, weapon, mission, renderer feature) built from the docs alone passes its fixtures (`test_m24_examples.py`).
   - G6 Vanilla: full suite identical with no mods and with every example mod disabled (`test_m24_examples.py`).
+  - G7 Asset packs: a pack of imported assets (MOD-C importers, M11 writers) installs, loads and uninstalls cleanly; vanilla files untouched (`test_m24_packs.py`).
+  - G8 Mod manager: load order and the conflict report for a set of 10 mods equal the documented resolution, the same on every run (`test_m24_manager.py`).
+  - G9 Modes: with enhanced features installed, compat mode passes every vanilla gate; switching modes needs no reinstall (`test_m24_modes.py`).
   - Common gate C1-C8.
 
 ## Mod track [parallel] — tools and authoring for modders

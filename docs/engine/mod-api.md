@@ -159,7 +159,7 @@ This document is the extension-point index; each subsystem spec names its own:
 - Vanilla tables registered from: `Engine\tests\fixtures\m4_lua_bindings.json` (Lua libraries), `m3_frame_trace.json` (updater vector, type update groups), `mgsv_unified_server\data\re\gameobject_type_index.tsv` and `cmd_handlers.tsv` (copied into `Engine\mods\vanilla\*.json`), `fox_edb.json` (reflection), constants of `Engine\runtime\*` and `Engine\world\*`.
 - `Engine\tests\test_m10_registry.py` (G1): every registry dump equals the table it came from; two builds give byte-identical dumps; the script host installs Lua libraries and natives only through the registry; M0-M9 gate test files unchanged against `verifiers.lock.json`.
 
-## Open
+## Open (OPEN_QUESTIONS.md E42-E45, decisions D1-D3)
 - Stripped bindings as host no-ops (G7): exact (every recording returns nothing), but `test_m4_gate_b.py` pins `answered_pct >= 94.0`, which today counts the 7 stripped functions it calls twice (replayed and stripped); the real figure is 93.6 % (619 / 661). Needs the gate-b threshold corrected and relocked (Luc).
 - Hook sites (G3): which engine functions expose before / after hooks, and the blackboard view types.
 - Lua mod sandbox and the instruction budget value (G4).

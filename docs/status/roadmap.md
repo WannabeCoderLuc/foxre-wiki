@@ -228,7 +228,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
   - G5 Load order: two mods overriding one parameter and two mods hooking one site resolve in the documented order (`ModAPI.md` "Load order"), byte-identical over runs and over every input order (`test_m10_load_order.py`).
   - G6 Overhead: registry dispatch costs at most 5 % frame time on the M3 and M9 scenarios against the pre-registry baseline (`ModAPI.md` "Overhead budget"; `test_m10_perf.py`).
   - G7 Ownership: `natives_owner.json` covers 100 % of the bindings in `m4_lua_bindings.json` and `commands_owner.json` 100 % of the vanilla SendCommand handlers, each with an owning milestone from `gates.json` by the rules in `ModAPI.md` "Ownership"; natives the engine implements are marked implemented and not answered from a recording; owners are in the registry (`owner_milestone`) (`test_natives_owned.py`).
-  - Common gate C1-C8.
+  - Common gate C1-C8. C7 stays open for M10, not N/A (Luc, 2026-11-05): no C++ backend exists yet, so C7 stays NOT BUILT and gate M10 is not accepted until `test_cpp_equiv.py` covers a backend. The M9 C++ step (native boundary below) was never built; first backend = M7 height sampling + M8 nav path job (STATUS Next).
 
 ## M11 Asset formats [PLANNED] — textures, models, rigs, fova, parts, language, sound containers
 - `.ftex/.ftexs`, `.fmdl`, `.frig/.frdv`, `.fv2`/fova, `.parts`, `.lng`; `.sdf/.sbp` and Wwise `.bnk` / `.wem` as containers (no audio decode: M21); texture path recovery (E2). Readers and writers; formats registered through the M10 loader registry.

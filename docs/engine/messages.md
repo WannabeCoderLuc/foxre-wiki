@@ -54,7 +54,7 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 
 - **Message ids** (registry `messages`, key = StrCode32): vanilla ids, categories and argument values are registered; a mod's own ids are StrCode32 of `"<ns>.Name"` and may not collide with any registered id (M10 G4) [B M10 G1].
 - **SendCommand handlers** (registry `commands`, key `"<handler>:<Command>"`): `TypeManager.command` dispatches to registered handlers of the type (`handlers` by StrCode32) [B M10 G1]; chaining (`fn(next, ...)`) planned (M10 G3).
-- **Listeners**: `MessageBus.add_listener`; the mod-facing `ctx.listen` is planned (M10 G3).
+- **Listeners**: `MessageBus.add_listener`; mods: `ctx.listen(name_or_id, fn)` (registry kind `listeners`), installed by `MessageBus.register_from(reg)` (ModAPI.md "Extension kinds", M10 G3).
 
 ## Evidence
 - Verifiers: `test_m4_messages.py` (message delivery against live), `test_m3_runtime.py` (bus and dispatch on fixture `m3_frame_trace.json`).

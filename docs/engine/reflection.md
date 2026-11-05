@@ -43,7 +43,7 @@ PropertyInfo (0x48 B): vtable (slot 1 = arraySize), name +0x10, offset +0x18, ar
 ## Extension points
 Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 
-- **Classes** (registry `reflection_classes`, key = class name, value super / version / StrCode64 hash): vanilla = `fox_edb.json` [B M10 G1]; mod classes (namespaced) planned (M10 G3).
+- **Classes** (registry `reflection_classes`, key = class name, value super / version / StrCode64 hash): vanilla = `fox_edb.json` [B M10 G1]; mod classes (namespaced, with their own properties) are added to a `TypeDB` by `TypeDB.register_from(reg)` [B M10 G3: `fox2cls.Beacon` from a mod DataSet, ModAPI.md "Reference mods"].
 
 ## Evidence
 - Verifiers: `test_typedb.py` (type database from `fox_edb.json`).

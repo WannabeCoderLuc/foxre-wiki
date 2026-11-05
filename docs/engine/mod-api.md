@@ -31,8 +31,12 @@ Tags: [B] built and tested (gate item named), [P] planned (gate item named), [D]
 | `reflection_classes` | class name (str) | `{super, version, hash}` | `TypeDB` (vanilla source) | `fox_edb.json` via `Engine\core\typedb.py` |
 | `lua_libraries` | library name (str) | `{kind, after_chunks, members, values}` | `ScriptHost.register_upto` | `m4_lua_bindings.json` |
 | `natives` | `"Lib.Func"` | `{source, owner_milestone}` | `ScriptHost.natives` (a live view of this registry) | `ScriptHost` sources (loader, timers, popups, title, stage blocks ...) + recorded answers |
+| `hooks` [B G3] | site name (str) | ordered list `[{owner, before, after}]` (bools); `impl` = the matching `[(owner, before_fn, after_fn)]` | `Engine\mods\hooks.py` `run_site` at the three sites | the three site names with empty lists (vanilla declares the sites; a mod's `ctx.hook` is an override layer) |
+| `listeners` [B G3] | `"<ns>.listen<n>"` (n = 0, 1, ... per mod) | `{message, name}` (StrCode32 id, name if known) | `MessageBus.register_from` | none (vanilla's own listeners are engine objects) |
 
 Not every vanilla entry has an implementation: GameObject types, command handlers and updaters are registered as **descriptors** (name, id, priority) so ids are reserved and collisions are caught, and get an `impl` when the owning milestone ports them (`commands_owner.json`, `natives_owner.json`, G7).
+
+Kinds are dumped in the fixed order of `registry.KINDS` (12 kinds since G3; `hooks` and `listeners` last, so the first ten keep their G1 / G2 order).
 
 ## Registry consumers [B G1]
 `Engine\mods\params.py`. Engine modules read measured constants through the registry, never from their module constants (those stay the vanilla mod's *source*):
@@ -144,38 +148,39 @@ Every refusal raises a `ModError` subclass (`Engine\mods\registry.py`) whose mes
 5. Context services: `ctx.random` (a `random.Random` seeded from the loader seed and the namespace's StrCode32: same seed, same numbers, independent per mod), `ctx.emit(*event)` (owner-tagged runtime trace in `Registries.trace`, compared by the double run).
 6. `ModLoader.order` and `Registries.dump_json()` are the load report.
 
-## Extension kinds [P G3 reference mods, one each]
+## Extension kinds [B G3 reference mods, one each]
 | Kind | API | Engine hook point |
 |---|---|---|
 | New system | `ctx.register("updaters", "<ns>.Name", {priority}, impl=factory)` with lifecycle `OnAllocate / OnInitialize / OnUpdate / OnTerminate` | `UpdateService` vector (priority order, insertion sort, `Scheduler.md`) |
-| Message listener / own message ids | `ctx.listen(name_or_id, fn)`, `ctx.register("messages", strcode32("<ns>.Name"), {...})` | `MessageBus.add_listener` (`Messages.md`) |
+| Message listener / own message ids | `ctx.listen(name_or_id, fn)` (`fn(msg, bus)`, registry kind `listeners`), `ctx.message("<ns>.Name")` -> id | `MessageBus.register_from(reg)`: one bus listener that calls the mod listeners of the message's id in registration order (`Messages.md`) |
 | New GameObject type + SendCommand handlers | `ctx.register("gameobject_types", index, {...}, impl=manager_factory)`; `ctx.register("commands", "<type>:<ns>.Cmd", ..., impl=fn)` | `GameObjectManager.register_from`, `TypeManager.command` |
-| New `.fox2` class | `ctx.register("reflection_classes", "<Ns>Class", {...})` | `TypeDB` lookup / entity build (`Entities.md`) |
+| New `.fox2` class | `ctx.register("reflection_classes", "<ns>.Class", {super, version, hash, properties: [{name, type, container, arraysize}]})` | `TypeDB.register_from(reg)` adds every registry class it lacks (own properties; inherited ones come from `super`); `World(typedb).add` then types the mod DataSet's entities (`Entities.md`) |
 | Parameter override | `ctx.override("parameters", name, value)`; layered by load order | `Registries.param` |
 | Before / after hooks | `ctx.hook(site, before=fn, after=fn)`; a before hook may change the arguments or cancel (section "Hook sites") | `route.switch`, `cp.phase_change`, `command.dispatch` |
-| SendCommand handler chaining | `ctx.override("commands", key, impl=fn)`, `fn(next, instance, args)` calls the previous handler | command dispatch |
-| AI node insert / replace | `ctx.override("ai_tables", "route.steps", ...)` | step / role tables (`SoldierAI.md`) |
+| SendCommand handler chaining | `ctx.override("commands", key, impl=fn)`: for kind `commands` the context wraps `fn(next, instance, args)`, `next(instance, args)` calls the previous impl (`KeyError` when there is none: vanilla descriptors have no impl until their milestone ports them) | `TypeManager.command` (handlers copied by `GameObjectManager.register_from`) |
+| AI node insert / replace | `ctx.override("ai_tables", name, value=...)`: the vanilla table plus / minus entries (a step name in an unnamed slot of `route.steps`, an event type in `route.no_stop_events`) | `route_follow`, `cp_phase`, `realize` read their tables through `params.table` (`SoldierAI.md`) |
 | Blackboard access | read-only `CpView` / `SoldierView` / `PlayerView` passed to hooks (section "Hook sites") | `cp_phase`, `route_follow`, `realize` records |
-| Lua library | `ctx.register("lua_libraries", "<Ns>Lib", {kind, after_chunks, members})` + `natives` | `ScriptHost.register_upto` |
+| Lua library | Lua mod: `mod.library("<ns>.Lib", {Fn = function ... end, ...})` registers `lua_libraries` `<ns>.Lib` (`{kind: "library", after_chunks: 0, members: {Fn: "mod"}, values: {}}`) and one `natives` entry `<ns>.Lib.Fn` per function; its impl calls the Lua function **in the mod's own sandbox** (`LuaSandbox.call`: budget and refusals apply; arguments and results as plain values) | `ScriptHost(mods=[...])` + `register_upto`: the game's Lua sees the table `<ns>.Lib` |
 
-## Hook sites [D design 2026-11-04, P G3 implementation]
-Design only (E42 answered by design, no RE): what a mod can observe, change or cancel around a named engine call. Hooks are a registry kind `hooks` (added with G3; key = site name, value = the ordered list of `(owner, before?, after?)`), so they are dumped, owner-tagged and undone like every other registration.
+## Hook sites [D design 2026-11-04, B G3 implementation]
+E42 answered by design, no RE; built with G3 (`Engine\mods\hooks.py`): what a mod can observe, change or cancel around a named engine call. Hooks are a registry kind `hooks` (added with G3; key = site name, value = the ordered list of `(owner, before?, after?)`), so they are dumped, owner-tagged and undone like every other registration.
 
 **API.** `ctx.hook(site, before=None, after=None)`:
 
 - `before(call) -> None | CANCEL`: `call` is a `HookCall` with `site`, `frame` (host frame counter), `args` (a mutable dict of the site's arguments, changes are passed on), `view` (read-only blackboard view, below), `cancelled` (bool). Returning `hooks.CANCEL` stops the call: later before hooks do not run, the engine function is not called, the result is the site's **cancel result**.
 - `after(call, result) -> result`: sees the result (or the cancel result, `call.cancelled` set) and returns the result passed on (return it unchanged to observe only).
 - Order: before hooks in load order, after hooks in reverse load order (the first loaded mod wraps the outermost), same order on every run. A site with no hooks costs one registry lookup (G6 budget).
-- Lua mods: `mod.hook(site, before, after)`; each call runs through the sandbox's budget (`LuaSandbox.call`); `args` and `view` are passed as plain tables (copies), a changed `args` table is read back.
+- Lua mods: `mod.hook(site, before, after)` (either may be nil); each call runs through the sandbox's budget (`LuaSandbox.call`). `before(args, view)` gets plain tables (copies; `rec` as `{node, evt, step}`, float32 as numbers) and returns `mod.CANCEL`, a table (the changed `args`, read back key by key) or nil; `after(args, result)` returns the result or nil (unchanged).
+- **Engine side**: `hooks.run_site(reg, site, args, call, cancel_result, view=None, frame=0)`; `reg` = the engine instance's registries (`None` = the compat default, which has no hooks). With an empty list the engine function is called directly, no `HookCall` is built. `call(args)` runs the engine function on the (possibly changed) arguments; `view` may be a callable (built only when a hook runs).
 - Determinism: hook calls are part of the owner-tagged trace (`ctx.emit` from hooks, plus one `["hook", site, frame, cancelled]` event per call that a mod handled), so the G4 double run covers them.
 
 **First sites** (each implemented by G3 with one reference mod):
 
 | Site | Engine call | `args` | Result / cancel result | Reference mod (G3) |
 |---|---|---|---|---|
-| `route.switch` | `route_follow.step_after` (a soldier's record moves to the next leg or node event) and the caution / evasion route switch | `soldier` (index), `route` (id), `rec` (node, evt, step), `reverse`, `pos` | new `Rec` / the current `Rec` (the soldier stays on its leg or event) | hook that cancels a route switch |
-| `cp.phase_change` | the CP phase transition (fall-back on request finish, raise on notice; `cp_phase` + the M9 request chain) | `cp`, `from_phase`, `to_phase`, `cause` (request id or `"timer"`), `timer` (float32) | new phase / the old phase (timer untouched) | morale system observes phase changes (with its updater) |
-| `command.dispatch` | `TypeManager.command` / `send_command` before the registered handler | `type_index`, `instance`, `command` (name), `hash32`, `params` (the command table) | handler return value / `None` | chained handler logs and rewrites one command |
+| `route.switch` | `route_follow.step_after(..., soldier=, route_id=, frame=)` (a soldier's record moves to the next leg or node event); the caution / evasion route switch joins the site when it is ported | `soldier` (index), `route` (id), `rec` (node, evt, step), `reverse`, `pos` | new `Rec` / the current `Rec` (the soldier stays on its leg or event) | hook that cancels a route switch |
+| `cp.phase_change` | `cp_phase.phase_change(cp, from_phase, to_phase, cause, timer, reg=, frame=, view=)` (every CP phase transition: fall-back on request finish, raise on notice) | `cp`, `from_phase`, `to_phase`, `cause` (request id or `"timer"`), `timer` (float32) | new phase / the old phase (timer untouched) | morale system observes phase changes (with its updater) |
+| `command.dispatch` | `TypeManager.command` (also behind `send_command`) before the registered handler; the manager's `registries` is set by `GameObjectManager.register_from` | `type_index`, `instance`, `command` (name), `hash32`, `params` (the command table) | handler return value / `None` | chained handler logs and rewrites one command |
 
 Handler chaining (`ctx.override("commands", key, impl=fn)`, `fn(next, instance, args)`) stays a separate kind: it replaces one handler, a `command.dispatch` hook sees every command of every type.
 
@@ -185,6 +190,21 @@ Handler chaining (`ctx.override("commands", key, impl=fn)`, `fn(next, instance, 
 - `SoldierView`: `index`, `cp`, `route` (id), `rec` (node, evt, step), `kind` (record +0x66 & 3), `flags`, `position`, `realized` (bool), `role`.
 - `PlayerView`: `position`, `seen_by` (cp ids whose linger is above 0), `phase_known` (bool per cp).
 Views never expose engine objects: a hook changes state only through `args`, its result, or registry calls of its own namespace.
+
+## Reference mods [B G3]
+`Engine\mods\reference\`, one per extension kind; `Engine\tests\test_m10_ref_mods.py`, fixture `Engine\tests\fixtures\m10_ref_mods.json` (one section per mod, generated by `Tools\m10_ref_fixture.py`, `--check` in the test; each section also holds what the test predicts independently). Every mod passes the G4 double run; loading them changes no other engine instance, and the null-mod / vanilla traces stay byte-identical.
+
+| Mod | Kind(s) | What it does | Checked against |
+|---|---|---|---|
+| `morale` | new system (updater, lifecycle) + `cp.phase_change` after hook | morale per CP in 0..1000: per frame +1 sneak, 0 caution, -1 evasion, -2 alert (clamped); phase from the hook; `OnAllocate` / `OnInitialize` / `OnUpdate` / `OnTerminate`; emits every 60 frames | `m9_phase` phase changes replayed on the frame axis; final morale = closed form over the phase segments |
+| `listener` | message listener + own message id | `ctx.message("listener.Rally")`; on `Finish` (sender `Timer`) raises `listener.Rally`; on `listener.Rally` emits | bus log `Finish`, `listener.Rally` in one drain |
+| `beacon` | new GameObject type + SendCommand handlers | type 120 `beacon.Beacon` (group 1), commands `beacon.SetLevel` / `beacon.GetLevel` | `GameObjectManager` tick + `send_command` |
+| `chain` | handler chaining + `command.dispatch` before hook | chained `beacon.SetLevel` clamps the level to <= 5; the dispatch hook logs every command and rewrites a negative level to 0 | results through both layers |
+| `fox2cls` | new `.fox2` class | class `fox2cls.Beacon` (super `Data`; `level` uint32, `position` Vector3) and DataSet `reference\data\beacons.fox2` (3 entities, equal to the mod's builder output) | `World.add` types the 3 entities only with `TypeDB.register_from` |
+| `alertrate` | parameter override | `cp.rate.alert` = float32(1/20) (x1.5) | `m9_phase`: alert drain from the clear timer 1798 frames (live) -> the predicted count; alert windows drain at the new rate, caution / evasion windows unchanged |
+| `holdroute` | `route.switch` before hook (cancel) | cancels every switch of soldier 91 | `m9_route`: soldier 91 keeps its record, every other transition equals vanilla |
+| `ainode` | AI node insert | names unnamed step slot 8 `ainode.LookAround`; inserts event type 0xEF94DD47 (the most common node event of the m9_route routes) into `route.no_stop_events` | `m9_route`: a transition differs from vanilla exactly when vanilla lands on that event type |
+| `lualib` | Lua library (Lua mod, sandboxed) + Lua `cp.phase_change` hook | `lualib.Greeting` (`Add`, `Hello`, `Roll` seeded, `Escape` reads `os`) | `ScriptHost(mods=[lualib])`: game Lua calls the library; `Escape` is refused by the sandbox |
 
 ## Sandbox (Lua mods) [B G4]
 `Engine\mods\lua_mod.py`. Each Lua mod gets its own Lua 5.1 state (lupa, as the M4 host) and an environment table with only copies of `string` (no `dump`), `table`, `math` (`math.random` / `math.randomseed` replaced by the mod's `ctx.random`), and `assert`, `error`, `ipairs`, `next`, `pairs`, `pcall`, `select`, `tonumber`, `tostring`, `type`, `unpack`, `setmetatable`, `getmetatable`, plus `loadstring` (text only; the chunk gets the sandbox environment) and the read-only API table `mod`: `namespace`, `register(kind, key, value)`, `override(kind, key, value)`, `message(name, value)` -> id, `param(name)`, `random(m, n)`, `emit(...)`. The entry chunk is the registration: it runs once inside `register(ctx)`.
@@ -223,8 +243,8 @@ This document is the extension-point index; each subsystem spec names its own:
 - `Engine\tests\test_m10_registry.py` (G1): every registry dump equals the table it came from; two builds give byte-identical dumps; the script host installs Lua libraries and natives only through the registry; M0-M9 gate test files unchanged against `verifiers.lock.json`.
 
 ## Open (OPEN_QUESTIONS.md E42-E45; decisions D1-D3 confirmed by Luc 2026-11-04)
-- Hook sites: implementation and the reference mods (G3); the design is above ("Hook sites"). Live order of a mod listener relative to the mission `OnUpdate` stays E45.
-- Overhead budget (G6): registry lookups are dict lookups at registration time; per-frame dispatch is unchanged until hooks exist.
+- Hook sites: built with G3 at `route.switch` (step_after), `cp.phase_change`, `command.dispatch`; the caution / evasion route switch joins `route.switch` when it is ported. Live order of a mod listener relative to the mission `OnUpdate` stays E45.
+- Overhead budget (G6): registry lookups are dict lookups at registration time; a site with no hooks costs one registry lookup per call (G6 measures it).
 
 ---
 <small>Source: `docs/engine/ModAPI.md` in the project repository &middot; generated 2026-11-05.</small>

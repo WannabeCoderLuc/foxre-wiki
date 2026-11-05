@@ -57,7 +57,7 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 | M7 | Terrain & collision formats [PASS 2026-10-29] — `.htre`/`.tre2`, `.geom` | `.htre`/`.tre2`, `.geom` | <span class="status planned">PLANNED</span> |
 | M8 | Navigation & routes | nav2 runtime, path queries (Luc, 2026-11-01) | <span class="status pass">PASS</span> |
 | M9 | Gameplay core [PASS, Luc 2026-11-04] — Soldier AI, CP phases and notice, route following (headless) | Soldier AI, CP phases and notice, route following (headless) | <span class="status planned">PLANNED</span> |
-| M10 | Mod API core [IN PROGRESS: G1, G2, G4, G7 PASS 2026-11-04] — registries, manifest, loader, hooks (headless) | registries, manifest, loader, hooks (headless) | <span class="status planned">PLANNED</span> |
+| M10 | Mod API core [IN PROGRESS: G1, G2, G3, G4, G7 PASS 2026-11-05] — registries, manifest, loader, hooks (headless) | registries, manifest, loader, hooks (headless) | <span class="status planned">PLANNED</span> |
 | M11 | Asset formats | textures, models, rigs, fova, parts, language, sound containers | <span class="status planned">PLANNED</span> |
 | M12 | Sound & UI logic | sound events, music states, menus, iDroid, HUD (headless) | <span class="status planned">PLANNED</span> |
 | M13 | Open world complete | both maps, every block level, clock, weather, random numbers (headless) | <span class="status planned">PLANNED</span> |
@@ -98,10 +98,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-11-05: **M10 G3 Reference mods PASS**: hook sites built (route.switch, cp.phase_change, command.dispatch), kinds hooks + listeners, nine reference mods with fixture `m10_ref_mods.json`, `test_m10_ref_mods.py` 17/17; gate M10 8/14 with C1 (full suite, run now); session-end prompt now carries an MCP tools block.
 - 2026-11-05: **M10 G2 Null mod + G4 Rejections PASS**; M9 modules read constants through the registry; hook-site design in ModAPI.md; full suite 274/274, gate M10 6/14 PASS (C1 from cache).
 - 2026-11-04: **M10 G7 Ownership PASS**: natives_owner.json 5,532 bindings (3,104 implemented, stripped bindings now host no-ops; gate-b threshold 93.5 % relocked, Luc), commands_owner.json 514 entries, rules in ModAPI.md "Ownership"; `owner_milestone` in the registry; `test_natives_owned.py` 10/10; full suite incl. slow PASS (C1); M10 4/15.
 - 2026-11-04: **M10 G1 Registries PASS**: [`docs\engine\ModAPI.md`](engine/mod-api.md), `Engine\mods\` (registry, loader, vanilla mod); ScriptHost Lua libraries + natives through the registry; `test_m10_registry.py` 17/17; full suite 196/196; M0-M9 gates PASS.
 - 2026-11-04: **Gates aligned**: every milestone M0-M24 has numbered gate items matching its name and goal in ROADMAP.md; gates.json generated from it (`Tools/gates_sync.py`), checked by `test_gates_roadmap.py`.
-- 2026-11-04: **M9 Gameplay core PASS** (Luc accepted the gate, G1-G6); milestone-end site pages rewritten.
 
 [Full session log](status/log.md)

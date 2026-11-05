@@ -50,11 +50,15 @@ One topic per page, in plain language: what it is, why it matters, how the origi
 
 -   **[How soldiers think](soldier-ai.md)**
 
-    Realized soldiers, route steps, phase timers, reports and investigators (M9, IN PROGRESS).
+    Realized soldiers, route steps, phase timers, reports and investigators (M9, PASS).
 
 -   **[How mods plug into the engine](mod-api.md)**
 
     Registries, manifest, load order, hooks, sandbox: what the Mod API is, its benefits and limits (M10, IN PROGRESS).
+
+-   **[The C++ backend](native-backend.md)**
+
+    Why hot paths move to C++, the bit-identical oracle against the Python reference, the default backend (M10 C7, PASS).
 
 -   **[How we verify](verification.md)**
 

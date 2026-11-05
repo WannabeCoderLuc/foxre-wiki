@@ -103,6 +103,7 @@ nav:
       - "How soldiers find their way": explain/path-finding.md
       - "How soldiers think": explain/soldier-ai.md
       - "How mods plug into the engine": explain/mod-api.md
+      - "The C++ backend": explain/native-backend.md
       - "How we verify": explain/verification.md
   - "Modding guides":
       - mods/index.md

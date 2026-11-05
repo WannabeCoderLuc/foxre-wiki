@@ -64,8 +64,9 @@ SITE = [
         ("Terrain and collision files", "terrain-and-collision", "docs/site/explain/Terrain-And-Collision.md", "Height maps, collision shapes and the game's ground-height rule (M7)."),
         ("Routes and navmeshes", "routes-and-navmeshes", "docs/site/explain/Routes-And-Navmeshes.md", "Patrol routes and walkable surfaces (formats M1, runtime M8)."),
         ("How soldiers find their way", "path-finding", "docs/site/explain/Path-Finding.md", "One path job from request to result: loaded blocks, six stages, smoothing, runtime state (M8)."),
-        ("How soldiers think", "soldier-ai", "docs/site/explain/Soldier-AI.md", "Realized soldiers, route steps, phase timers, reports and investigators (M9, IN PROGRESS)."),
+        ("How soldiers think", "soldier-ai", "docs/site/explain/Soldier-AI.md", "Realized soldiers, route steps, phase timers, reports and investigators (M9, PASS)."),
         ("How mods plug into the engine", "mod-api", "docs/site/explain/Mod-API.md", "Registries, manifest, load order, hooks, sandbox: what the Mod API is, its benefits and limits (M10, IN PROGRESS)."),
+        ("The C++ backend", "native-backend", "docs/site/explain/Native-Backend.md", "Why hot paths move to C++, the bit-identical oracle against the Python reference, the default backend (M10 C7, PASS)."),
         ("How we verify", "verification", "docs/site/explain/Verification.md", "Pass/fail gates, FoxTrace captures, record/replay, claims, confidence tags."),
     ]),
     ("Modding guides", "mods", "manual", "What each finding means for a mod, with a worked (hypothetical) example "
@@ -160,7 +161,7 @@ WIKI_NAMES = {
     "Format-GEOM": "docs/formats/GEOM.md", "Format-FOXDATA": "docs/formats/FOXDATA.md",
     "MCP-Server": "mgsv_unified_server/AI_GUIDE.md", "Tooling": "docs/TOOLING.md", "Background": "docs/BACKGROUND.md",
     "Engine-Resources": "docs/engine/Resources.md", "Engine-World": "docs/engine/World.md",
-    "Engine-Navigation": "docs/engine/Navigation.md", "Engine-SoldierAI": "docs/engine/SoldierAI.md", "Engine-ModAPI": "docs/engine/ModAPI.md", "Claims": "docs/CLAIMS.md", "Claims-Contradictions": "docs/CLAIMS_CONTRADICTIONS.md",
+    "Engine-Navigation": "docs/engine/Navigation.md", "Engine-SoldierAI": "docs/engine/SoldierAI.md", "Engine-ModAPI": "docs/engine/ModAPI.md", "Engine-Native": "docs/engine/Native.md", "Claims": "docs/CLAIMS.md", "Claims-Contradictions": "docs/CLAIMS_CONTRADICTIONS.md",
     "Sahelanthropus": "docs/SAHELAN.md", "Battlefield-AI": "docs/BATTLEFIELD.md",
     # 2026-10-24 restructure; the old Guide-* names keep working
     "Guide-Overview": "docs/site/start/Overview.md", "Guide-Glossary": "docs/site/start/Glossary.md",

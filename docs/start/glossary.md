@@ -75,6 +75,8 @@
 | **Native boundary** | the line between the game's Lua and the engine's own code, where the engine answers calls |
 | **Claim** | a fact from a community source; counts only after the project's own check confirms it |
 | **Clean-room** | re-implementing from written specifications only, never from copied code |
+| **Double run** | running the same scenario twice with the same seed (and once more in a fresh process) and requiring byte-identical output: the determinism check C4 |
+| **Backend** | which implementation answers a query: the C++ copy (default when built) or the Python reference; both must give bit-identical answers |
 
 ## Mods
 | Term | Meaning |

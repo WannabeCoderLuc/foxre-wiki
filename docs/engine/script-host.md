@@ -181,6 +181,13 @@ Some chunks are loaded by natives, not by Lua: `TppSoundDaemon{…}` (constructo
 ## FoxTrace lesson: enable hooks together
 FoxTrace installs hooks on its own thread while the game keeps booting. With 16 hooks enabled one by one (each `MH_EnableHook` suspends all threads) the late hooks went live after the registrations they were meant to see (capture 3: `fox_class_add` 0 calls, early stock libs missing, runs disagreeing). Fixed 2026-10-22: create all hooks, then one `MH_EnableHook(MH_ALL_HOOKS)` → capture 4 complete and identical over 2 runs. New arg types for Fox strings: `S` (`char**`), `T` (`fox::String*`), `n`/`N` (`int*`/`double*`); per-hook `skip=<caller VAs>`.
 
+## Fixture provenance (C5) [D 2026-11-05]
+Machine-readable list: `Engine\tests\fixtures\provenance.json`, checked by `test_fixture_provenance.py` (ROADMAP common gate C5).
+
+- `m4_lua_bindings.json`: capture `trace_m4_lua_bindings4_20261022_190858`, 2 identical runs, plus the static luaL_Reg arrays.
+- `m4_lua_returns.json`: 4 captures x 2 runs (`trace_m5_luaret_20261023_115514`, `trace_m4_luaret_direct_20261023_111747`, `trace_m4_luaret_20261023_110720`, `trace_m4b_luaret_f30020_20261029_002259`); `distill_returns.py` over these 8 runs reproduces the fixture's 723 functions exactly (checked 2026-11-05; the fixture's `runs` field names all 8). `stable` = both runs of a capture logged the same sequences: 718 of 723. **Varying returns, pinned to run 1's sequence:** `Time.GetRawElapsedTimeSinceStartUp`, `TppScriptVars.GetElapsedTimeSinceLastPlay` (wall clock), `TppSoldierFace.CreateFaceTable`, `TppSoldierFace.GetFaceFpkFileCodeList` (face selection differs per boot), `SplashScreen.GetSplashScreenWithName` (handle). The host answers them with the recorded run-1 sequence; no gate compares these values with live.
+- `m5_save_image.json` (dump `m5_sbtrace_20261023`), `m4b_save_image.json` (dump `save_state_20261029_f30020`): one read each of a fixed save slot. **Pinned by construction:** these are the slot's stored values, loaded unchanged on every boot of that save (restored only via `LoadVarsFromSlot`), not values measured while the game runs; the host reproduces the live boots from them (M5 chunk gate, M4 gate b). A second read would only re-read the same file.
+
 ## Extension points
 Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 

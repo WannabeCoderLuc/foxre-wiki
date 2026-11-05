@@ -32,7 +32,7 @@ Runs once per frame on one thread, **~60 per second** [V live, 2 runs]. No stati
 2. If the pending list `svc+0xB0/+0xB8` (`std::vector<Updater*>`, guarded by the lock at `svc+0xC8`; filled by `0x140BF54A0`) is non-empty: append each to the updater vector `svc+0x98/+0xA0`, clear the pending list, then **`std::sort` by priority** (comparator `0x140BF4C10`: `a->vt[0]() < b->vt[0]()`, ascending).
    - The sort is MSVC introsort `0x14015CA00`: ranges of ≤ 32 elements go straight to insertion sort (`0x140081840`), which is **stable** → equal priorities keep registration order [V code + live: ties 7×2 and 18×4 keep their order across re-sorts].
 3. Call every updater's **vt+8 Update** (no arguments besides `this`) in vector order.
-- Live (boot → title → free roam f30010, idle, 2 identical runs): the vector holds **18, 19 or 24 updaters** (3 distinct sets, priorities 0–25; the 24-entry set is active during mission load). Exact lists: `Engine\tests\fixtures\m3_frame_trace.json`. Updater class names [?] (vtables have no QueryInterface name).
+- Live (boot → title → free roam f30010, idle, 2 identical runs `foxtrace_20261022_0016`, `foxtrace_20261022_0019`): the vector holds **18, 19 or 24 updaters** (3 distinct sets, priorities 0–25; the 24-entry set is active during mission load). Exact lists: `Engine\tests\fixtures\m3_frame_trace.json`. Updater class names [?] (vtables have no QueryInterface name).
 
 ## Type update groups (service `+0x00..+0x80`) [V] — [x] these are not the frame updaters
 `FUN_140BF4B00(svc, desc)` (via `0x140BF5520` during type activation, requires `desc+0x28 == 0`): allocates a 0x38-B entry (vtable `0x1423063F8`, ctor `FUN_140BF4690`) for `tm = desc+0x20`:

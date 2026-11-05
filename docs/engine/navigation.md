@@ -90,6 +90,7 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 ## Evidence
 - Verifiers: `test_m8_nav.py` (fixtures `m8_nav_jobs.json`, `m8_nav_paths.json`), `test_nav2_roundtrip.py`, `test_nav2_all.py` (format, slow); `test_cpp_equiv.py` (C++ backend = this module, M10 C7).
 - Live runs: `Memory\research\m8_nav*_<timestamp>\` (FoxTrace nav captures, runs named in the sections above).
+- Fixture provenance (C5, `Engine\tests\fixtures\provenance.json`): `m8_nav_jobs.json` = two runs (`m8_nav14_20261101_180029`, `m8_nav15_20261101_181436`), each with its own jobs, the port within 0.1 m on both. `m8_nav_paths.json` = one capture (`m8_nav_20261029_185330`: navreq run 1 plus the route walks runA / runB / runC); **pinned, not two runs**: its M8 tests are a regression floor (no loaded blocks, a request can pair with the wrong path), and C7 uses its requests only as inputs to the `cpp == py` comparison, never as live expectations.
 
 ## Open (E33)
 What creates the runtime state: block bits and obstacle activation, ring placement, off-mesh link sources (0x140502FC0 -> 0x141C7CE30), who adds blocked pairs; the engine replays them. Cluster-level dynamic links (`islandGraph...`) are not ported and no job needed them. Sneak-vs-alert comparison on the same jobs; other missions and locations; what starts a path request while on a route (`SoldierAI.md`, open).

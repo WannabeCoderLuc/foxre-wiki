@@ -4,9 +4,17 @@ Clean-room engine design, no RE: a C++ copy of Python query code that already eq
 Tags: [B] built and tested, [P] planned, [D] design decision.
 
 ## Boundary [D]
-- **Python is the reference.** Every native function has a Python original in `Engine\world\` that keeps working unchanged; the C++ copy must give **bit-identical** results on the same inputs (`cpp == py`, common gate C7). A native function without a passing oracle is not used.
-- **Only hot runtime queries move.** Height sampling (M7), the nav path job (M8) now; collision / raycast (M14) and the frame loop (M23) later. Format codecs (`Engine\formats\`) stay Python for good.
-- **Same signatures.** Query objects take contiguous buffers (`numpy` float32 / uint arrays, `bytes`); the Python class keeps parsing and owns the data, the native object is built from it once and answers queries.
+- **New engine code is C++ only (Luc, 2026-11-05).** Every new engine module or system is written here in C++ and verified by pytest through its pybind11 binding directly against the live fixtures and game files of its gate items; no Python version is written first.
+- **Existing Python modules are the frozen reference.** A C++ copy of one (a port) must give **bit-identical** results on the same inputs (`cpp == py`, common gate C7); a port without a passing oracle is not used. Python modules get bug fixes only; one that needs new behaviour is ported first, then extended in C++. All are ported by M23 (G1). Ported so far: height sampling (M7), the nav path job (M8).
+- **Stays Python:** `Tools\` (incl. the MOD-A toolkit), MCP servers, pytest verifiers and harnesses, fixture generators, build scripts, and the byte-exact format codecs (`Engine\formats\`) that tools and tests use; the runtime reads typed data through C++ query objects.
+- **Same signatures (ports).** Query objects take contiguous buffers (`numpy` float32 / uint arrays, `bytes`); the Python class keeps parsing and owns the data, the native object is built from it once and answers queries.
+
+## Writing a new C++ module [D]
+1. Spec first (`docs\engine\` / `docs\formats\`, skills `fox-system` / `fox-format`); gate items and test names in the ROADMAP list, then `Tools\gates_sync.py`.
+2. Sources `Engine\native\src\<module>.cpp` (+ `.h`) with one `bind_<module>(py::module_&)` called from `module.cpp`; `build_native.py` compiles every `src\*.cpp`.
+3. Data in through contiguous buffers (`numpy` arrays, `bytes`) from the Python codecs; C++ parses files only where the runtime streams them (M23).
+4. Tests `Engine\tests\test_<milestone>_*.py` import the binding (fail, never skip, when it is missing or stale: `Engine.native.backend("cpp")`) and compare against live fixtures / game files; the C4 double run goes through the binding.
+5. float32 where the exe uses `float` (the spec says which), else `double`; `/fp:strict`; no wall clock, no unseeded randomness.
 
 ## Module and build [B C7]
 - `Engine\native\src\`: `heightfield.cpp`, `navigation.cpp`, `module.cpp` (pybind11 module `_foxnative`). `Engine\native\__init__.py`: backend selection (below), `available()`, `SOURCE_SHA`.

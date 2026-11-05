@@ -99,10 +99,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-11-05: **New engine code is C++ only (Luc)**: rule in ROADMAP, Native.md, CLAUDE.md, Engine README and the skills; Python engine modules frozen as reference (port before extending); Tools, verifiers and codecs stay Python.
 - 2026-11-05: **C++ backend built, M10 C7 PASS**: `Engine\native\` (pybind11, `/fp:strict`), HeightField + whole nav path job bit-identical to Python (948 jobs, 410 requests, 200,036 heights), nav 19x faster, default when built; spec [`docs\engine\Native.md`](engine/native.md), ROADMAP / gates / docs updated; gate M10 11/14 with C1 (full suite, run now).
 - 2026-11-05: **M10 G5 Load order + G6 Overhead PASS**: order and budget specified in ModAPI.md; `test_m10_load_order.py` 11/11, `test_m10_perf.py` 4/4 (M9 <= 1.8 %, M3 <= 3.2 % after `Registry.live` / `decoded`); gate M10 10/14 with C1 (full suite, run now).
 - 2026-11-05: **M10 G3 Reference mods PASS**: hook sites built (route.switch, cp.phase_change, command.dispatch), kinds hooks + listeners, nine reference mods with fixture `m10_ref_mods.json`, `test_m10_ref_mods.py` 17/17; gate M10 8/14 with C1 (full suite, run now); session-end prompt now carries an MCP tools block.
 - 2026-11-05: **M10 G2 Null mod + G4 Rejections PASS**; M9 modules read constants through the registry; hook-site design in ModAPI.md; full suite 274/274, gate M10 6/14 PASS (C1 from cache).
-- 2026-11-04: **M10 G7 Ownership PASS**: natives_owner.json 5,532 bindings (3,104 implemented, stripped bindings now host no-ops; gate-b threshold 93.5 % relocked, Luc), commands_owner.json 514 entries, rules in ModAPI.md "Ownership"; `owner_milestone` in the registry; `test_natives_owned.py` 10/10; full suite incl. slow PASS (C1); M10 4/15.
 
 [Full session log](status/log.md)

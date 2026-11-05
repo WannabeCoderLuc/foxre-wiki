@@ -57,7 +57,7 @@ Some entities are **DataIdentifiers**: tables of names linked to other entities.
 ## For modders
 - Add or edit entities with the right types: [Editing fox2 DataSets](../mods/editing-datasets.md).
 - Look up your own named places from Lua: [Locators and map blocks in a mod](../mods/locators-and-blocks.md).
-- Planned: mods register new DataSet classes through the Mod API (M10), loaded by the same path as vanilla classes ([Where things stand for modders](../mods/where-things-stand.md)).
+- Mods register new DataSet classes through the Mod API (M10, IN PROGRESS): the engine then types a mod's own DataSet like a vanilla one ([Writing a mod for the new engine](../mods/mod-api.md)).
 
 ---
 <small>Hand-written article (`docs/site/explain/Classes-And-Entities.md`) &middot; published 2026-11-05.</small>

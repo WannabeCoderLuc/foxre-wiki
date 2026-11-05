@@ -44,6 +44,10 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
     Registries, manifest, loader, extension kinds, sandbox, determinism (M10, IN PROGRESS).
 
+-   **[Native backend](native.md)**
+
+    C++ copies of the hot query paths (heights, nav path job), bit-identical to the Python reference (M10 C7, IN PROGRESS).
+
 -   **[World streaming and locators](world.md)**
 
     DataIdentifier locator lookup, stage blocks and the title menu (M6, PASS).

@@ -139,12 +139,13 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 - **C4 Determinism:** the milestone's scenario run twice with the same seed gives byte-identical traces.
 - **C5 Fixtures:** each live fixture comes from at least two runs that agree, or the varying values are pinned as ranges with the reason in the spec; clamped and free runs never mixed (M9 capture protocol).
 - **C6 Mods:** each new extension point has a reference mod under `Engine\mods\reference\` passing its own fixtures; all vanilla items pass with no mod and with the null mod loaded.
-- **C7 Native backends:** where a C++ backend exists, `cpp == py` on the milestone's fixtures.
+- **C7 Native backends:** where a C++ backend exists for code the milestone touches or owns, `cpp == py` bit-identical on the milestone's fixtures (`test_cpp_equiv.py`; the test builds `Engine\native\` first and fails, never skips, without a compiler; [`docs\engine\Native.md`](../engine/native.md)).
 - **C8 Docs:** hand-written site pages for the milestone rewritten; `sync_wiki.py` builds with `mkdocs build --strict`.
 
 ## Implementation language & native boundary (Luc, 2026-10-29)
 - **Python first through M8:** M7 (`.htre`/`.tre2`/`.geom`) and M8 (`.nav2`) codecs and spatial queries are pure Python. Python stays the permanent reference implementation.
-- **Targeted C++ from M9 via `pybind11`:** only hot runtime query paths (height sampling, collision / raycast queries, nav pathfinding) move to C++, each checked by a differential pytest oracle against the Python version (`cpp_fn == py_fn`). Format codecs in `Engine\formats\` stay Python for good.
+- **Targeted C++ via `pybind11`:** only hot runtime query paths (height sampling, collision / raycast queries, nav pathfinding) move to C++, each checked by a differential pytest oracle against the Python version (`cpp_fn == py_fn`, bit-identical). Format codecs in `Engine\formats\` stay Python for good. Planned from M9, but no M9 gate item required it and it was not built; **built 2026-11-05 under M10 C7** (Luc): `Engine\native\` (`_foxnative`), height sampling (M7) and the whole nav path job (M8); spec [`docs\engine\Native.md`](../engine/native.md), build `python Tools\build_native.py`.
+- **Default backend (Luc, 2026-11-05):** C++ when the module is built and matches its sources, else Python (`ENGINE_BACKEND=auto`); `ENGINE_BACKEND=py` forces the reference, `=cpp` requires the native module. Later hot paths: collision / raycast (M14 G7), whole frame loop (M23).
 - **Guardrails in M7-M8:** spatial math in strict float32 (`numpy.float32` / `ctypes.c_float`) so results match the exe's 32-bit `xmm` math now and C++ `float` bit-for-bit later; byte-identical format codecs (`Engine\formats\`) are kept separate from runtime query objects (`Engine\world\`), which take contiguous buffers so a `pybind11` backend can drop in behind the same signatures.
 
 ## M6 World streaming & locators [PASS] — stage blocks, location loader, locators
@@ -228,7 +229,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
   - G5 Load order: two mods overriding one parameter and two mods hooking one site resolve in the documented order (`ModAPI.md` "Load order"), byte-identical over runs and over every input order (`test_m10_load_order.py`).
   - G6 Overhead: registry dispatch costs at most 5 % frame time on the M3 and M9 scenarios against the pre-registry baseline (`ModAPI.md` "Overhead budget"; `test_m10_perf.py`).
   - G7 Ownership: `natives_owner.json` covers 100 % of the bindings in `m4_lua_bindings.json` and `commands_owner.json` 100 % of the vanilla SendCommand handlers, each with an owning milestone from `gates.json` by the rules in `ModAPI.md` "Ownership"; natives the engine implements are marked implemented and not answered from a recording; owners are in the registry (`owner_milestone`) (`test_natives_owned.py`).
-  - Common gate C1-C8. C7 stays open for M10, not N/A (Luc, 2026-11-05): no C++ backend exists yet, so C7 stays NOT BUILT and gate M10 is not accepted until `test_cpp_equiv.py` covers a backend. The M9 C++ step (native boundary below) was never built; first backend = M7 height sampling + M8 nav path job (STATUS Next).
+  - Common gate C1-C8. C7 stays open for M10, not N/A (Luc, 2026-11-05): no C++ backend exists yet, so C7 stays NOT BUILT and gate M10 is not accepted until `test_cpp_equiv.py` covers a backend. The M9 C++ step (native boundary below) was never built; it is built under M10: C7 = `HeightField` on every M7 ground point plus 100,000 seeded points, and `NavWorld.find_path` on all 948 `m8_nav_jobs` and the `m8_nav_paths` requests, bit-identical to Python ([`docs\engine\Native.md`](../engine/native.md)).
 
 ## M11 Asset formats [PLANNED] — textures, models, rigs, fova, parts, language, sound containers
 - `.ftex/.ftexs`, `.fmdl`, `.frig/.frdv`, `.fv2`/fova, `.parts`, `.lng`; `.sdf/.sbp` and Wwise `.bnk` / `.wem` as containers (no audio decode: M21); texture path recovery (E2). Readers and writers; formats registered through the M10 loader registry.
@@ -281,7 +282,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
   - G4 Character controller: recorded input runs (walk, run, crouch, prone, slopes, stairs, ledges, 20 min total) with recorded root motion: position within 2 cm per step, under 10 cm drift per 60 s window, grounded / falling sequence equal (`test_m14_controller.py`).
   - G5 Soldiers: realized soldier positions on the M9 route runs within 5 cm (`test_m14_controller.py`).
   - G6 Rigid bodies: at least 50 recorded prop events (kick, shot, explosion): rest position within 10 cm, rest time within 0.2 s (`test_m14_rigid.py`).
-  - G7 Speed: `cpp == py` on G2 and G4; the M17 scenario's physics step under 2 ms per frame on the reference PC (`test_m14_perf.py`).
+  - G7 Speed: `cpp == py` on G2 and G4 (rules of [`docs\engine\Native.md`](../engine/native.md)); the M17 scenario's physics step under 2 ms per frame on the reference PC (`test_m14_perf.py`).
   - G8 Mod: a new collision shape and physics material from a mod (`test_m14_mod.py`).
   - Common gate C1-C8.
 
@@ -320,7 +321,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
   - G3 No recordings: the native replay fixture is not loaded (asserted); every native called has an implementation (`test_m17_slice.py`).
   - G4 Determinism: two engine runs byte-identical (`test_m17_slice.py`).
   - G5 Mods together: all reference mods from M10-M16 loaded at once; null mod changes nothing; the morale mod changes only the predicted values (`test_m17_mods.py`).
-  - G6 Speed: simulation at least real time (60 frames per second) on the reference PC (`test_m17_perf.py`).
+  - G6 Speed: simulation at least real time (60 frames per second) on the reference PC, default backend ([`docs\engine\Native.md`](../engine/native.md)) (`test_m17_perf.py`).
   - Common gate C1-C8.
 
 ## M18 Full cast [PLANNED] — every soldier type, animals, buddies, heli, vehicles, bosses
@@ -379,7 +380,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
 ## M23 Standalone runtime [PLANNED] — C++ frame loop, packaging
 - No Python in the frame loop (Python stays the reference and the tools); installer that finds the player's own game copy; no game bytes shipped.
 - **Gate:**
-  - G1 Equivalence: C++ runtime equals the Python reference on every fixture of the suite (`test_m23_equivalence.py`).
+  - G1 Equivalence: C++ runtime equals the Python reference on every fixture of the suite, by the equivalence rules of [`docs\engine\Native.md`](../engine/native.md) (`test_m23_equivalence.py`).
   - G2 Mission: a full mission at 60 fps, 1080p, no replay data (`test_m23_perf.py`).
   - G3 Package: clean VM + player's game copy runs; the package contains zero game-derived bytes (scan against the QAR hash inventory) (`test_m23_package.py`).
   - G4 Soak: 24 h run, no crash, memory growth under 1 % per hour (`test_m23_soak.py`).

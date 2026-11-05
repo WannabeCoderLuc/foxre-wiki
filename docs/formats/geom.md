@@ -2,7 +2,7 @@
 
 Codec: `Engine\formats\foxdata.py` (container + raw payloads) · verifier `Engine\tests\test_foxdata_all.py` (slow) · quick `test_m7_formats.py`.
 **Gate (2026-10-29): 5,176 / 5,176 unique files round-trip byte-identically with zero undecoded bytes outside node payloads**: `.geom` 3,078 (8,000 entries, mostly `chunk2/3.dat`, environ / gimmick `scenes`), `.geoms` 2,033 (2,092; `block_*/..._geoprim_*.geoms`), `.gskl` 65 (202; item / chara skeletons).
-Typed payload decoding (GeoGroup / GeoBlock / shape trees / bounding-volume grid) is **not done**: it is needed by the collision queries (M9 native boundary), and stays open as E30.
+Typed payload decoding (GeoGroup / GeoBlock / shape trees / bounding-volume grid) is **not done**: it is needed by the collision queries (M14, C++ hot path per [`docs\engine\Native.md`](../engine/native.md)), and stays open as E30.
 
 ## Container [V via FOXDATA.md, D]
 - Header: version 201406020, name hash 0x006B936E (`GEOM` per the template), flags 0, bytes 0x18–0x1F non-zero in every file (not read by the FoxData readers; [?]).

@@ -63,7 +63,7 @@ From boot to free roam the game raised 43 bus messages, the same ones in the sam
 
 ## For modders
 - React to events and send commands: [Messages and commands in a mod](../mods/messages-and-commands.md).
-- Planned: mods add updaters with their own priority, message ids and command handlers through the Mod API (M10).
+- Mods add updaters with their own priority, message listeners and ids, object types, command handlers and hooks on command dispatch through the Mod API (M10, IN PROGRESS: [Writing a mod for the new engine](../mods/mod-api.md)).
 
 ---
 <small>Hand-written article (`docs/site/explain/Frame-Loop.md`) &middot; published 2026-11-05.</small>

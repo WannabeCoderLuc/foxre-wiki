@@ -78,7 +78,8 @@ With the player far away, soldiers move exactly on `.frt` route edges: of 170 mo
 `GetUsingRoute` / `GetDoingRouteEventIndex` exist only on the heli handler [V], hence nil for soldiers. The soldier's route and route state are table fields (impl +0xE8, `SoldierAI.md` "Route state"); FoxTrace `soldier` logs them. Routes in the M8 fixture stay identified by geometry.
 
 ## Engine module (`Engine\world\navigation.py`)
-`NavWorld.add_file`, `set_loaded`, `set_blocked`, `set_runtime`, `in_loaded`, `locate`, `find_path(start, goal, filter=, cost_mult=, cost_mask=)` (sets `status`), `subgoal_along`, `track_route`, `edge_speed_class`, `edge_move_family`. Vertices, node positions, g / h / f and relaxed points are float32; the ray's side tests compare float32 inputs in double [I: no difference at the gate margin, revisit for C++]. The obstacle / triangle overlap test is a separating-axis version of 0x1401A73F0 [I].
+`NavWorld.add_file`, `set_loaded`, `set_blocked`, `set_runtime`, `in_loaded`, `locate`, `find_path(start, goal, filter=, cost_mult=, cost_mask=)` (sets `status`), `subgoal_along`, `track_route`, `edge_speed_class`, `edge_move_family`. Vertices, node positions, g / h / f and relaxed points are float32; the ray's side tests compare float32 inputs in double [I: no difference at the gate margin; the C++ copy keeps the rule]. The obstacle / triangle overlap test is a separating-axis version of 0x1401A73F0 [I].
+**C++ backend** ([`docs\engine\Native.md`](native.md), M10 C7): `NavWorld(backend=None)`; `add_file` / `set_*` forward the parsed meshes and runtime state to `_foxnative.NavCore`, which answers `find_path` (all stages) bit-identical to this module on every `m8_nav_jobs` job and `m8_nav_paths` request (`test_cpp_equiv.py`); default when built, `ENGINE_BACKEND=py` forces Python.
 
 ## Extension points
 Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
@@ -87,7 +88,7 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 - Route step table and arrival distances are registry data (`ai_tables` `route.*`, `parameters` `route.*`) [B M10 G1]; overriding them is MOD-B / M10 G3.
 
 ## Evidence
-- Verifiers: `test_m8_nav.py` (fixtures `m8_nav_jobs.json`, `m8_nav_paths.json`), `test_nav2_roundtrip.py`, `test_nav2_all.py` (format, slow).
+- Verifiers: `test_m8_nav.py` (fixtures `m8_nav_jobs.json`, `m8_nav_paths.json`), `test_nav2_roundtrip.py`, `test_nav2_all.py` (format, slow); `test_cpp_equiv.py` (C++ backend = this module, M10 C7).
 - Live runs: `Memory\research\m8_nav*_<timestamp>\` (FoxTrace nav captures, runs named in the sections above).
 
 ## Open (E33)

@@ -28,6 +28,7 @@ The list's one rule: a project counts only if correctness is a **machine-decidab
 | **gh** | winget | GitHub CLI (repo, CI, issues) |
 | **ImHex** | winget | hex editor with pattern language |
 | **RenderDoc 1.46** | winget (signed by Baldur Karlsson) | D3D11 frame capture: shaders, draws, render targets. Injecting into mgsvtpp may clash with Denuvo/V_F hooks: test with plugins off |
+| **pybind11** (2026-11-05) | pip | C++ backend of the engine (`Engine\native\`, [`docs\engine\Native.md`](../engine/native.md)): `python Tools\build_native.py` builds `_foxnative` with MSVC (`/O2 /fp:strict`), skips when current |
 | **vcpkg** (`C:\Tools\vcpkg`) | git + bootstrap (signed by Microsoft) | C++ libraries for the engine (e.g. `vcpkg install imgui`) |
 | **Blender** | winget | view decoded models/animations |
 | Cheat Engine | existing | memory inspection of the running game (single player) |

@@ -9,8 +9,8 @@
 - **Which packages a mission loads is decided in Lua** (`TppMissionList` / `TppPackList`), not in the executable. You can add or swap packages without touching the exe.
 - We have a **list of every native Lua function the game registers** (5,532 of them, with their addresses), plus recorded examples of what many of them return in a real session.
 
-## Where this is heading (planned)
-The new engine is being built so modders can rely on it. Planned, none of it exists yet: a **Mod API** (milestone M10, right after M9) that lets a mod register new systems, add game object types and commands, override values, hook events and extend the soldier AI, with tests that check a mod changes only what it says it changes; later **importers** for models, textures and animations, **world and navmesh authoring**, and an **enhanced renderer** that stays separate from the faithful one. With no mods loaded the engine must behave exactly like the original game. Area by area: [Where things stand for modders](where-things-stand.md). Order and gates: [Roadmap](../status/roadmap.md).
+## Where this is heading
+The new engine is being built so modders can rely on it. Its **Mod API** (milestone M10, IN PROGRESS; gate items pass, engine still private) lets a mod register new systems, add game object types and commands, override values, hook events and extend the soldier AI, with tests that check a mod changes only what it says it changes ([How mods plug into the engine](../explain/mod-api.md), [Writing a mod for the new engine](mod-api.md)). Planned later: **importers** for models, textures and animations, **world and navmesh authoring**, and an **enhanced renderer** that stays separate from the faithful one. With no mods loaded the engine must behave exactly like the original game. Area by area: [Where things stand for modders](where-things-stand.md). Order and gates: [Roadmap](../status/roadmap.md).
 
 New here? [Getting started as a modder](../start/modder-start.md) and [Addresses, hashes and tags](../start/conventions.md) explain how to read the rest.
 
@@ -18,6 +18,7 @@ New here? [Getting started as a modder](../start/modder-start.md) and [Addresses
 | Guide | Finding it builds on |
 |---|---|
 | [Where things stand for modders](where-things-stand.md) | what is decoded, ported and planned, per area |
+| [Writing a mod for the new engine](mod-api.md) | the Mod API: manifest, extension kinds, hooks, sandbox (M10) |
 | [Archives, packages and hashes](archives-and-hashes.md) | byte-exact QAR / FPK codecs, PathCode64, the name gap |
 | [Add a package to a mission](add-a-package.md) | mission package lists are decided in Lua |
 | [Run your own Lua from a package](lua-from-packages.md) | package scripts run on load, in path order |

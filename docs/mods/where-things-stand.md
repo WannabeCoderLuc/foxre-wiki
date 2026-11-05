@@ -1,6 +1,6 @@
 # Where things stand for modders
 
-*Hand-written overview, as of 2026-11-04 (M9 PASS, M10 next). What is decoded, what the new engine already runs, and what the planned Mod API will offer. Order and gates: [Roadmap](../status/roadmap.md). Counts: [Numbers at a glance](../status/numbers.md).*
+*Hand-written overview, as of 2026-11-05 (M9 PASS, M10 IN PROGRESS). What is decoded, what the new engine already runs, and what its Mod API offers. Order and gates: [Roadmap](../status/roadmap.md). Counts: [Numbers at a glance](../status/numbers.md).*
 
 ## Three levels
 Every topic on this site sits at one of three levels:
@@ -9,9 +9,9 @@ Every topic on this site sits at one of three levels:
 |---|---|---|
 | **Decoded** | written down in a spec, with evidence and tags | use the facts in a mod for the original game |
 | **Ported** | the new engine implements it and a test compares it with the real game | test ideas offline (inside the project for now) |
-| **Extensible** | the engine offers a documented way for mods to add or change it | nothing yet: the Mod API is PLANNED (M10) |
+| **Extensible** | the engine offers a documented way for mods to add or change it | write a mod against the Mod API (M10, IN PROGRESS; engine still private) |
 
-Nothing is at the third level yet. The engine's own repository is private for now.
+The third level started with M10: the frame loop, messages and commands, DataSet classes, the Lua host and the soldier and base tables can be extended through the Mod API. The engine's own repository is private for now, so this is not yet usable outside the project.
 
 ## What is decoded and ported, by area
 | Area | Decoded | Ported and tested | Guide |
@@ -31,24 +31,26 @@ Nothing is at the third level yet. The engine's own repository is private for no
 
 "Natives answered from recordings" means: when the game's Lua calls a native function the engine does not implement yet, the engine returns what the real game returned in a recorded session. From M10 on, each native gets an owning milestone that must implement it; the M17 headless slice runs with none recorded.
 
-## What the Mod API will offer (planned)
-Milestone **M10 Mod API core** comes right after M9. None of it exists yet. Planned, per the roadmap:
+## The Mod API (M10, IN PROGRESS)
+Milestone **M10 Mod API core** came right after M9. Its seven gate items pass; the common checks (determinism double run, fixture provenance, the C++ backend, the site build) are still open, and the gate is not accepted yet. What exists:
 
-- **Registries for everything.** Game object types, `SendCommand` handlers, message ids, updaters, AI node tables, resource loaders, DataSet classes and Lua libraries are registered, not hardcoded. The original game's content registers through the same path as a mod.
-- **A mod manifest**: namespace, API version (0.x until M24), dependencies, load order. A loader detects conflicts.
-- **Extension kinds**: a new system with its own update and the `OnAllocate` / `OnInitialize` / `OnUpdate` / `OnTerminate` lifecycle; message listeners and own message ids; new game object types with command handlers; new `.fox2` classes; parameter overrides layered by load order; before / after hooks that can observe, change or cancel; command handler chaining; AI node insert or replace; Lua libraries.
-- **Lua mods in a sandbox** (no `os`, `io`, `debug`, `require` or binary chunks) and Python mods for prototypes.
+- **Registries for everything the engine runs**: game object types, `SendCommand` handlers, message ids, updaters, AI tables, measured parameters, resource loaders, DataSet classes, Lua libraries and natives, hooks and message listeners. The original game's content is registered by a built-in `vanilla` mod through the same calls a mod makes.
+- **A manifest and loader**: namespace, API version (0.1; exact match until 1.0 in M24), dependencies and order hints. The load order is documented and the same on every run; refused sets are undone completely, and the error names the mod.
+- **Extension kinds**, each tested by a reference mod: a new system with a lifecycle, message listeners and own message ids, new object types with commands, command handler chaining, new DataSet classes, value overrides, before / after hooks that observe, change or cancel, AI table inserts, and Lua libraries.
+- **Three hook sites**: a soldier's route switch, a base's phase change, and command dispatch.
+- **Lua mods in a sandbox** (no files, OS, clock, `require` or precompiled code; 10 million instructions per call) and Python mods for your own prototypes.
 
-How M10 will be tested (gate items, abbreviated):
+| Gate item | What the test checks | Status |
+|---|---|---|
+| Registries | every table goes through the registry and equals its source; all earlier gates still pass | <span class="status pass">PASS</span> |
+| Null mod | an empty mod changes nothing: frame loop, script host and soldier traces byte-identical | <span class="status pass">PASS</span> |
+| Reference mods | nine mods, one per kind, each against a fixture; for example an alert rate of 1/20 instead of 1/30 ends the recorded alert after 1,199 frames instead of 1,798, exactly as predicted | <span class="status pass">PASS</span> |
+| Rejections | name and hash collisions, version mismatch, missing dependency, cycles, sandbox escapes, nondeterminism are refused with the mod named | <span class="status pass">PASS</span> |
+| Load order | two mods on one value or one hook site resolve the same way for every input order and run | <span class="status pass">PASS</span> |
+| Overhead | registry reads cost at most 5 % frame time (measured about 0.5 to 3 %) | <span class="status pass">PASS</span> |
+| Ownership | each of the 5,532 natives and 514 command handlers has the milestone that must implement it | <span class="status pass">PASS</span> |
 
-| Item | Test |
-|---|---|
-| Registries | every type, handler, message, updater and Lua library goes through the registry; all earlier gates still pass |
-| Null mod | the whole suite with an empty mod loaded gives byte-identical traces |
-| Reference mods | one per extension kind, for example a morale system on CP phases, or a phase rate override that changes the phase trace by exactly the predicted amount |
-| Rejections | id collisions, API mismatch, missing dependency, load-order cycles, sandbox escapes and unseeded randomness are refused |
-| Load order | two mods overriding one value resolve the same way every run |
-| Overhead | registry dispatch costs at most 5 % frame time |
+Background and limits: [How mods plug into the engine](../explain/mod-api.md). Writing one: [Writing a mod for the new engine](mod-api.md).
 
 ## Later mod milestones (planned)
 | Milestone | For modders |
@@ -65,7 +67,8 @@ MOD-A, tools whose output is tested in the original game (a route editor, a navm
 ## Promises the engine makes
 - **Compat mode**: with no mods loaded, every test against the original game still passes. Enhanced features are separate modes.
 - **Determinism**: randomness only from the engine's seeded generator, a fixed frame order. A mod's effect can be replayed exactly.
-- **Extension points in every spec**: each engine and format spec gets a section saying what a mod can register, override, hook or replace. The soldier spec already has one ([Soldier AI](../engine/soldier-ai.md), "Extension points").
+- **Extension points in every spec**: each engine and format spec has a section saying what a mod can register, override, hook or replace; the index is the [Mod API](../engine/mod-api.md) reference page.
+- **Nothing changes by accident**: with an empty mod loaded every test passes byte for byte; a mod's changes are owner-tagged and can be listed.
 
 ## What you can use today, for the original game
 - The **findings** in the guides, for Lua mods and native hooks (with your own testing).

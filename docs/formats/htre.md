@@ -59,7 +59,7 @@ f32 absolute world heights in metres (afgh ~190–820, cypr ~−50–200) [D]. T
 - **`.tre2` [D]:** the low grid is exactly every 16th sample of the block mosaic (afgh 256 × 256 vs 4,096 × 4,096: median and max difference 0), spacing gridDistance × 2^lowShift = 32 m, origin −gridWidth · gridDistance / 2 = −4096. Every afgh small block has its `.htre`, so no walkable point is covered by the `.tre2` alone.
 
 ## Height queries (`Engine\world\heightfield.py`)
-`HeightField(grid, spacing, origin_x, origin_z).sample(x, z)`, float32 over a contiguous row-major buffer (ROADMAP native boundary); `HeightField.from_blocks({(bx, bz): grid})` builds one field from small blocks, `HeightField.from_tre2(...)` the low field.
+`HeightField(grid, spacing, origin_x, origin_z, backend=None).sample(x, z)` and `sample_many(xz)`, float32 over a contiguous row-major buffer; answered by the C++ backend when built ([`docs\engine\Native.md`](../engine/native.md), bit-identical, `test_cpp_equiv.py`), the Python version is the reference; `HeightField.from_blocks({(bx, bz): grid})` builds one field from small blocks, `HeightField.from_tre2(...)` the low field.
 
 - **Interpolation [V live]:** each 2 m cell is two triangles split along the diagonal (x0, z0) → (x0 + 2, z0 + 2): with fx, fz the fractions in the cell and a, b, c, d = h[r,c], h[r,c+1], h[r+1,c], h[r+1,c+1]: fx ≥ fz → a + (b − a)·fx + (d − b)·fz, else a + (d − c)·fx + (c − a)·fz.
 - **Live fixture** (`Engine\tests\fixtures\m7_ground_heights.json`, `Tools\m7_ground_fixture.py`, run `Memory

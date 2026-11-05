@@ -83,6 +83,13 @@
 | **Extension point** | a place where a mod may add to or change an engine system: register something new, override a value, hook an event |
 | **Registry** | a table of types, handlers, messages or updaters that vanilla and mods both register into |
 | **Manifest** | a mod's declaration: namespace, API version, dependencies, load order |
+| **Namespace** | a mod's unique lower-case name; every new name it registers starts with it (`morale.MoraleSystem`) |
+| **Vanilla mod** | the built-in mod that registers the original game's content, through the same calls as any mod |
+| **Override** | a mod replacing a registered value or handler; the last loaded mod wins, earlier layers are kept |
+| **Hook site** | a named engine call where mods may run before / after functions (`route.switch`, `cp.phase_change`, `command.dispatch`) |
+| **CANCEL** | what a before hook returns to stop the engine call at a hook site |
+| **Reference mod** | a small mod the tests load to prove one extension kind works as predicted |
+| **Sandbox** | the restricted Lua environment shared mods run in: no files, OS, clock or `require` |
 | **Null mod** | an empty mod; loading it must change nothing |
 | **Reference mod** | a small mod per extension kind that the engine's tests run |
 | **Compat mode** | the engine with no mods loaded; it must behave exactly like the original game |

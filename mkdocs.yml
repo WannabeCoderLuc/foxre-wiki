@@ -102,11 +102,13 @@ nav:
       - "Routes and navmeshes": explain/routes-and-navmeshes.md
       - "How soldiers find their way": explain/path-finding.md
       - "How soldiers think": explain/soldier-ai.md
+      - "How mods plug into the engine": explain/mod-api.md
       - "How we verify": explain/verification.md
   - "Modding guides":
       - mods/index.md
       - "For modders: findings at a glance": mods/for-modders.md
       - "Where things stand for modders": mods/where-things-stand.md
+      - "Writing a mod for the new engine": mods/mod-api.md
       - "Archives, packages and hashes": mods/archives-and-hashes.md
       - "Add a package to a mission": mods/add-a-package.md
       - "Run your own Lua from a package": mods/lua-from-packages.md
@@ -134,6 +136,7 @@ nav:
       - "Navigation and routes": engine/navigation.md
       - "Soldier AI": engine/soldier-ai.md
       - "Mod API": engine/mod-api.md
+      - "Native backend": engine/native.md
       - "World streaming and locators": engine/world.md
       - "Claims ledger": engine/claims.md
       - "Claims: contradictions": engine/claims-contradictions.md

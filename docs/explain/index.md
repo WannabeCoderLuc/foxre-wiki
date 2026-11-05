@@ -52,6 +52,10 @@ One topic per page, in plain language: what it is, why it matters, how the origi
 
     Realized soldiers, route steps, phase timers, reports and investigators (M9, IN PROGRESS).
 
+-   **[How mods plug into the engine](mod-api.md)**
+
+    Registries, manifest, load order, hooks, sandbox: what the Mod API is, its benefits and limits (M10, IN PROGRESS).
+
 -   **[How we verify](verification.md)**
 
     Pass/fail gates, FoxTrace captures, record/replay, claims, confidence tags.

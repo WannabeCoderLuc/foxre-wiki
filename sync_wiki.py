@@ -65,12 +65,14 @@ SITE = [
         ("Routes and navmeshes", "routes-and-navmeshes", "docs/site/explain/Routes-And-Navmeshes.md", "Patrol routes and walkable surfaces (formats M1, runtime M8)."),
         ("How soldiers find their way", "path-finding", "docs/site/explain/Path-Finding.md", "One path job from request to result: loaded blocks, six stages, smoothing, runtime state (M8)."),
         ("How soldiers think", "soldier-ai", "docs/site/explain/Soldier-AI.md", "Realized soldiers, route steps, phase timers, reports and investigators (M9, IN PROGRESS)."),
+        ("How mods plug into the engine", "mod-api", "docs/site/explain/Mod-API.md", "Registries, manifest, load order, hooks, sandbox: what the Mod API is, its benefits and limits (M10, IN PROGRESS)."),
         ("How we verify", "verification", "docs/site/explain/Verification.md", "Pass/fail gates, FoxTrace captures, record/replay, claims, confidence tags."),
     ]),
     ("Modding guides", "mods", "manual", "What each finding means for a mod, with a worked (hypothetical) example "
      "of how it would be used. Hand-written; addresses are for PC 1.0.15.4 EN.", [
         ("For modders: findings at a glance", "for-modders", "docs/site/mods/For-Modders.md", "Every finding that matters for modding, in one page."),
-        ("Where things stand for modders", "where-things-stand", "docs/site/mods/Where-Things-Stand.md", "What is decoded, what the engine runs, what the planned Mod API (M10, M24) will offer."),
+        ("Where things stand for modders", "where-things-stand", "docs/site/mods/Where-Things-Stand.md", "What is decoded, what the engine runs, what the Mod API offers (M10 IN PROGRESS, M24 PLANNED)."),
+        ("Writing a mod for the new engine", "mod-api", "docs/site/mods/Mod-API.md", "Manifest, Python or Lua, every extension kind, hooks, pitfalls and limits (M10, IN PROGRESS)."),
         ("Archives, packages and hashes", "archives-and-hashes", "docs/site/mods/Archives-And-Hashes.md", "PathCode64, the name gap, package contents, checks for file tools."),
         ("Add a package to a mission", "add-a-package", "docs/site/mods/Add-A-Package.md", "Mission package lists are Lua: wrap the package-path function."),
         ("Run your own Lua from a package", "lua-from-packages", "docs/site/mods/Lua-From-Packages.md", "Package scripts run on load, in path order."),
@@ -100,6 +102,7 @@ SITE = [
         ("Navigation and routes", "navigation", "docs/engine/Navigation.md", "Path job, runtime blocks, dynamic links, route following (M8, PASS)."),
         ("Soldier AI", "soldier-ai", "docs/engine/SoldierAI.md", "Capture protocol, far mode, move speeds, route state, phases (M9, PASS)."),
         ("Mod API", "mod-api", "docs/engine/ModAPI.md", "Registries, manifest, loader, extension kinds, sandbox, determinism (M10, IN PROGRESS)."),
+        ("Native backend", "native", "docs/engine/Native.md", "C++ copies of the hot query paths (heights, nav path job), bit-identical to the Python reference (M10 C7, IN PROGRESS)."),
         ("World streaming and locators", "world", "docs/engine/World.md", "DataIdentifier locator lookup, stage blocks and the title menu (M6, PASS)."),
         ("Claims ledger", "claims", "docs/CLAIMS.md", "Facts from IHHook, Infinite Heaven, V_Framework and the wiki, checked against the executable."),
         ("Claims: contradictions", "claims-contradictions", "docs/CLAIMS_CONTRADICTIONS.md", "Ours vs theirs for every contradicted community address."),
@@ -157,7 +160,7 @@ WIKI_NAMES = {
     "Format-GEOM": "docs/formats/GEOM.md", "Format-FOXDATA": "docs/formats/FOXDATA.md",
     "MCP-Server": "mgsv_unified_server/AI_GUIDE.md", "Tooling": "docs/TOOLING.md", "Background": "docs/BACKGROUND.md",
     "Engine-Resources": "docs/engine/Resources.md", "Engine-World": "docs/engine/World.md",
-    "Engine-Navigation": "docs/engine/Navigation.md", "Engine-SoldierAI": "docs/engine/SoldierAI.md", "Claims": "docs/CLAIMS.md", "Claims-Contradictions": "docs/CLAIMS_CONTRADICTIONS.md",
+    "Engine-Navigation": "docs/engine/Navigation.md", "Engine-SoldierAI": "docs/engine/SoldierAI.md", "Engine-ModAPI": "docs/engine/ModAPI.md", "Claims": "docs/CLAIMS.md", "Claims-Contradictions": "docs/CLAIMS_CONTRADICTIONS.md",
     "Sahelanthropus": "docs/SAHELAN.md", "Battlefield-AI": "docs/BATTLEFIELD.md",
     # 2026-10-24 restructure; the old Guide-* names keep working
     "Guide-Overview": "docs/site/start/Overview.md", "Guide-Glossary": "docs/site/start/Glossary.md",

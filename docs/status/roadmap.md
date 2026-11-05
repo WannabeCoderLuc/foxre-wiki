@@ -216,7 +216,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
   - G5 Soldier behaviour by phase, second base: the same chain at afgh_enemyBase_cp (`test_m9_g5.py`).
   - G6 Alert slow band: the front point and the 10 m band (`test_m9_g6.py`).
 
-## M10 Mod API core [IN PROGRESS: G1-G7, C1-C8 PASS 2026-11-05 (C3 N/A); awaiting Luc's review] — registries, manifest, loader, hooks (headless)
+## M10 Mod API core [IN PROGRESS: G1-G7, C1-C8 PASS 2026-11-05 (C3 N/A), site pages rewritten; awaiting Luc's review] — registries, manifest, loader, hooks (headless)
 - Data-driven registries for everything M2-M9 built: GameObject types, SendCommand handlers, message ids, updaters (phase + priority), AI node tables, resource loaders, reflection classes, Lua libraries. Vanilla registered through the same path.
 - Mod manifest (namespace, API version 0.x, dependencies, load order); loader with conflict detection; Lua mods in the `lua51_run` sandbox pattern; Python mods for prototypes.
 - Extension kinds: new system (updater + lifecycle `OnAllocate / OnInitialize / OnUpdate / OnTerminate`), message listeners and own message ids (namespaced StrCode32), new GameObject types with handlers, new `.fox2` classes, parameter overrides (layered by load order), before / after hooks (observe, change, cancel), SendCommand handler chaining, AI node insert / replace, blackboard access, Lua libraries.

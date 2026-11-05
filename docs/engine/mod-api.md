@@ -16,7 +16,7 @@ Tags: [B] built and tested (gate item named), [P] planned (gate item named), [D]
 
 - `key`: the canonical key of the kind (below); `value`: JSON-able descriptor (what the dump shows); `impl`: optional Python callable / factory (not dumped); `owner`: namespace of the mod that registered it; `layers`: `(owner, value)` history of overrides, in load order.
 - `register(key, value, impl=None)` adds a key; a key already present raises `Conflict` naming both owners.
-- `override(key, value=..., impl=...)` replaces an existing entry's value and / or impl and appends a layer; the last loaded mod wins (G5 pins the order).
+- `override(key, value=..., impl=...)` replaces an existing entry's value and / or impl and appends a layer; the last loaded mod wins (order: section "Load order").
 - Iteration (`items()`, `keys()`) is registration order. `dump()` = `{key: value}` in that order; `Registries.dump_json()` = canonical JSON of every kind (sorted keys inside values, kinds in fixed order).
 
 | Kind | Key | Value (dumped) | Consumer today | Vanilla source |
@@ -138,7 +138,7 @@ Every refusal raises a `ModError` subclass (`Engine\mods\registry.py`) whose mes
 | Sandbox escape (Lua) | `SandboxError` | at the access: forbidden global, binary chunk, instruction budget | `mod 'probe': sandbox refused global 'os'` |
 | Nondeterminism | `NondeterminismError` | double run with the same seed (`Engine\mods\determinism.py`) | `nondeterministic mod(s) 'clock': event 1 differs between two runs with seed 0` |
 
-## Loader [B G1 order, B G4 rejections, P G5]
+## Loader [B G1 order, B G4 rejections, B G5 load order]
 `Engine\mods\loader.py`, `ModLoader(registries).load(mods)`:
 
 1. Validate every manifest (namespace, API version, entry).
@@ -147,6 +147,17 @@ Every refusal raises a `ModError` subclass (`Engine\mods\registry.py`) whose mes
 4. Conflicts: registering a key that exists raises `Conflict` (owner of the existing entry and the new one named). New string keys of non-vanilla mods must be namespaced (**D3, Luc 2026-11-04**: `<ns>.Name`, message names hashed as StrCode32 of `"<ns>.Name"`; an unprefixed key is refused); `ctx.message("<ns>.Name", value)` registers the id and refuses a collision with any registered id, vanilla or mod (G4).
 5. Context services: `ctx.random` (a `random.Random` seeded from the loader seed and the namespace's StrCode32: same seed, same numbers, independent per mod), `ctx.emit(*event)` (owner-tagged runtime trace in `Registries.trace`, compared by the double run).
 6. `ModLoader.order` and `Registries.dump_json()` are the load report.
+
+## Load order [D, B G5]
+The load order decides which override wins and in which order hooks run. It is a pure function of the set of manifests: the order the mods are passed in, the filesystem order and the run never change it (`test_m10_load_order.py`).
+
+1. **Resolution** (`resolve_order`): `vanilla` first. Edges "X loads before Y": `Y.depends` contains X (X must be in the set or already loaded, else refused); `Y.after` contains X; `X.before` contains Y. `after` / `before` naming a mod that is not in the set are ignored (soft). Then Kahn's algorithm: of all mods whose predecessors are loaded, the one with the **smallest namespace** (Python string order, i.e. code points) loads next. No constraint between two mods -> namespace order. A cycle is refused ("Rejections").
+2. **Later `load()` calls** into the same registries come after every mod already loaded (their `preloaded` namespaces satisfy dependencies).
+3. **Overrides** (`ctx.override`, any kind): applied in load order. The entry's value / impl / owner are the **last loaded** mod's; `Entry.layers` holds every `(owner, value)` in load order. A layer that sets only `impl` keeps the previous value (and the reverse).
+4. **Command chaining**: the last loaded handler is outermost; `next` calls the one loaded before it.
+5. **Hooks** at one site: **before hooks in load order**, a before that returns `CANCEL` stops the later before hooks and the engine call; **after hooks in reverse load order** (the first loaded mod's after runs last, so it wraps the outermost), and every after hook runs, also on a cancelled call (`call.cancelled` set). Changes a before hook makes to `args` are seen by the before hooks loaded after it and by the engine call.
+6. **Undo** of a refused set restores the exact pre-load entries (value, impl, owner, layers); the result is the same as never loading the set.
+Checked (G5): two parameter overrides (`cp.rate.alert`) and two hooks on one site (`cp.phase_change`, `route.switch`) for each way to order a pair (namespace tie, `after`, `before`, `depends`, and a constraint against namespace order), every permutation of the input list, and two runs: the load order, `Registries.dump_json()`, the override layers, the hook call order, the parameter read through `params.param`, the m9_phase alert drain and the owner-tagged trace are byte-identical.
 
 ## Extension kinds [B G3 reference mods, one each]
 | Kind | API | Engine hook point |
@@ -169,7 +180,7 @@ E42 answered by design, no RE; built with G3 (`Engine\mods\hooks.py`): what a mo
 
 - `before(call) -> None | CANCEL`: `call` is a `HookCall` with `site`, `frame` (host frame counter), `args` (a mutable dict of the site's arguments, changes are passed on), `view` (read-only blackboard view, below), `cancelled` (bool). Returning `hooks.CANCEL` stops the call: later before hooks do not run, the engine function is not called, the result is the site's **cancel result**.
 - `after(call, result) -> result`: sees the result (or the cancel result, `call.cancelled` set) and returns the result passed on (return it unchanged to observe only).
-- Order: before hooks in load order, after hooks in reverse load order (the first loaded mod wraps the outermost), same order on every run. A site with no hooks costs one registry lookup (G6 budget).
+- Order: before hooks in load order, after hooks in reverse load order (the first loaded mod wraps the outermost), same order on every run (section "Load order"). A site with no hooks costs one registry lookup (section "Overhead budget").
 - Lua mods: `mod.hook(site, before, after)` (either may be nil); each call runs through the sandbox's budget (`LuaSandbox.call`). `before(args, view)` gets plain tables (copies; `rec` as `{node, evt, step}`, float32 as numbers) and returns `mod.CANCEL`, a table (the changed `args`, read back key by key) or nil; `after(args, result)` returns the result or nil (unchanged).
 - **Engine side**: `hooks.run_site(reg, site, args, call, cancel_result, view=None, frame=0)`; `reg` = the engine instance's registries (`None` = the compat default, which has no hooks). With an empty list the engine function is called directly, no `HookCall` is built. `call(args)` runs the engine function on the (possibly changed) arguments; `view` may be a callable (built only when a hook runs).
 - Determinism: hook calls are part of the owner-tagged trace (`ctx.emit` from hooks, plus one `["hook", site, frame, cancelled]` event per call that a mod handled), so the G4 double run covers them.
@@ -205,6 +216,16 @@ Views never expose engine objects: a hook changes state only through `args`, its
 | `holdroute` | `route.switch` before hook (cancel) | cancels every switch of soldier 91 | `m9_route`: soldier 91 keeps its record, every other transition equals vanilla |
 | `ainode` | AI node insert | names unnamed step slot 8 `ainode.LookAround`; inserts event type 0xEF94DD47 (the most common node event of the m9_route routes) into `route.no_stop_events` | `m9_route`: a transition differs from vanilla exactly when vanilla lands on that event type |
 | `lualib` | Lua library (Lua mod, sandboxed) + Lua `cp.phase_change` hook | `lualib.Greeting` (`Add`, `Hello`, `Roll` seeded, `Escape` reads `os`) | `ScriptHost(mods=[lualib])`: game Lua calls the library; `Escape` is refused by the sandbox |
+
+## Overhead budget [D, B G6]
+The registry / hook path may cost at most **5 % frame time** against the pre-registry baseline on the M3 and M9 scenarios (`test_m10_perf.py`).
+
+- **Registry path:** the engine instance's vanilla `Registries` passed as `reg`, no hooks registered: every frame reads its parameters, AI tables and message names through the registry and looks up each hook site it passes.
+- **Baseline:** the same consumer code with the registry layer replaced by the module constants it is built from (`params.param` / `params.table` answer from dicts made by `vanilla.parameters()` / `vanilla.ai_tables()` without a `Registries`; `hooks.hooks_at` answers nothing and `hooks.run_site` calls the engine function directly), i.e. the code before G1. Both paths give byte-identical results (checked in the same test).
+- **Workloads:** M9 = the two `m9_phase` runs frame by frame (phase changes through `cp.phase_change`, one `cp_phase.rate` read + float32 drain step per frame; ~27,000 frames) and every `m9_route` transition through `route.switch` (2,035 calls). M3 = the live updater-vector change sequence (9 frames) and the 43-message sequence, priorities and names read per use, repeated 40 times. Load time (building the registries, loading mods) is not frame time and is not in the budget.
+- **Measurement** (test code only; no engine module reads a clock): fixtures loaded and instances built outside the timed region; 2 warm-up rounds; 15 alternated pairs (A B, B A, ...) with the garbage collector off; ratio = median of the per-pair ratios; up to 3 attempts, each a full median, the best one counts (noise only ever slows one attempt; a real regression fails all three). Measured 2026-11-05: M9 1.005-1.018, M3 1.009-1.032.
+- **Read path that keeps it:** each `Registry` keeps `live` (key -> current value, written by register / override / remove / undo) for frame-time reads (`Registry.get`, `params.table`), and `decoded` (`params.param`'s float32 values decoded once from `bits`; every write to the key drops its line). Before this cache `params.param` rebuilt the float32 on every read and the M9 path cost 2.1x the baseline.
+- With hooks registered a site costs what the hooks do (a `HookCall` and a view per call); that is the mod's cost, not the API's.
 
 ## Sandbox (Lua mods) [B G4]
 `Engine\mods\lua_mod.py`. Each Lua mod gets its own Lua 5.1 state (lupa, as the M4 host) and an environment table with only copies of `string` (no `dump`), `table`, `math` (`math.random` / `math.randomseed` replaced by the mod's `ctx.random`), and `assert`, `error`, `ipairs`, `next`, `pairs`, `pcall`, `select`, `tonumber`, `tostring`, `type`, `unpack`, `setmetatable`, `getmetatable`, plus `loadstring` (text only; the chunk gets the sandbox environment) and the read-only API table `mod`: `namespace`, `register(kind, key, value)`, `override(kind, key, value)`, `message(name, value)` -> id, `param(name)`, `random(m, n)`, `emit(...)`. The entry chunk is the registration: it runs once inside `register(ctx)`.
@@ -244,7 +265,7 @@ This document is the extension-point index; each subsystem spec names its own:
 
 ## Open (OPEN_QUESTIONS.md E42-E45; decisions D1-D3 confirmed by Luc 2026-11-04)
 - Hook sites: built with G3 at `route.switch` (step_after), `cp.phase_change`, `command.dispatch`; the caution / evasion route switch joins `route.switch` when it is ported. Live order of a mod listener relative to the mission `OnUpdate` stays E45.
-- Overhead budget (G6): registry lookups are dict lookups at registration time; a site with no hooks costs one registry lookup per call (G6 measures it).
+- Overhead with hooks registered is not budgeted (section "Overhead budget"); a native (C++) hot path for registry reads is not needed at M10 (registry path within 2 % on M9).
 
 ---
 <small>Source: `docs/engine/ModAPI.md` in the project repository &middot; generated 2026-11-05.</small>

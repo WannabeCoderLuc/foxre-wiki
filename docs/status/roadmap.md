@@ -214,7 +214,7 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
   - G5 Soldier behaviour by phase, second base: the same chain at afgh_enemyBase_cp (`test_m9_g5.py`).
   - G6 Alert slow band: the front point and the 10 m band (`test_m9_g6.py`).
 
-## M10 Mod API core [IN PROGRESS: G1, G2, G3, G4, G7 PASS 2026-11-05] — registries, manifest, loader, hooks (headless)
+## M10 Mod API core [IN PROGRESS: G1-G7 PASS 2026-11-05] — registries, manifest, loader, hooks (headless)
 - Data-driven registries for everything M2-M9 built: GameObject types, SendCommand handlers, message ids, updaters (phase + priority), AI node tables, resource loaders, reflection classes, Lua libraries. Vanilla registered through the same path.
 - Mod manifest (namespace, API version 0.x, dependencies, load order); loader with conflict detection; Lua mods in the `lua51_run` sandbox pattern; Python mods for prototypes.
 - Extension kinds: new system (updater + lifecycle `OnAllocate / OnInitialize / OnUpdate / OnTerminate`), message listeners and own message ids (namespaced StrCode32), new GameObject types with handlers, new `.fox2` classes, parameter overrides (layered by load order), before / after hooks (observe, change, cancel), SendCommand handler chaining, AI node insert / replace, blackboard access, Lua libraries.
@@ -225,8 +225,8 @@ Old → new numbers (2026-11-04; older docs and the log keep the old ones): M10 
   - G2 Null mod: the M3 / M4 / M9 scenario traces with the null mod loaded are byte-identical to no mod (`test_m10_null_mod.py`).
   - G3 Reference mods, one per extension kind, each with a fixture (`test_m10_ref_mods.py`): morale system as a new updater on CP phases; message listener; new GameObject type + SendCommand handler; new `.fox2` class loaded from a mod DataSet; CP phase rate override changes the `m9_phase` trace by exactly the predicted amount; hook that cancels a route switch; chained handler; AI node insert; Lua library.
   - G4 Rejections (`test_m10_rejects.py`): StrCode32 id collision with vanilla or another mod; API version mismatch; missing dependency; load-order cycle; sandbox escapes (`os` / `io` / `debug` / `require` / binary chunks); nondeterminism (unseeded random, wall clock) caught by a double run; each refused with an error naming the mod(s).
-  - G5 Load order: two mods overriding one parameter resolve in documented order, same result on every run (`test_m10_load_order.py`).
-  - G6 Overhead: registry dispatch costs at most 5 % frame time on the M3 and M9 scenarios against the pre-registry baseline (`test_m10_perf.py`).
+  - G5 Load order: two mods overriding one parameter and two mods hooking one site resolve in the documented order (`ModAPI.md` "Load order"), byte-identical over runs and over every input order (`test_m10_load_order.py`).
+  - G6 Overhead: registry dispatch costs at most 5 % frame time on the M3 and M9 scenarios against the pre-registry baseline (`ModAPI.md` "Overhead budget"; `test_m10_perf.py`).
   - G7 Ownership: `natives_owner.json` covers 100 % of the bindings in `m4_lua_bindings.json` and `commands_owner.json` 100 % of the vanilla SendCommand handlers, each with an owning milestone from `gates.json` by the rules in `ModAPI.md` "Ownership"; natives the engine implements are marked implemented and not answered from a recording; owners are in the registry (`owner_milestone`) (`test_natives_owned.py`).
   - Common gate C1-C8.
 

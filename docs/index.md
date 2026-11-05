@@ -78,7 +78,7 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 | Module | Language | Specification | State | Gate (on all game files) |
 |---|---|---|---|---|
 | `mods/` (registry, loader, vanilla) | Python | [`docs/engine/ModAPI.md`](engine/mod-api.md) | <span class="status in-progress">IN PROGRESS</span> | Mod API core (M10): registries for GameObject types, commands, messages, updaters, AI tables, parameters, resource loaders, reflection classes, Lua libraries, natives; manifest + load order; vanilla registered through the same `ModContext`; ScriptHost installs Lua libraries and natives only from its registry. G1: every dump equals its source table (`test_m10_registry.py`). |
-| `native/` (`_foxnative`: heightfield, navigation) | C++17 (pybind11, MSVC `/fp:strict`) | [`docs/engine/Native.md`](engine/native.md) | <span class="status in-progress">IN PROGRESS</span> | C++ copies of `HeightField.sample` and `NavWorld.find_path`, bit-identical to the Python reference (`test_cpp_equiv.py`, M10 C7); default backend when built (`python Tools/build_native.py`), `ENGINE_BACKEND=py` forces Python. |
+| `native/` (`_foxnative`: heightfield, navigation) | C++17 (pybind11, MSVC `/fp:strict`) | [`docs/engine/Native.md`](engine/native.md) | PASS (M10 C7) | C++ copies of `HeightField.sample` and `NavWorld.find_path`, bit-identical to the Python reference on 948 nav jobs, 410 requests and 200,036 height points, about 19x (nav) / 300x (batched heights) faster (`test_cpp_equiv.py`, M10 C7); default backend when built (`python Tools/build_native.py`), `ENGINE_BACKEND=py` forces Python. |
 | `world/realize.py` | Python | [`docs/engine/SoldierAI.md`](engine/soldier-ai.md) | <span class="status in-progress">IN PROGRESS</span> | Soldier realize selection (far mode): budget inside the stage window, 32 / 28 m inset. 159 of 181 live lists equal, the rest within sample age (`test_m9_soldier.py`). |
 | `core/strcode.py` | Python | docstring | <span class="status pass">PASS</span> | StrCode64 = exe 0x141A09AC0 (`re_emulate`, incl. > 64-byte strings) |
 | `core/typedb.py` | Python | [`docs/engine/Reflection.md`](engine/reflection.md) | <span class="status pass">PASS</span> | game registry dump == all DataSets (3,372/3,372 props) |
@@ -99,10 +99,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-11-05: **C++ backend built, M10 C7 PASS**: `Engine\native\` (pybind11, `/fp:strict`), HeightField + whole nav path job bit-identical to Python (948 jobs, 410 requests, 200,036 heights), nav 19x faster, default when built; spec [`docs\engine\Native.md`](engine/native.md), ROADMAP / gates / docs updated; gate M10 11/14 with C1 (full suite, run now).
 - 2026-11-05: **M10 G5 Load order + G6 Overhead PASS**: order and budget specified in ModAPI.md; `test_m10_load_order.py` 11/11, `test_m10_perf.py` 4/4 (M9 <= 1.8 %, M3 <= 3.2 % after `Registry.live` / `decoded`); gate M10 10/14 with C1 (full suite, run now).
 - 2026-11-05: **M10 G3 Reference mods PASS**: hook sites built (route.switch, cp.phase_change, command.dispatch), kinds hooks + listeners, nine reference mods with fixture `m10_ref_mods.json`, `test_m10_ref_mods.py` 17/17; gate M10 8/14 with C1 (full suite, run now); session-end prompt now carries an MCP tools block.
 - 2026-11-05: **M10 G2 Null mod + G4 Rejections PASS**; M9 modules read constants through the registry; hook-site design in ModAPI.md; full suite 274/274, gate M10 6/14 PASS (C1 from cache).
 - 2026-11-04: **M10 G7 Ownership PASS**: natives_owner.json 5,532 bindings (3,104 implemented, stripped bindings now host no-ops; gate-b threshold 93.5 % relocked, Luc), commands_owner.json 514 entries, rules in ModAPI.md "Ownership"; `owner_milestone` in the registry; `test_natives_owned.py` 10/10; full suite incl. slow PASS (C1); M10 4/15.
-- 2026-11-04: **M10 G1 Registries PASS**: [`docs\engine\ModAPI.md`](engine/mod-api.md), `Engine\mods\` (registry, loader, vanilla mod); ScriptHost Lua libraries + natives through the registry; `test_m10_registry.py` 17/17; full suite 196/196; M0-M9 gates PASS.
 
 [Full session log](status/log.md)

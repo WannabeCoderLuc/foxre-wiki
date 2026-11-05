@@ -18,6 +18,7 @@ Tags: [B] built and tested, [P] planned, [D] design decision.
 - `ENGINE_BACKEND=py`: Python only. `ENGINE_BACKEND=cpp`: C++ required; a missing or stale module raises at construction.
 - Per object: `HeightField(..., backend=None | "py" | "cpp")`, `NavWorld(backend=...)`; `None` follows `ENGINE_BACKEND`. `obj.backend` says which one answers.
 - Each native function is listed below with its state; `auto` only uses functions marked [B].
+- The M7 / M8 gate tests pass on both backends (`ENGINE_BACKEND=auto` and `=py`, 2026-11-05).
 
 ## Equivalence rules [D]
 - **Floats:** Python `float` (float64) arithmetic -> C++ `double`; each `f32()` / `np.float32(...)` rounding -> a `(float)` cast at the same point; numpy float32 expressions -> C++ `float` with the same operation order. No `-ffast-math`, no FMA.
@@ -30,13 +31,18 @@ Tags: [B] built and tested, [P] planned, [D] design decision.
 |---|---|---|---|
 | `HeightField.sample(x, z)` | `Engine\world\heightfield.py` | `heightfield.cpp` `sample` | [B C7] |
 | `HeightField.sample_many(xz)` | new, = `sample` per row | `heightfield.cpp` `sample_many` | [B C7] |
-| `NavWorld.find_path(...)` (all six stages: locate / seed, A*, cluster, region, corridor, relax, ray, extender; runtime meshes and dynamic links) | `Engine\world\navigation.py` | `navigation.cpp` `NavCore` | [B C7] when `test_cpp_equiv.py` passes on every job; else [P] (see "Open") |
+| `NavWorld.find_path(...)` (all six stages: locate / seed, A*, cluster, region, corridor, relax, ray, extender; runtime meshes and dynamic links), `locate`, `in_loaded`; the triangle grid is built in C++ | `Engine\world\navigation.py` | `navigation.cpp` `NavCore` | [B C7] |
+| CPython float helpers: `math.hypot` / `math.dist` (`vector_norm`), float `//`, `x ** 2` | CPython 3.13 | `pyfloat.h` | [B C7] (200,000 seeded inputs) |
 
 ## Data flow (nav) [D]
 `NavWorld.add_file` parses as before and forwards each mesh (`_Mesh` arrays and raw bodies `b0`, `b1`, `b3` with their offsets, key, block, origin, scale) and each tile tail to `NavCore`; the triangle grid is rebuilt in C++ in the same order. `set_loaded`, `set_blocked`, `set_runtime` forward their state (runtime meshes built once per state, as in Python). `find_path` returns the path and sets `status` from the native answer.
 
-## Measured
-Filled in when the oracle passes: per-backend time for the 948 `m8_nav_jobs` and for 100,000 height samples (printed by `test_cpp_equiv.py`, not gated; speed gates are M14 G7, M17 G6, M22 G4, M23).
+## Measured [B C7, 2026-11-05]
+Printed by `test_cpp_equiv.py` (one run, reference PC; not gated, speed gates are M14 G7, M17 G6, M22 G4, M23):
+
+- **Nav path job:** 948 `m8_nav_jobs` (614 ok, 25 coarse, 309 unloaded) 1.51 s Python -> 0.078 s C++ (about 19x); all bit-identical, and all 410 `m8_nav_paths` requests.
+- **Heights:** 100,000 samples 0.62 s Python; C++ one call per sample 0.18 s (call overhead dominates), `sample_many` 0.002 s (about 300x); 200,036 points bit-identical on the .htre mosaic and the .tre2 field.
+- Load time: `NavWorld.add_file` still parses in Python; the triangle grid is built in C++ (the Python grid is skipped under the C++ backend).
 
 ## Extension points
 - **Native plugins** (M24): mods may ship a native module only through the same rule: a Python reference plus a `cpp == py` oracle in the mod's own tests; the loader never loads a native module from a Lua mod (sandbox, `ModAPI.md`).

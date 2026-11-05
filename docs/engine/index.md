@@ -46,7 +46,7 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
 -   **[Native backend](native.md)**
 
-    C++ copies of the hot query paths (heights, nav path job), bit-identical to the Python reference (M10 C7, IN PROGRESS).
+    C++ copies of the hot query paths (heights, nav path job), bit-identical to the Python reference (M10 C7, PASS).
 
 -   **[World streaming and locators](world.md)**
 

@@ -102,7 +102,7 @@ SITE = [
         ("Navigation and routes", "navigation", "docs/engine/Navigation.md", "Path job, runtime blocks, dynamic links, route following (M8, PASS)."),
         ("Soldier AI", "soldier-ai", "docs/engine/SoldierAI.md", "Capture protocol, far mode, move speeds, route state, phases (M9, PASS)."),
         ("Mod API", "mod-api", "docs/engine/ModAPI.md", "Registries, manifest, loader, extension kinds, sandbox, determinism (M10, IN PROGRESS)."),
-        ("Native backend", "native", "docs/engine/Native.md", "C++ copies of the hot query paths (heights, nav path job), bit-identical to the Python reference (M10 C7, IN PROGRESS)."),
+        ("Native backend", "native", "docs/engine/Native.md", "C++ copies of the hot query paths (heights, nav path job), bit-identical to the Python reference (M10 C7, PASS)."),
         ("World streaming and locators", "world", "docs/engine/World.md", "DataIdentifier locator lookup, stage blocks and the title menu (M6, PASS)."),
         ("Claims ledger", "claims", "docs/CLAIMS.md", "Facts from IHHook, Infinite Heaven, V_Framework and the wiki, checked against the executable."),
         ("Claims: contradictions", "claims-contradictions", "docs/CLAIMS_CONTRADICTIONS.md", "Ours vs theirs for every contradicted community address."),

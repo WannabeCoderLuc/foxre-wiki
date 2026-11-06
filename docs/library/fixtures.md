@@ -28,6 +28,7 @@ Ground truth the engine tests (`Engine/tests/`) compare against. Each comes from
 | `m9_route.json` | 142 KB | see the test that loads it |
 | `m9_soldier_forced.json` | 3 KB | see the test that loads it |
 | `m9_soldier_free.json` | 451 KB | see the test that loads it |
+| `moda_harness_live.json` | 5 KB | see the test that loads it |
 | `natives_owner.json` | 594 KB | see the test that loads it |
 | `provenance.json` | 7 KB | see the test that loads it |
 

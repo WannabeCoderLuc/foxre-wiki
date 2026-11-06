@@ -44,7 +44,7 @@
 | 0x08 | u32 | header size (0x70 empty, 0x90 for 1 mesh type, up to 0x120) |
 | 0x0C | u32 | chunk count (4 per mesh type) |
 | 0x10 | u32 | spatial **grid** offset |
-| 0x14 | u16, u16 | 0, tile id |
+| 0x14 | u16, u16 | file id: (type bit 15 \| 1 for the `_nav.1` / piece-5 file, else 0), tile [D 769 / 769 unique files; V live MOD-A G4: a `_nav` file with another value here is not registered] |
 | 0x18 | u32 | **tail** block offset |
 | 0x20 | f32×3 | tile origin (world) |
 | 0x2C | u32 | optional extra block (mtbs) |

@@ -99,10 +99,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-11-06: **MOD-A G4 PASS** (MOD-A complete): live check `Tools\moda\livecheck.py`, spec ModToolkit.md "Live check [G4]"; edited route + rebaked 3 x 3 navmesh via SnakeBite (Luc); baker file-id bug found live and fixed (NAV2-HEADER); v2 runs `moda_g4d` / `e` clean; `test_moda_live.py` 9/9, gate MOD 4/8. Artifact: https://claude.ai/artifact/JHHhckNsLh75CXet5UJ1XK
 - 2026-11-06: **MOD-A G3 PASS**: mod-Lua harness (`Tools\moda\luaharness.py`, 10 seeds, CLI `moda lua`), spec ModToolkit.md "Mod-Lua harness"; 2 live runs (Luc OK for the second: seed 07's `error()` at load ended the game); `test_moda_harness.py` 9/9, full suite 370/370, M10 14/14. Artifact: https://claude.ai/artifact/Dzg9Ae5bFKu6WLuedRwSMC
 - 2026-11-06: **MOD-A G2 PASS**: navmesh baker (`Tools\moda\navbake.py`, `nav2mesh.py`, `nav2rules.py`), spec ModToolkit.md + NAVMESH.md "Build model" (0.1 m source grid); `test_moda_baker.py` 6/6, 1,297 / 1,348 queries within 0.1 m (938 / 948 M8 jobs); full suite PASS, M10 14/14. Artifact: https://claude.ai/artifact/SU8m5vR7yfv1QEnSnwGjAd
 - 2026-11-06: **MOD-A G1 PASS**: ROADMAP MOD-A split into G1-G4 (gates.json MOD 8 items); spec [`docs\engine\ModToolkit.md`](engine/mod-toolkit.md); `Tools\moda\` validated writers (frt / fox2 / fpk, 30 rules) + `.frt` route editor + CLI; `test_moda_toolkit.py` 19/19 (307 vanilla `.frt` identical and clean, all 16,354 packages pass); full suite 355/355. Artifact: https://claude.ai/artifact/NqfjFmUpvbtRKCBp1afUew
 - 2026-11-05: **M10 PASS (Luc)**: gate M10 14/14 (C3 N/A), statuses updated in ROADMAP, gates.json (M11 NEXT), README, site; full suite rerun PASS.
-- 2026-11-05: **M10 hand-written site pages rewritten and published** (Mod API explanation + guide, Where things stand, Overview, Glossary; new `explain\Native-Backend.md`); test_site_build 4/4, docs_contract 14/14, gate M10 14/14 with C1 run now. Next: Luc's M10 gate review.
 
 [Full session log](status/log.md)

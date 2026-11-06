@@ -64,12 +64,14 @@ Top: RelaxedIdleAct 135k · RelaxedWalk 107k · RelaxedWalkAct 81k · CautionWal
 edge MoveNormal / MoveSlow / MoveFast / MoveVeryFast (0x6366BEFD / 0xE2647436 / 0x0BAB841A 92k / 0xF5E07DB3 = UAV speed 0 / 1 / 2 / 3 in the UAV route node 0x141955550 [V static]), CautionWalkSearch 0xEC2BF82A 77k, CautionDash 0xF4973B94, JumpOnly 0x8A397464 (s10151, beside RunOnly / WalkOnly);
 node WaitIdle 0xAFC35AAB 58k, CautionWalkFire 0x4E92CA60, VehicleIdle 0x75ABAE82, VehicleGetIn 0x0601BD97, HeliIdle 0x4A6C45E5, DisableStealthMode 0xEC9DB415, Snipe 0xA585C417 and SupineSnipe 0xBE536700 (both s10050, Quiet); 0xBF169F98 = StrCode32("") (also the empty aim-route word).
 
-**Still unnamed: 19 types, 12.8k events (1.33 %)**, classified by the exe handler that compares them [V static]:
+**2026-11-06 (hash hunt): +2 names [D]** (StrCode32 brute force over the route-event vocabulary, each at the handler's compare immediate): 0x921226F1 = `CautionStandIdleSearch` (node, 11.6k, sibling of CautionStandIdle / CautionWalkSearch), 0x94E22019 = `StairsDown` (edge, 7; `StairsUp` has no immediate). Also named while checking siblings: `LadderUp` 0x8A2866D4 / `LadderDown` 0xB5BE2B28 (paired immediates at 5 code sites; not route event types).
+
+**Still unnamed: 17 types, about 1.2k events**, classified by the exe handler that compares them [V static]:
 
 - vehicle edge (route-start scan 0x14156E580 / 0x14156FA50, with VehicleMove* / VehicleBack*): 0x0274BA40, 0x1D25BD30, 0x4E87F5A9, 0x77FA77E4, 0x9E620826, 0xF1DFFC4E;
 - vehicle node (same scan, with VehicleIdle / VehicleFire): 0x3A994F4E, 0xFF8DD83C, 0x9F695B52 (+ handled-but-unused 0x46DCD964, 0x2F00EC35, 0x308987DA);
-- soldier node handler 0x141574B90: 0x921226F1 12k, 0x6FC479D7, 0xD7324484, 0x91745EFB, 0xDD3F3F69; 0x141572470: 0x7419BC4C (position check);
-- 0x140ED0AC0..0x140ED4D30 group (with CautionRun / CautionWalk): 0x0AF9CFF0, 0x94E22019, 0xA69F808F;
+- soldier node handler 0x141574B90: ~~0x921226F1~~ (CautionStandIdleSearch), 0x6FC479D7, 0xD7324484, 0x91745EFB, 0xDD3F3F69; 0x141572470: 0x7419BC4C (position check);
+- 0x140ED0AC0..0x140ED4D30 group (with CautionRun / CautionWalk): 0x0AF9CFF0, ~~0x94E22019~~ (StairsDown), 0xA69F808F;
 - no immediate in the plain exe: 0xA00447C1 (s10151) [?].
 
 ---

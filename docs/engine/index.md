@@ -44,6 +44,10 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
     Registries, manifest, loader, extension kinds, sandbox, determinism (M10, PASS).
 
+-   **[Mod toolkit (MOD-A)](mod-toolkit.md)**
+
+    Validated writers and the .frt route editor for the original game: rules, editor operations, CLI (MOD-A G1, PASS; baker, harness, live check planned).
+
 -   **[Native backend](native.md)**
 
     C++ copies of the hot query paths (heights, nav path job), bit-identical to the Python reference (M10 C7, PASS).

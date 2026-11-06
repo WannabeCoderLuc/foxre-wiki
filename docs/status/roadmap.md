@@ -406,11 +406,19 @@ Each item starts when its dependencies pass. **MOD-A is in scope (Luc, 2026-11-0
 
 | Item | Builds on | Delivers | Gate |
 |---|---|---|---|
-| MOD-A Toolkit for the original game [IN SCOPE 2026-11-05] | M1, M7, M8 (passed) | Validated writers, route editor (`.frt`), navmesh baker (geometry → `.nav2`), headless mod-Lua harness on the M4 / M5 host | G1 every edited file round-trips and loads in the engine's own loader; G2 baker: navmeshes baked from vanilla geometry answer at least 1,000 path queries within 0.1 m of the vanilla `.nav2` (M8 oracle, offline); G3 harness reports the same Lua errors as the live game for 10 seeded broken modules; G4 (live) baked navmesh and edited route load in the game and soldiers follow them |
+| MOD-A Toolkit for the original game [IN SCOPE 2026-11-05] | M1, M7, M8 (passed) | Validated writers, route editor (`.frt`), navmesh baker (geometry → `.nav2`), headless mod-Lua harness on the M4 / M5 host | G1-G4 below (spec [`docs\engine\ModToolkit.md`](../engine/mod-toolkit.md)) |
 | MOD-B AI sandbox | M9, M10 | Behaviour and route changes predicted by the engine before testing in game | G1 an override (phase rate, route switch) produces the predicted trace; G2 (live, needs scope) the same change in game matches |
 | MOD-C Content importers | M11, M16, M24 | glTF → `.fmdl` / rig, PNG → `.ftex`, glTF animation → `.gani` | G1 imports decode with the M11 / M16 readers; G2 vanilla export → import keeps mesh, rig and clip data equal; G3 after M20, imported models render |
 | MOD-D World authoring | M8, M13, M14 | New terrain, nav worlds, stage-block grids, locators, routes | G1 a new 1 km² world streams, has collision and paths (M8 oracle on its baked navmesh), and hosts a soldier passing the M9 behaviour checks; G2 editing and reverting a vanilla block gives byte-identical files |
 | MOD-E Enhanced renderer | M20 | Modern lighting, higher resolutions, effects, as a separate mode | G1 M20 gate unchanged in compat mode; G2 each enhanced feature has a frame-time budget and a 1 h stability run (no NaN pixels, no device loss) |
+
+A mod item with a numbered gate list replaces its table row in `gates.json` by one item per gate (`MOD-A.G1` …); the others stay one item each.
+
+- **Gate (MOD-A):**
+  - G1 Validated writers and route editor: `Tools\moda\` writes `.frt`, `.fox2` (and its aliases) and `.fpk` / `.fpkd` only when the engine's own codec reads the bytes back to the same model and every rule of the format spec holds, else it refuses with the rule ids; every unique vanilla `.frt` read → write is byte-identical when unedited and passes every rule; route edits (add / move / delete nodes and events, add / delete routes) keep every FRT.md invariant, edited files load with `Engine\formats\frt.py` and `route_follow.step_after` runs on them (`test_moda_toolkit.py`)
+  - G2 Navmesh baker: navmeshes baked from vanilla geometry answer at least 1,000 path queries within 0.1 m of the vanilla `.nav2` (M8 oracle, offline) (`test_moda_baker.py`)
+  - G3 Mod-Lua harness: the headless harness on the M4 / M5 host reports the same Lua errors as the live game for 10 seeded broken modules (one live capture) (`test_moda_harness.py`)
+  - G4 Live: a baked navmesh and an edited route load in the game and soldiers follow them; mod-baseline restored and MATCH after every run (`test_moda_live.py`)
 
 ## Out of scope
 - Online play and FOBs (Konami's servers and protocol).

@@ -3,6 +3,7 @@
 Codec `Engine\formats\frt.py` · verifier `Engine\tests\test_frt_roundtrip.py`.
 **Gate (2026-10-21): 307 / 307 unique route files round-trip byte-identically** (311 inventory entries); every node's event range lies inside its route's events.
 Content [D]: 104,653 routes, 604,395 nodes, 963,624 events, 104 event types (69 named, 72 % of instances; **85 named, 98.7 %** since E6 2026-10-29). Route ids are sorted ascending in every file [D 307/307]; the exe binary-searches them [V].
+**Structural invariants (2026-11-06, all 307 files) [D]:** route ids strictly ascending (no duplicates); every route has at least one node (22,546 have exactly one); every node has at least one event, its edge event first (isNodeEvent 0), the rest node events (1); node event tables are contiguous (start = sum of the previous counts) and use every event of the route exactly once; node positions finite; bodySection 0 in all 963,624 events; isLoop 0 / 1 (1,393 loops). The MOD-A writer and route editor (`Tools\moda\`, [`docs\engine\ModToolkit.md`](../engine/mod-toolkit.md)) refuse files that break them.
 
 ## Layout (little-endian, version 3 in every file, contiguous, no padding) [D]
 ```

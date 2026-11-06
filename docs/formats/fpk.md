@@ -29,6 +29,7 @@ Data: each entry's bytes in table order, each padded to 16
 
 - `md5` = MD5 of the stored name bytes. In TPP 1.0.15.4 every name is stored in clear (`/Assets/…`) and matches its MD5 (124,841/124,841) [D]. (The format allows obfuscated names whose MD5 must be looked up in `fpk_dictionary.txt`; the codec keeps the stored MD5 for that case.)
 - Layout is canonical in every game file, so `write(read(b)) == b` [V].
+- Entry names are unique within each package [D 16,354 / 16,354, 2026-11-06]. **Validated writer (MOD-A G1):** `Tools\moda\` writes a package only when its own rules (FPK-READ / MODEL / NAME-DUP) and every `.frt` / DataSet entry's rules hold ([`docs\engine\ModToolkit.md`](../engine/mod-toolkit.md)); all vanilla packages pass.
 
 ## Lua obfuscation [V]
 Every `.lua` inside a package (732/732) is XOR-chained: first byte 0x1B or 0x1C (marker), then

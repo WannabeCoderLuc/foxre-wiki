@@ -81,7 +81,8 @@ Usage (property instances over all files) [D]: EntityHandle 3.57 M, EntityPtr 2.
 ## Codec notes
 - Floats are kept as raw 32-bit patterns (exact round trip incl. NaN payloads); `to_json()` shows them as floats.
 - Hashed values (String/Path/FilePtr/EntityLink) are raw integers; `Names` resolves them for display from the file's string table, dictionaries and `strcode64`.
-- **Name resolution (2026-10-29, all 44,994 DataSets, `Tools\fox2_name_report.py`)** [D]: every distinct class name (403), property name (1,651) and hashed value (293,035 of 293,036: String / Path / FilePtr / EntityLink values and StringMap keys) resolves from the DataSet's **own string table**; one value hash resolves nowhere (no dictionary has it). Dictionaries are not needed for names that a file carries.
+- **Name resolution (2026-10-29, all 44,994 DataSets, `Tools\fox2_name_report.py`)** [D]: every distinct class name (403), property name (1,651) and hashed value (293,035 of 293,036: String / Path / FilePtr / EntityLink values and StringMap keys) resolves from the DataSet's **own string table**; one value hash resolves nowhere (no dictionary has it). Dictionaries are not needed for names that a file carries. The count is per distinct hash over the corpus (resolved by **some** file's table), not per file: 242,812 name uses are absent from their own file's table (2026-11-06, MOD-A survey; e.g. the empty-string value 0xB8A0BF169F98) [D].
+- **Validated writer (MOD-A G1):** `Tools\moda\` writes DataSets only when rules FOX2-READ / MODEL / CLASS / CLASS-VERSION / PROP / ADDR hold ([`docs\engine\ModToolkit.md`](../engine/mod-toolkit.md) "Validation rules"); all vanilla DataSets pass.
 - The writer emits the canonical layout above; since every game file is canonical, `write(read(b)) == b` holds for all of them.
 
 ## Exe side

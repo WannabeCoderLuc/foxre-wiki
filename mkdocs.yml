@@ -137,6 +137,7 @@ nav:
       - "Navigation and routes": engine/navigation.md
       - "Soldier AI": engine/soldier-ai.md
       - "Mod API": engine/mod-api.md
+      - "Mod toolkit (MOD-A)": engine/mod-toolkit.md
       - "Native backend": engine/native.md
       - "World streaming and locators": engine/world.md
       - "Claims ledger": engine/claims.md

@@ -71,7 +71,7 @@ Background and limits: [How mods plug into the engine](../explain/mod-api.md). W
 | MOD-E Enhanced renderer (after M20) | modern lighting and effects as a separate mode |
 | M24 Mod platform 1.0 | frozen, versioned API; asset packs; native plugins through a C interface; a mod manager; one example mod per area |
 
-MOD-A, tools for the original game (validated file writers, a route editor, a navmesh baker, a mod-Lua test harness), is **in scope since 2026-11-05** and comes next after M10 (PLANNED): each tool is checked offline against the engine first (the baker, for example, must answer at least 1,000 path queries within 0.1 m of the game's own navmesh), then its output is loaded and tested in the game.
+MOD-A, tools for the original game (validated file writers, a route editor, a navmesh baker, a mod-Lua test harness), is **in scope since 2026-11-05** (IN PROGRESS): **G1 PASS (2026-11-06)**, the validated writers for route sets, DataSets and packages and the `.frt` route editor ([Mod toolkit](../engine/mod-toolkit.md)); the navmesh baker (G2), the mod-Lua harness (G3) and the in-game check (G4) are PLANNED. Each tool is checked offline against the engine first (the baker, for example, must answer at least 1,000 path queries within 0.1 m of the game's own navmesh), then its output is loaded and tested in the game.
 
 ## Promises the engine makes
 - **Compat mode**: with no mods loaded, every test against the original game still passes. Enhanced features are separate modes.

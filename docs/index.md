@@ -99,10 +99,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-11-06: **MOD-A G2 PASS**: navmesh baker (`Tools\moda\navbake.py`, `nav2mesh.py`, `nav2rules.py`), spec ModToolkit.md + NAVMESH.md "Build model" (0.1 m source grid); `test_moda_baker.py` 6/6, 1,297 / 1,348 queries within 0.1 m (938 / 948 M8 jobs); full suite PASS, M10 14/14. Artifact: https://claude.ai/artifact/SU8m5vR7yfv1QEnSnwGjAd
 - 2026-11-06: **MOD-A G1 PASS**: ROADMAP MOD-A split into G1-G4 (gates.json MOD 8 items); spec [`docs\engine\ModToolkit.md`](engine/mod-toolkit.md); `Tools\moda\` validated writers (frt / fox2 / fpk, 30 rules) + `.frt` route editor + CLI; `test_moda_toolkit.py` 19/19 (307 vanilla `.frt` identical and clean, all 16,354 packages pass); full suite 355/355. Artifact: https://claude.ai/artifact/NqfjFmUpvbtRKCBp1afUew
 - 2026-11-05: **M10 PASS (Luc)**: gate M10 14/14 (C3 N/A), statuses updated in ROADMAP, gates.json (M11 NEXT), README, site; full suite rerun PASS.
 - 2026-11-05: **M10 hand-written site pages rewritten and published** (Mod API explanation + guide, Where things stand, Overview, Glossary; new `explain\Native-Backend.md`); test_site_build 4/4, docs_contract 14/14, gate M10 14/14 with C1 run now. Next: Luc's M10 gate review.
 - 2026-11-05: **M10 common gate C4, C5, C8 PASS, gate M10 14/14 (C3 N/A)**: `test_determinism.py` 8/8 (24 scenarios, fresh instances + fresh process; stubs tie-order fix in `ScriptHost.coverage`), `test_fixture_provenance.py` 20/20 (`fixtures/provenance.json`, 18 fixtures, spec reasons added), `test_site_build.py` 4/4 (strict build on a temp copy). Next: hand-written M10 pages, then Luc's gate review.
-- 2026-11-05: **New engine code is C++ only (Luc)**: rule in ROADMAP, Native.md, CLAUDE.md, Engine README and the skills; Python engine modules frozen as reference (port before extending); Tools, verifiers and codecs stay Python.
 
 [Full session log](status/log.md)

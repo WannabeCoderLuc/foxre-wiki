@@ -46,7 +46,7 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
 -   **[Mod toolkit (MOD-A)](mod-toolkit.md)**
 
-    Validated writers and the .frt route editor for the original game: rules, editor operations, CLI (MOD-A G1, PASS; baker, harness, live check planned).
+    Validated writers, the .frt route editor and the navmesh baker for the original game: rules, editor operations, bake model, CLI (MOD-A G1, G2 PASS; harness, live check planned).
 
 -   **[Native backend](native.md)**
 

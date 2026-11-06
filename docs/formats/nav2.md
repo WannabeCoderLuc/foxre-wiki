@@ -115,6 +115,14 @@
 - **Cell** (8 bytes): u32 **self-relative** list offset, u16 group count, u8 minY>>8, u8 maxY>>8.
 - **List:** per group, (u32 meshType, u32 n, u16 regionIds[n]) = the regions whose AABB overlaps the cell.
 
+## Build model (2026-11-06) [D]
+Census of the 2,786 unique vanilla pieces for the MOD-A baker ([`docs\engine\ModToolkit.md`](../engine/mod-toolkit.md) "Navmesh baker", rates there):
+
+- The original's vertices are absolute world positions on a **0.1 m grid in every axis** (float32); vertex quanta = `floor((w - origin) * quant)`, edge nodes = `floor(((A + B) * 0.5 - origin) * quant)` (100 %); link weight = `floor(wsc * |midA - midB|)` (99.8 %). The older "node = edge midpoint within 1 unit" and "weights fitted" lines above come from not knowing the grid.
+- Edge nodes are numbered per region in triangle order, edges 1, 0, 2; node links are the triangle pairs (0, 1), (0, 2), (1, 2) stable-sorted by the lower node; adjacency lists each triangle's other nodes in edge order; `node_tri` = the last triangle holding the edge.
+- Region representative = node nearest the area-weighted centroid of the region's triangles; tail clusters = connected regions of equal attribute; cluster node = the member representative nearest the cluster centroid; cluster link cost = `floor(wsc * distance)` of the representatives.
+- Kind-1 records follow the poly-info table directly (4-byte aligned), each slot rounded to 16 bytes; tail = 3 class blocks (classes 1, 2 empty); tail border lists pair crossing *i* with the neighbour's opposite list (order not recoverable).
+
 ## Editing [V]
 - **`navmesh_tool.py edit <tile> --box x0,z0,x1,z1[,y0,y1] (--raise dy | --move dx,dy,dz) --out f.nav2`**
   1. Moves the vertices in the box.

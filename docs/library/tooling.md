@@ -106,5 +106,33 @@ e\devmap_folded.tsv`: **166 of 34,547** EXACT names sit on folded bodies (10 to 
 
 - **Selftest:** `_devmap_checks` (in `--selftest`): build guard accepts the retail exe and refuses a foreign one; the hand-confirmed EXACT pairs of 2026-11-04 come back unchanged (0x140D69FB0 `AlertAiImpl::CheckActiveMember`, 0x140D63550 `CommandPost2Impl::SetMemberRole_`, 0x14139D600 `UnrealBasicAction2Impl::GetMoveVelocityForUnreal`, 0x140D5AAA0 `CommandPost2Impl::DoRequestRadio`) with dev decompile and `verify` rows; AUTO is labelled `[hint AUTO]`, never `[dev]`; the folded 0x1400FE390 prints `[hint folded x2]`, and no hand-confirmed pair is in the folded list; annotation leaves call-site addresses alone.
 
+## Hash hunt 2026-11-06: naming the exe's StrCode64 hash sites [V]
+Tools: `Tools\hash_hunt.py` (baseline / targets / harvest / run / family / deepfamily / numbers / camel), `Tools\hash_scan_files.py` (finds which extracted file types hold given hashes), `Tools\hash_hunt_community.py` (community hash lists). Matching uses `strcode_brute\bin\brute.exe`; candidate lists and logs are in `Tools\strcode_brute\work\hunt_*`.
+
+**Verification gate (every row recorded):** Engine StrCode64 (`Engine\core\strcode.py`) == the exe's own StrCode64 run in unicorn (`oracle_tools.strcode64_emulated`, 0x141A09AC0) == the hash, **and** the exe bytes at a code site re-read from `GameBackup` hold that `movabs` immediate. The site address goes in the note. Rows that fail go to `work\hunt_rejected.tsv`; none failed. Each run prints its search space and the number of random 48-bit matches to expect (`space × targets / 2^48`). Every run stayed at or below 0.17, so collisions are unlikely but not ruled out for the largest runs (camel k≤2, deep family).
+
+**Baseline → after** (knowledge DB `hash_sites`, distinct hashes; unnamed sites exist only for kind `hashuse` = every 48-bit `movabs` imm64 in .xtext, because the other kinds are recorded only when a name is known):
+
+| width / kind | distinct | named before | named after | unnamed after |
+|---|---|---|---|---|
+| 64 hashuse | 17,109 | 7,310 | 10,643 | 6,466 (about 6,260 look like hashes; the rest are masks or pointers) |
+| 32 imm32 (derived) | 2,571 → 2,613 | 2,571 | 2,613 | 0 |
+| 64 data_q / mov_imm64 / imm64 / raw48 | 9,150 | all | all | 0 |
+| **all** | 21,755 → 21,797 | 11,956 | 15,331 | 6,466 |
+
++3,333 names in `strcode_bruteforced.tsv` (note `hash hunt: <method>`). By method: family recombination (a known `_` prefix plus the family's own tokens, 1–3 tokens; almost all `UI_` layout and animation names) 1,845 · class affixes (dev-build, exe and fox2 identifiers, stripped of Impl/Interface/Tpp, plus prefixes and suffixes taken from known class names) 616 · CamelCase recombination of tokens from known names 266 · dev-build DB dictionary (`GeminiWork\decomp\mgsv.db` names, strings, decompile literals) 182 · mgsv-lookup-strings dictionaries 166 · number neighbours (digit runs swept) 135 · local community wiki text 94 · exe strings 7, vanilla Lua 6, fox2 4, Research\sources text 8, known-name case variants 4. Extracted file paths (FileInventory) found 0. Dictionary passes are finished. Family, class-affix and CamelCase recombination converged: the last rounds found 0–1 new names.
+
+**What is left:** about 6,260 hashes, mostly motion-graph and action names in the player, soldier, walker-gear and wolf action plugins (dev objs `TppPlayer2*ActionPlugin`, `*ArmAdjuster`, `*AdjustExecutor`), Fx locator groups, FoxPad and the music manager. About 1,760 of them also occur as 48-bit values in extracted files: `.mog` 1,506 (motion graph state, transition and parameter names; the file holds no strings), `.fmdl` 113, `.mtar` 109, `.uigb`/`.uif`/`.uia`/`.uilb` UI files. Next lead: a `.mog` reader (M16) that pairs each hash with its node role, plus gani names from the mtar dictionary as candidate vocabulary.
+
+**Community hash lists** (mgsv-lookup-strings TPP lists; Engine `pathcode.py` / `strcode.py`), results in `data\re\community_hash_matches.tsv`. Only matches that are absent from that tool's own dictionary are counted:
+
+| set | hashes | unmatched in list | matched now, missing from that tool's dictionary | of which in no community dictionary |
+|---|---|---|---|---|
+| langId (StrCode32, LangTool) | 15,950 | 5,361 | 15 | 15 (names found by the exe hunt, e.g. `dialog_savedata_new`, `mb_challenge_task_*`; 32-bit, so expected random matches ≈ 0.4 across the snake_case pool) |
+| mtar gani paths (PathCode64, MtarTool) | 7,989 | 6,802 | 20 | 20 (strings from the wiki's custom-weapons page and IHHook, e.g. `snapcqc_s_chk_fre_rld`) |
+| qar paths (PathCode64, GzsTool) | 49,255 | 9,433 | 6,507 | 22 (6,485 are already in IHHook `pathDict.txt`) |
+
+The lookup-strings "unmatched" lists are older than its dictionaries: most of their entries are matched today by GzsTool's / LangTool's own dictionaries.
+
 ---
 <small>Source: `docs/TOOLING.md` in the project repository &middot; generated 2026-11-06.</small>

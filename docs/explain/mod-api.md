@@ -1,6 +1,6 @@
 # How mods plug into the engine
 
-*M10 Mod API core, IN PROGRESS (2026-11-05): all 14 gate checks pass (items G1 to G7 and the common checks C1, C2, C4 to C8; C3 does not apply to M10); the milestone is not passed until Luc accepts the gate. API version 0.1. Exact details: [Mod API](../engine/mod-api.md). How to write one: [Writing a mod for the new engine](../mods/mod-api.md).*
+*M10 Mod API core, PASS (accepted 2026-11-05): all 14 gate checks pass (items G1 to G7 and the common checks C1, C2, C4 to C8; C3 does not apply to M10). API version 0.1. Exact details: [Mod API](../engine/mod-api.md). How to write one: [Writing a mod for the new engine](../mods/mod-api.md).*
 
 ## What it is
 The Mod API is the documented way for a mod to add to the new engine or change it, without editing the engine's code. A mod is a small package with a **manifest** (its name, the API version it was written for, what must load before it) and a **register** step that tells the engine what it adds or changes.
@@ -110,4 +110,4 @@ The tests compare the engine with recordings of the real game (fixtures). The co
 - `test_determinism.py` (C4), `test_fixture_provenance.py` (C5), `test_cpp_equiv.py` (C7), `test_site_build.py` (C8), and the whole test suite (C1).
 
 ---
-<small>Hand-written article (`docs/site/explain/Mod-API.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/explain/Mod-API.md`) &middot; published 2026-11-06.</small>

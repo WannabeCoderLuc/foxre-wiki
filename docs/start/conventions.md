@@ -59,4 +59,4 @@ Soldier pages use [D] for "measured in live runs", usually with the number of ru
 - Engine source paths (`Engine/world/cp_phase.py`) refer to the project's private repository.
 
 ---
-<small>Hand-written article (`docs/site/start/Conventions.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/start/Conventions.md`) &middot; published 2026-11-06.</small>

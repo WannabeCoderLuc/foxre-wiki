@@ -65,4 +65,4 @@ Printed by `test_cpp_equiv.py` (one run, reference PC; not gated, speed gates ar
 - Collision / raycast (M14) and the C++ frame loop (M23) are not started.
 
 ---
-<small>Source: `docs/engine/Native.md` in the project repository &middot; generated 2026-11-05.</small>
+<small>Source: `docs/engine/Native.md` in the project repository &middot; generated 2026-11-06.</small>

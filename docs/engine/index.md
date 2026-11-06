@@ -42,7 +42,7 @@ Clean-room specifications of Fox Engine subsystems, and the state of the new eng
 
 -   **[Mod API](mod-api.md)**
 
-    Registries, manifest, loader, extension kinds, sandbox, determinism (M10, IN PROGRESS).
+    Registries, manifest, loader, extension kinds, sandbox, determinism (M10, PASS).
 
 -   **[Native backend](native.md)**
 

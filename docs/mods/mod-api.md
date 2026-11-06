@@ -1,6 +1,6 @@
 # Writing a mod for the new engine
 
-*M10 Mod API core, IN PROGRESS (2026-11-05): all 14 gate checks pass, the gate awaits Luc's review. API version 0.1. The engine's repository is private for now, so nobody outside the project can run these mods yet. The code below uses the real API: it mirrors the nine reference mods the engine's tests load and check. Background: [How mods plug into the engine](../explain/mod-api.md). Exact details: [Mod API](../engine/mod-api.md).*
+*M10 Mod API core, PASS (accepted 2026-11-05): all 14 gate checks pass. API version 0.1. The engine's repository is private for now, so nobody outside the project can run these mods yet. The code below uses the real API: it mirrors the nine reference mods the engine's tests load and check. Background: [How mods plug into the engine](../explain/mod-api.md). Exact details: [Mod API](../engine/mod-api.md).*
 
 ## Python or Lua
 | | Python mod | Lua mod |
@@ -98,4 +98,4 @@ If your mod's numbers come from a recording of the real game, keep at least two 
 - Mods for this engine do not run in the original game. For the original game see the other guides; tools whose output goes into the original game are the MOD-A track (in scope since 2026-11-05, next after M10).
 
 ---
-<small>Hand-written article (`docs/site/mods/Mod-API.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/mods/Mod-API.md`) &middot; published 2026-11-06.</small>

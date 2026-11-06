@@ -53,4 +53,4 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 Fx node classes' properties (from data only); dynamic properties (165 entities) — runtime-only, no registry entry.
 
 ---
-<small>Source: `docs/engine/Reflection.md` in the project repository &middot; generated 2026-11-05.</small>
+<small>Source: `docs/engine/Reflection.md` in the project repository &middot; generated 2026-11-06.</small>

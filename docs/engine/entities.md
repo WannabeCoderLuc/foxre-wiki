@@ -56,4 +56,4 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 - RE: runtime instantiation and the live gate above, tagged [V] / [V static] against the retail exe.
 
 ---
-<small>Source: `docs/engine/Entities.md` in the project repository &middot; generated 2026-11-05.</small>
+<small>Source: `docs/engine/Entities.md` in the project repository &middot; generated 2026-11-06.</small>

@@ -304,4 +304,4 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md). Built (M10 G1): phase rates, rea
 - Africa (afgh second base done: G5); the +0x1A0 byte (0 on all soldiers in the last 20 samples of `m9_route1`), the view test and the slot swaps in the port.
 
 ---
-<small>Source: `docs/engine/SoldierAI.md` in the project repository &middot; generated 2026-11-05.</small>
+<small>Source: `docs/engine/SoldierAI.md` in the project repository &middot; generated 2026-11-06.</small>

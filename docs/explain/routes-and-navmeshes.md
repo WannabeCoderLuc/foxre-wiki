@@ -36,4 +36,4 @@ FoxTrace logs every path job in the real game, with its inputs and the state of 
 - Reading and writing `.frt` and `.nav2` files byte-exactly: [FRT route sets](../formats/frt.md), [NAV2 navmeshes](../formats/nav2.md). A navmesh baker and route editor for the original game (MOD-A) are planned; world and navmesh authoring for the new engine is MOD-D ([Where things stand for modders](../mods/where-things-stand.md)).
 
 ---
-<small>Hand-written article (`docs/site/explain/Routes-And-Navmeshes.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/explain/Routes-And-Navmeshes.md`) &middot; published 2026-11-06.</small>

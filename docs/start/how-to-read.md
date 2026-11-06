@@ -39,4 +39,4 @@ Milestones and modules are marked **PASS** (its automated gate passes), **IN PRO
 Game files, extracted game data and decompiled code. Addresses refer to the PC Steam build 1.0.15.4 (English).
 
 ---
-<small>Hand-written article (`docs/site/start/How-To-Read.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/start/How-To-Read.md`) &middot; published 2026-11-06.</small>

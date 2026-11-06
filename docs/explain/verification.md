@@ -50,4 +50,4 @@ Some function names come from a symbol map of a development build of the same ex
 The same method protects a mod: keep a byte-exact round trip for every file your tool writes, check every address against a second source ([Checking community addresses](../mods/claims.md)), and repeat any live observation once before you rely on it. FoxTrace shows how to watch the game without changing it ([Tracing the game with FoxTrace](../mods/foxtrace.md)).
 
 ---
-<small>Hand-written article (`docs/site/explain/Verification.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/explain/Verification.md`) &middot; published 2026-11-06.</small>

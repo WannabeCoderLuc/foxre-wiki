@@ -30,4 +30,4 @@ The slot update runs every frame after the mission controller (updater priority 
 Load and unload your own side content with the area: [Side content with script blocks](../mods/script-blocks.md). The block's transitions reach Lua as `Block.OnScriptBlockStateTransition(blockName, state)` ([Messages and commands in a mod](../mods/messages-and-commands.md)).
 
 ---
-<small>Hand-written article (`docs/site/explain/Script-Blocks.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/explain/Script-Blocks.md`) &middot; published 2026-11-06.</small>

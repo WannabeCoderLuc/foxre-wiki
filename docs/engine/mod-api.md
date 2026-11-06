@@ -269,4 +269,4 @@ This document is the extension-point index; each subsystem spec names its own:
 - Overhead with hooks registered is not budgeted (section "Overhead budget"); a native (C++) hot path for registry reads is not needed at M10 (registry path within 2 % on M9).
 
 ---
-<small>Source: `docs/engine/ModAPI.md` in the project repository &middot; generated 2026-11-05.</small>
+<small>Source: `docs/engine/ModAPI.md` in the project repository &middot; generated 2026-11-06.</small>

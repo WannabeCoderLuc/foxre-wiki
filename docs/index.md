@@ -57,7 +57,7 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 | M7 | Terrain & collision formats [PASS 2026-10-29] — `.htre`/`.tre2`, `.geom` | `.htre`/`.tre2`, `.geom` | <span class="status planned">PLANNED</span> |
 | M8 | Navigation & routes | nav2 runtime, path queries (Luc, 2026-11-01) | <span class="status pass">PASS</span> |
 | M9 | Gameplay core [PASS, Luc 2026-11-04] — Soldier AI, CP phases and notice, route following (headless) | Soldier AI, CP phases and notice, route following (headless) | <span class="status planned">PLANNED</span> |
-| M10 | Mod API core [IN PROGRESS: G1-G7, C1-C8 PASS 2026-11-05 (C3 N/A), site pages rewritten; awaiting Luc's review] — registries, manifest, loader, hooks (headless) | registries, manifest, loader, hooks (headless) | <span class="status planned">PLANNED</span> |
+| M10 | Mod API core [PASS, Luc 2026-11-05: G1-G7, C1-C8 PASS (C3 N/A)] — registries, manifest, loader, hooks (headless) | registries, manifest, loader, hooks (headless) | <span class="status planned">PLANNED</span> |
 | M11 | Asset formats | textures, models, rigs, fova, parts, language, sound containers | <span class="status planned">PLANNED</span> |
 | M12 | Sound & UI logic | sound events, music states, menus, iDroid, HUD (headless) | <span class="status planned">PLANNED</span> |
 | M13 | Open world complete | both maps, every block level, clock, weather, random numbers (headless) | <span class="status planned">PLANNED</span> |
@@ -77,7 +77,7 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 | Module | Language | Specification | State | Gate (on all game files) |
 |---|---|---|---|---|
-| `mods/` (registry, loader, vanilla) | Python | [`docs/engine/ModAPI.md`](engine/mod-api.md) | <span class="status in-progress">IN PROGRESS</span> | Mod API core (M10): registries for GameObject types, commands, messages, updaters, AI tables, parameters, resource loaders, reflection classes, Lua libraries, natives; manifest + load order; vanilla registered through the same `ModContext`; ScriptHost installs Lua libraries and natives only from its registry. G1: every dump equals its source table (`test_m10_registry.py`). |
+| `mods/` (registry, loader, vanilla) | Python | [`docs/engine/ModAPI.md`](engine/mod-api.md) | <span class="status pass">PASS</span> | Mod API core (M10): registries for GameObject types, commands, messages, updaters, AI tables, parameters, resource loaders, reflection classes, Lua libraries, natives; manifest + load order; vanilla registered through the same `ModContext`; ScriptHost installs Lua libraries and natives only from its registry. G1: every dump equals its source table (`test_m10_registry.py`). |
 | `native/` (`_foxnative`: heightfield, navigation) | C++17 (pybind11, MSVC `/fp:strict`) | [`docs/engine/Native.md`](engine/native.md) | PASS (M10 C7) | C++ copies of `HeightField.sample` and `NavWorld.find_path`, bit-identical to the Python reference on 948 nav jobs, 410 requests and 200,036 height points, about 19x (nav) / 300x (batched heights) faster (`test_cpp_equiv.py`, M10 C7); default backend when built (`python Tools/build_native.py`), `ENGINE_BACKEND=py` forces Python. |
 | `world/realize.py` | Python | [`docs/engine/SoldierAI.md`](engine/soldier-ai.md) | <span class="status in-progress">IN PROGRESS</span> | Soldier realize selection (far mode): budget inside the stage window, 32 / 28 m inset. 159 of 181 live lists equal, the rest within sample age (`test_m9_soldier.py`). |
 | `core/strcode.py` | Python | docstring | <span class="status pass">PASS</span> | StrCode64 = exe 0x141A09AC0 (`re_emulate`, incl. > 64-byte strings) |
@@ -99,10 +99,10 @@ PC 1.0.15.4 &middot; runtime analysis only &middot; no game files published &mid
 
 ## Latest sessions
 
+- 2026-11-05: **M10 PASS (Luc)**: gate M10 14/14 (C3 N/A), statuses updated in ROADMAP, gates.json (M11 NEXT), README, site; full suite rerun PASS.
 - 2026-11-05: **M10 hand-written site pages rewritten and published** (Mod API explanation + guide, Where things stand, Overview, Glossary; new `explain\Native-Backend.md`); test_site_build 4/4, docs_contract 14/14, gate M10 14/14 with C1 run now. Next: Luc's M10 gate review.
 - 2026-11-05: **M10 common gate C4, C5, C8 PASS, gate M10 14/14 (C3 N/A)**: `test_determinism.py` 8/8 (24 scenarios, fresh instances + fresh process; stubs tie-order fix in `ScriptHost.coverage`), `test_fixture_provenance.py` 20/20 (`fixtures/provenance.json`, 18 fixtures, spec reasons added), `test_site_build.py` 4/4 (strict build on a temp copy). Next: hand-written M10 pages, then Luc's gate review.
 - 2026-11-05: **New engine code is C++ only (Luc)**: rule in ROADMAP, Native.md, CLAUDE.md, Engine README and the skills; Python engine modules frozen as reference (port before extending); Tools, verifiers and codecs stay Python.
 - 2026-11-05: **C++ backend built, M10 C7 PASS**: `Engine\native\` (pybind11, `/fp:strict`), HeightField + whole nav path job bit-identical to Python (948 jobs, 410 requests, 200,036 heights), nav 19x faster, default when built; spec [`docs\engine\Native.md`](engine/native.md), ROADMAP / gates / docs updated; gate M10 11/14 with C1 (full suite, run now).
-- 2026-11-05: **M10 G5 Load order + G6 Overhead PASS**: order and budget specified in ModAPI.md; `test_m10_load_order.py` 11/11, `test_m10_perf.py` 4/4 (M9 <= 1.8 %, M3 <= 3.2 % after `Registry.live` / `decoded`); gate M10 10/14 with C1 (full suite, run now).
 
 [Full session log](status/log.md)

@@ -32,4 +32,4 @@ Ground truth the engine tests (`Engine/tests/`) compare against. Each comes from
 | `provenance.json` | 7 KB | see the test that loads it |
 
 ---
-<small>Generated 2026-11-05 from the project repository.</small>
+<small>Generated 2026-11-06 from the project repository.</small>

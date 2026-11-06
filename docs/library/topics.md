@@ -18,9 +18,9 @@
 | Soldiers and alert phases | [How soldiers think](../explain/soldier-ai.md) | [Soldiers and alert phases in a mod](../mods/soldier-ai.md) | [Soldier AI](../engine/soldier-ai.md) | M9 IN PROGRESS |
 | Community addresses | [How we verify](../explain/verification.md) | [Checking community addresses](../mods/claims.md) | [Claims ledger](../engine/claims.md), [Contradictions](../engine/claims-contradictions.md) | ongoing |
 | Live tracing | [How we verify](../explain/verification.md) | [Tracing the game with FoxTrace](../mods/foxtrace.md) | [Live captures](captures.md) | ongoing |
-| Mod API | [How mods plug into the engine](../explain/mod-api.md) | [Writing a mod for the new engine](../mods/mod-api.md) | [Mod API](../engine/mod-api.md) | M10 IN PROGRESS, M24 PLANNED |
+| Mod API | [How mods plug into the engine](../explain/mod-api.md) | [Writing a mod for the new engine](../mods/mod-api.md) | [Mod API](../engine/mod-api.md) | M10 PASS, M24 PLANNED |
 
 Not covered yet (PLANNED): models, textures and animation (M11, M16), sound and UI logic (M12), physics (M14), combat and equipment (M15), missions and saves (M19), rendering and audio output (M20, M21).
 
 ---
-<small>Hand-written article (`docs/site/library/Topics.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/library/Topics.md`) &middot; published 2026-11-06.</small>

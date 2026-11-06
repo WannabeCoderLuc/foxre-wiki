@@ -1,6 +1,6 @@
 # The C++ backend
 
-*Built under M10 (common gate item C7, PASS on 2026-11-05); M10 itself is IN PROGRESS until Luc accepts its gate. Exact details: [Native backend](../engine/native.md). Related: [How soldiers find their way](path-finding.md), [Terrain and collision files](terrain-and-collision.md), [How we verify](verification.md).*
+*Built under M10 (common gate item C7; M10 PASS on 2026-11-05). Exact details: [Native backend](../engine/native.md). Related: [How soldiers find their way](path-finding.md), [Terrain and collision files](terrain-and-collision.md), [How we verify](verification.md).*
 
 ## What it is
 The new engine was first written in Python: easy to read, easy to test, and quick to change while the game's behaviour was still being worked out. The **C++ backend** is a second copy of the engine's busiest code, written in C++ and loaded into the same process, that gives exactly the same answers much faster.
@@ -43,4 +43,4 @@ The C++ backend contains no code from the game. It is a line-by-line copy of the
 - Mods cannot ship native code yet. From M24, a mod's native plugin will have to follow the same rule: a reference version plus its own bit-identical test.
 
 ---
-<small>Hand-written article (`docs/site/explain/Native-Backend.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/explain/Native-Backend.md`) &middot; published 2026-11-06.</small>

@@ -67,4 +67,4 @@ If our understanding of even one field were wrong, at least one file would come 
 - Getting your own files into a mission: [Add a package to a mission](../mods/add-a-package.md).
 
 ---
-<small>Hand-written article (`docs/site/explain/Game-Data.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/explain/Game-Data.md`) &middot; published 2026-11-06.</small>

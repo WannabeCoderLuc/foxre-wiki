@@ -96,4 +96,4 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 What creates the runtime state: block bits and obstacle activation, ring placement, off-mesh link sources (0x140502FC0 -> 0x141C7CE30), who adds blocked pairs; the engine replays them. Cluster-level dynamic links (`islandGraph...`) are not ported and no job needed them. Sneak-vs-alert comparison on the same jobs; other missions and locations; what starts a path request while on a route (`SoldierAI.md`, open).
 
 ---
-<small>Source: `docs/engine/Navigation.md` in the project repository &middot; generated 2026-11-05.</small>
+<small>Source: `docs/engine/Navigation.md` in the project repository &middot; generated 2026-11-06.</small>

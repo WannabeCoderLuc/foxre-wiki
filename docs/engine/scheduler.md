@@ -104,4 +104,4 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 - Updater names still [?]: prio 0, 5, 6, 12, 16, 20, 22 (behaviour known, table above); which updater walks the 4 type groups.
 
 ---
-<small>Source: `docs/engine/Scheduler.md` in the project repository &middot; generated 2026-11-05.</small>
+<small>Source: `docs/engine/Scheduler.md` in the project repository &middot; generated 2026-11-06.</small>

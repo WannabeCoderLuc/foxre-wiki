@@ -10,7 +10,7 @@
 - We have a **list of every native Lua function the game registers** (5,532 of them, with their addresses), plus recorded examples of what many of them return in a real session.
 
 ## Where this is heading
-The new engine is being built so modders can rely on it. Its **Mod API** (milestone M10, IN PROGRESS; gate items pass, engine still private) lets a mod register new systems, add game object types and commands, override values, hook events and extend the soldier AI, with tests that check a mod changes only what it says it changes ([How mods plug into the engine](../explain/mod-api.md), [Writing a mod for the new engine](mod-api.md)). Planned later: **importers** for models, textures and animations, **world and navmesh authoring**, and an **enhanced renderer** that stays separate from the faithful one. With no mods loaded the engine must behave exactly like the original game. Area by area: [Where things stand for modders](where-things-stand.md). Order and gates: [Roadmap](../status/roadmap.md).
+The new engine is being built so modders can rely on it. Its **Mod API** (milestone M10, PASS; engine still private) lets a mod register new systems, add game object types and commands, override values, hook events and extend the soldier AI, with tests that check a mod changes only what it says it changes ([How mods plug into the engine](../explain/mod-api.md), [Writing a mod for the new engine](mod-api.md)). Planned later: **importers** for models, textures and animations, **world and navmesh authoring**, and an **enhanced renderer** that stays separate from the faithful one. With no mods loaded the engine must behave exactly like the original game. Area by area: [Where things stand for modders](where-things-stand.md). Order and gates: [Roadmap](../status/roadmap.md).
 
 New here? [Getting started as a modder](../start/modder-start.md) and [Addresses, hashes and tags](../start/conventions.md) explain how to read the rest.
 
@@ -139,4 +139,4 @@ We imported 3,084 facts from IHHook, Infinite Heaven, V_Framework and the commun
 - Source code (private repository for now): `Engine\formats\` (readers/writers), `Engine\script\` (Lua host), `Engine\resources\` (package and block loading), `Tools\FoxTrace\` (tracer).
 
 ---
-<small>Hand-written article (`docs/site/mods/For-Modders.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/mods/For-Modders.md`) &middot; published 2026-11-06.</small>

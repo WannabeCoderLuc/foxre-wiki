@@ -103,4 +103,4 @@ Things to check in such a mod: sneak forced after alert left one soldier standin
 - The offsets above are for this build. Check before hooking.
 
 ---
-<small>Hand-written article (`docs/site/mods/Soldier-AI.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/mods/Soldier-AI.md`) &middot; published 2026-11-06.</small>

@@ -64,4 +64,4 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 Where the frame calls this bucket's drain relative to the mission `OnUpdate` (called through the vtable; no static caller) [?]; full Msg name table per sender; when `0x140BF9A20` fires.
 
 ---
-<small>Source: `docs/engine/Messages.md` in the project repository &middot; generated 2026-11-05.</small>
+<small>Source: `docs/engine/Messages.md` in the project repository &middot; generated 2026-11-06.</small>

@@ -35,4 +35,4 @@ What the language service reports as the "current" language (it never matched th
 Patch the iDroid's tables so changes survive every reload: [Patching the iDroid tables](../mods/idroid-tables.md).
 
 ---
-<small>Hand-written article (`docs/site/explain/IDroid.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/explain/IDroid.md`) &middot; published 2026-11-06.</small>

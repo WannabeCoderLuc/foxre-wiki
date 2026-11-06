@@ -1,6 +1,6 @@
 # Where things stand for modders
 
-*Hand-written overview, as of 2026-11-05 (M9 PASS; M10 IN PROGRESS: all 14 gate checks pass, awaiting Luc's review). What is decoded, what the new engine already runs, and what its Mod API offers. Order and gates: [Roadmap](../status/roadmap.md). Counts: [Numbers at a glance](../status/numbers.md).*
+*Hand-written overview, as of 2026-11-05 (M9 PASS, M10 PASS). What is decoded, what the new engine already runs, and what its Mod API offers. Order and gates: [Roadmap](../status/roadmap.md). Counts: [Numbers at a glance](../status/numbers.md).*
 
 ## Three levels
 Every topic on this site sits at one of three levels:
@@ -9,7 +9,7 @@ Every topic on this site sits at one of three levels:
 |---|---|---|
 | **Decoded** | written down in a spec, with evidence and tags | use the facts in a mod for the original game |
 | **Ported** | the new engine implements it and a test compares it with the real game | test ideas offline (inside the project for now) |
-| **Extensible** | the engine offers a documented way for mods to add or change it | write a mod against the Mod API (M10, IN PROGRESS; engine still private) |
+| **Extensible** | the engine offers a documented way for mods to add or change it | write a mod against the Mod API (M10 PASS; engine still private) |
 
 The third level started with M10: the frame loop, messages and commands, DataSet classes, the Lua host and the soldier and base tables can be extended through the Mod API. The engine's own repository is private for now, so this is not yet usable outside the project.
 
@@ -31,8 +31,8 @@ The third level started with M10: the frame loop, messages and commands, DataSet
 
 "Natives answered from recordings" means: when the game's Lua calls a native function the engine does not implement yet, the engine returns what the real game returned in a recorded session. From M10 on, each native gets an owning milestone that must implement it; the M17 headless slice runs with none recorded.
 
-## The Mod API (M10, IN PROGRESS)
-Milestone **M10 Mod API core** came right after M9. All of its checks pass: the seven gate items and the common checks every milestone from M10 on must pass. The milestone counts as passed once Luc has reviewed and accepted the gate. What exists:
+## The Mod API (M10, PASS)
+Milestone **M10 Mod API core** came right after M9. All of its checks pass: the seven gate items and the common checks every milestone from M10 on must pass; the gate was accepted on 2026-11-05. What exists:
 
 - **Registries for everything the engine runs**: ten kinds of tables (game object types, `SendCommand` handlers, message ids, updaters, AI tables, measured parameters, resource loaders, DataSet classes, Lua libraries, natives) plus hooks and message listeners. The original game's content is registered by a built-in `vanilla` mod through the same calls a mod makes.
 - **A manifest and loader**: namespace, API version (0.1; exact match until 1.0 in M24), dependencies and order hints. The load order is documented and the same on every run and for every input order; refused sets are undone completely, and the error names the mod.
@@ -88,4 +88,4 @@ MOD-A, tools for the original game (validated file writers, a route editor, a na
 - The **claims ledger**, to check community addresses before hooking them.
 
 ---
-<small>Hand-written article (`docs/site/mods/Where-Things-Stand.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/mods/Where-Things-Stand.md`) &middot; published 2026-11-06.</small>

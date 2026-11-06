@@ -41,7 +41,7 @@ Every milestone ends on a test a computer decides: pass or fail. A file reader o
 | M7 Terrain and collision | read the ground height maps and collision shapes, answer the ground height anywhere | <span class="status pass">PASS</span> |
 | M8 Navigation and routes | path finding on the navmesh, far soldiers walking their routes | <span class="status pass">PASS</span> |
 | M9 Gameplay core | soldiers, alert phases, noticing, soldiers following routes near the player (no graphics) | <span class="status pass">PASS</span> |
-| M10 Mod API core | the engine's own systems opened up for mods: register new systems, hook and extend existing ones; all checks pass, awaiting review | <span class="status in-progress">IN PROGRESS</span> |
+| M10 Mod API core | the engine's own systems opened up for mods: register new systems, hook and extend existing ones | <span class="status pass">PASS</span> |
 | M11 Asset formats | textures, models, skeletons, outfit, language and sound container files | <span class="status planned">PLANNED</span> |
 | M12 Sound and UI logic | which sounds and music the game asks for, menus, the iDroid and the HUD (no playback or drawing yet) | <span class="status planned">PLANNED</span> |
 | M13 Open world complete | both maps fully streamed, clock, weather and the game's random numbers | <span class="status planned">PLANNED</span> |
@@ -65,9 +65,11 @@ The milestones from M6 on were re-ordered on 2026-10-29 so that each one only ne
 
 M9 passed on 2026-11-04, with all six gate items checked against the real game: which 18 soldiers are fully simulated, how they follow routes far from and near the player (including why some idle waits run long), the alert phase timers, what really ends a phase (the base's radio reports, which wait for the soldiers it sent to investigate), the same chain at a second base, and why an alert lingers: while the player stays within 10 m of where a soldier last saw them, the last tenth of the alert timer runs 100 times slower. Damage and most script commands were not part of M9; they come with M15 (combat) and the M10 registries. See [How soldiers think](../explain/soldier-ai.md).
 
-**Now: M10 Mod API core** (IN PROGRESS, all 14 gate checks pass, waiting for Luc's review): the systems built so far are opened up for mods. Ten kinds of registries hold everything the engine runs, from object types and commands to measured constants and the game's Lua libraries; the original game's content is registered by a built-in "vanilla" mod through the same calls a mod makes. A manifest and loader put mods in a documented order and refuse conflicts with the mod named; hooks at three engine calls (a soldier's route switch, a base's phase change, command dispatch) let mods watch, change or stop them; Lua mods run in a sandbox. Nine reference mods each change exactly what they predict, and an empty mod changes nothing. The same scenarios run twice, and once more in a fresh process, give byte-identical results, and every recording the tests read is traced back to agreeing live runs. See [How mods plug into the engine](../explain/mod-api.md).
+M10 Mod API core passed on 2026-11-05, with all 14 gate checks: the systems built so far are opened up for mods. Ten kinds of registries hold everything the engine runs, from object types and commands to measured constants and the game's Lua libraries; the original game's content is registered by a built-in "vanilla" mod through the same calls a mod makes. A manifest and loader put mods in a documented order and refuse conflicts with the mod named; hooks at three engine calls (a soldier's route switch, a base's phase change, command dispatch) let mods watch, change or stop them; Lua mods run in a sandbox. Nine reference mods each change exactly what they predict, and an empty mod changes nothing. The same scenarios run twice, and once more in a fresh process, give byte-identical results, and every recording the tests read is traced back to agreeing live runs. See [How mods plug into the engine](../explain/mod-api.md).
 
 Also under M10, the engine's two busiest pieces (ground height and path finding) got a C++ copy that gives bit-identical answers to the Python version and runs about 19 times faster on path jobs; it is now the default, and every new engine system is written in C++. See [The C++ backend](../explain/native-backend.md).
+
+**Now: M11 Asset formats** (next): readers and writers for textures, models, skeletons, outfits, language and sound container files, checked against every game file. Alongside it, MOD-A: tools for modding the original game.
 
 On 2026-11-04 the order from M10 on was cut again, for two reasons. First, the engine should become something modders can build on, so the mod interface comes right after M9, while the engine's systems are still few and easy to open up. Second, the order follows what is most doable: work on what already exists first, then file formats, then systems the game already reveals through its scripts, then new runtime work, and the outputs (graphics, sound, the playable game) last. Every milestone still ends on a pass-or-fail test against the real game, now listed item by item.
 
@@ -79,4 +81,4 @@ On 2026-11-04 the order from M10 on was cut again, for two reasons. First, the e
 - Sources, tools, test fixtures and captures: [Library](../library/sources.md).
 
 ---
-<small>Hand-written article (`docs/site/start/Overview.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/start/Overview.md`) &middot; published 2026-11-06.</small>

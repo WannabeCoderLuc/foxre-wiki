@@ -2,7 +2,7 @@
 
 **Language (Luc, 2026-11-05):** new engine code is C++ only (`native/src/`, [`docs/engine/Native.md`](native.md)); the Python modules below are a frozen reference (port before extending, all ported by M23); codecs (`formats/`), tests and `Tools/` stay Python.
 Tests: `tests\` (pytest; `verifiers.lock.json` = sha256 of each verifier, enforced by `engine_verify`). Census tools that produce the spec statistics: `Tools\{fox2,fpk,qar}_census.py`, `Tools\qar_harvest_paths.py`.
-| `mods/` (registry, loader, vanilla) | Python | [`docs/engine/ModAPI.md`](mod-api.md) | <span class="status in-progress">IN PROGRESS</span> | Mod API core (M10): registries for GameObject types, commands, messages, updaters, AI tables, parameters, resource loaders, reflection classes, Lua libraries, natives; manifest + load order; vanilla registered through the same `ModContext`; ScriptHost installs Lua libraries and natives only from its registry. G1: every dump equals its source table (`test_m10_registry.py`). |
+| `mods/` (registry, loader, vanilla) | Python | [`docs/engine/ModAPI.md`](mod-api.md) | <span class="status pass">PASS</span> | Mod API core (M10): registries for GameObject types, commands, messages, updaters, AI tables, parameters, resource loaders, reflection classes, Lua libraries, natives; manifest + load order; vanilla registered through the same `ModContext`; ScriptHost installs Lua libraries and natives only from its registry. G1: every dump equals its source table (`test_m10_registry.py`). |
 | `native/` (`_foxnative`: heightfield, navigation) | C++17 (pybind11, MSVC `/fp:strict`) | [`docs/engine/Native.md`](native.md) | PASS (M10 C7) | C++ copies of `HeightField.sample` and `NavWorld.find_path`, bit-identical to the Python reference on 948 nav jobs, 410 requests and 200,036 height points, about 19x (nav) / 300x (batched heights) faster (`test_cpp_equiv.py`, M10 C7); default backend when built (`python Tools/build_native.py`), `ENGINE_BACKEND=py` forces Python. |
 | `world/realize.py` | Python | [`docs/engine/SoldierAI.md`](soldier-ai.md) | <span class="status in-progress">IN PROGRESS</span> | Soldier realize selection (far mode): budget inside the stage window, 32 / 28 m inset. 159 of 181 live lists equal, the rest within sample age (`test_m9_soldier.py`). |
 
@@ -35,4 +35,4 @@ Run all gates: MCP `engine_verify` (or `python -m pytest Engine\tests -q` from t
 Tests: `tests\` (pytest; `verifiers.lock.json` = sha256 of each verifier, enforced by `engine_verify`). Census tools that produce the spec statistics: `Tools\{fox2,fpk,qar}_census.py`, `Tools\qar_harvest_paths.py`.
 
 ---
-<small>Source: `Engine/README.md` in the project repository &middot; generated 2026-11-05.</small>
+<small>Source: `Engine/README.md` in the project repository &middot; generated 2026-11-06.</small>

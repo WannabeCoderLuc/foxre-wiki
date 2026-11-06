@@ -48,4 +48,4 @@ A file with flags `0x10` at the root and a child with flags `6` holds a group of
 - Rocks and buildings are collision, not terrain. The terrain height under a rock is the ground below it.
 
 ---
-<small>Hand-written article (`docs/site/mods/Collision-Files.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/mods/Collision-Files.md`) &middot; published 2026-11-06.</small>

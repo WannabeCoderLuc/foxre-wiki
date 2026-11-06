@@ -107,4 +107,4 @@ e\devmap_folded.tsv`: **166 of 34,547** EXACT names sit on folded bodies (10 to 
 - **Selftest:** `_devmap_checks` (in `--selftest`): build guard accepts the retail exe and refuses a foreign one; the hand-confirmed EXACT pairs of 2026-11-04 come back unchanged (0x140D69FB0 `AlertAiImpl::CheckActiveMember`, 0x140D63550 `CommandPost2Impl::SetMemberRole_`, 0x14139D600 `UnrealBasicAction2Impl::GetMoveVelocityForUnreal`, 0x140D5AAA0 `CommandPost2Impl::DoRequestRadio`) with dev decompile and `verify` rows; AUTO is labelled `[hint AUTO]`, never `[dev]`; the folded 0x1400FE390 prints `[hint folded x2]`, and no hand-confirmed pair is in the folded list; annotation leaves call-site addresses alone.
 
 ---
-<small>Source: `docs/TOOLING.md` in the project repository &middot; generated 2026-11-05.</small>
+<small>Source: `docs/TOOLING.md` in the project repository &middot; generated 2026-11-06.</small>

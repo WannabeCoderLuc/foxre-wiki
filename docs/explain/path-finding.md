@@ -79,4 +79,4 @@ Three mistakes in our own logging looked like engine errors for a long time, and
 Write patrols that behave, and trace path jobs: [Navmeshes and routes in a mod](../mods/navigation-and-routes.md).
 
 ---
-<small>Hand-written article (`docs/site/explain/Path-Finding.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/explain/Path-Finding.md`) &middot; published 2026-11-06.</small>

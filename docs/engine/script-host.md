@@ -235,4 +235,4 @@ Mod API: [`docs\engine\ModAPI.md`](mod-api.md).
 | trace_m4_lua_boot_20261022_182621 | boot chunk order (170), 147 openlib calls, 11 metatables, identical over 2 runs | [V live] |
 
 ---
-<small>Source: `docs/engine/ScriptHost.md` in the project repository &middot; generated 2026-11-05.</small>
+<small>Source: `docs/engine/ScriptHost.md` in the project repository &middot; generated 2026-11-06.</small>

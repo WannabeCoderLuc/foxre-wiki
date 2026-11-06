@@ -10,11 +10,11 @@ What each finding means for a mod, with a worked (hypothetical) example of how i
 
 -   **[Where things stand for modders](where-things-stand.md)**
 
-    What is decoded, what the engine runs, what the Mod API offers (M10 IN PROGRESS, M24 PLANNED).
+    What is decoded, what the engine runs, what the Mod API offers (M10 PASS, M24 PLANNED).
 
 -   **[Writing a mod for the new engine](mod-api.md)**
 
-    Manifest, Python or Lua, every extension kind, hooks, pitfalls and limits (M10, IN PROGRESS).
+    Manifest, Python or Lua, every extension kind, hooks, pitfalls and limits (M10, PASS).
 
 -   **[Archives, packages and hashes](archives-and-hashes.md)**
 

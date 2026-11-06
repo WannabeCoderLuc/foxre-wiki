@@ -9,7 +9,7 @@ This project does not ship a mod tool for the original game. It gives you **chec
 - **How the game's systems work**, from mission loading to soldier alert phases, each with the evidence behind it ([Explanations](../explain/game-data.md)).
 - **Modding guides** that turn those findings into practical advice, with a worked example per topic ([Modding guides](../mods/for-modders.md)).
 - **Checked addresses**: community addresses tested against the executable ([Checking community addresses](../mods/claims.md)).
-- A **new engine with a Mod API** (M10, IN PROGRESS; frozen as 1.0 in M24; the engine is private for now). See [How mods plug into the engine](../explain/mod-api.md) and [Writing a mod for the new engine](../mods/mod-api.md).
+- A **new engine with a Mod API** (M10, PASS; frozen as 1.0 in M24; the engine is private for now). See [How mods plug into the engine](../explain/mod-api.md) and [Writing a mod for the new engine](../mods/mod-api.md).
 
 ## Pick your path
 | You want to | Start with | Then |
@@ -51,4 +51,4 @@ This project does not ship a mod tool for the original game. It gives you **chec
 - What exists today and what is planned: [Where things stand for modders](../mods/where-things-stand.md).
 
 ---
-<small>Hand-written article (`docs/site/start/Modder-Start.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/start/Modder-Start.md`) &middot; published 2026-11-06.</small>

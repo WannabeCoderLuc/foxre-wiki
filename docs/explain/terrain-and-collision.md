@@ -47,4 +47,4 @@ flowchart LR
 - Working with the files themselves: [Terrain and collision files in a mod](../mods/collision-files.md).
 
 ---
-<small>Hand-written article (`docs/site/explain/Terrain-And-Collision.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/explain/Terrain-And-Collision.md`) &middot; published 2026-11-06.</small>

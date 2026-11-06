@@ -54,7 +54,7 @@ One topic per page, in plain language: what it is, why it matters, how the origi
 
 -   **[How mods plug into the engine](mod-api.md)**
 
-    Registries, manifest, load order, hooks, sandbox: what the Mod API is, its benefits and limits (M10, IN PROGRESS).
+    Registries, manifest, load order, hooks, sandbox: what the Mod API is, its benefits and limits (M10, PASS).
 
 -   **[The C++ backend](native-backend.md)**
 

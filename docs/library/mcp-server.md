@@ -149,4 +149,4 @@ Ingest formats: TSV `address|addr|va`+name → symbols; `strcode*|hash`+name →
 - 2026-10-21: docs moved to `..\docs\`; README/MCP_USAGE/KNOWLEDGE_DB/CHANGELOG merged into this file.
 
 ---
-<small>Source: `mgsv_unified_server/AI_GUIDE.md` in the project repository &middot; generated 2026-11-05.</small>
+<small>Source: `mgsv_unified_server/AI_GUIDE.md` in the project repository &middot; generated 2026-11-06.</small>

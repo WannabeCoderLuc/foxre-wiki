@@ -103,4 +103,4 @@ GameObject.SendCommand(g, { id = "SetCautionRoute", route = "rts_depot_return" }
 - Our data covers sneak phase in one mission. Check anything else yourself.
 
 ---
-<small>Hand-written article (`docs/site/mods/Navigation-And-Routes.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/mods/Navigation-And-Routes.md`) &middot; published 2026-11-06.</small>

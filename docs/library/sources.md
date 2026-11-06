@@ -27,4 +27,4 @@
 Path and string names come from hashing known strings: GzsTool's `qar_dictionary` / `fpk_dictionary`, FoxTool's `fox_dictionary`, `mgsv-lookup-strings`, plus our own brute-forced names (`strcode_bruteforced.tsv`). 83 % of archive entries have a known name.
 
 ---
-<small>Hand-written article (`docs/site/library/Sources.md`) &middot; published 2026-11-05.</small>
+<small>Hand-written article (`docs/site/library/Sources.md`) &middot; published 2026-11-06.</small>
